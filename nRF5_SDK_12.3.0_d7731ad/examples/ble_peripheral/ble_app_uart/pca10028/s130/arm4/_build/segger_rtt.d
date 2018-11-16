@@ -1,0 +1,9 @@
+.\_build\segger_rtt.o: ..\..\..\..\..\..\external\segger_rtt\SEGGER_RTT.c
+.\_build\segger_rtt.o: ..\..\..\..\..\..\external\segger_rtt\SEGGER_RTT.h
+.\_build\segger_rtt.o: ..\..\..\..\..\..\external\segger_rtt\SEGGER_RTT_Conf.h
+.\_build\segger_rtt.o: ..\config\sdk_config.h
+.\_build\segger_rtt.o: ..\..\..\..\..\..\components\device\compiler_abstraction.h
+.\_build\segger_rtt.o: ..\..\..\..\..\..\components\libraries\util\app_util_platform.h
+.\_build\segger_rtt.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\_build\segger_rtt.o: ..\..\..\..\..\..\components\device\nrf.h
+.\_build\segger_rtt.o: ..\..\..\..\..\..\components\device\nrf51.h

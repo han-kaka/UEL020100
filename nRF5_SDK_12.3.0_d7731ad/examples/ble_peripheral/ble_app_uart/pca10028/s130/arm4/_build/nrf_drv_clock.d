@@ -1,0 +1,14 @@
+.\_build\nrf_drv_clock.o: ..\..\..\..\..\..\components\drivers_nrf\clock\nrf_drv_clock.c
+.\_build\nrf_drv_clock.o: ..\..\..\..\..\..\components\libraries\util\sdk_common.h
+.\_build\nrf_drv_clock.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\_build\nrf_drv_clock.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\_build\nrf_drv_clock.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\_build\nrf_drv_clock.o: ..\config\sdk_config.h
+.\_build\nrf_drv_clock.o: ..\..\..\..\..\..\components\libraries\util\nordic_common.h
+.\_build\nrf_drv_clock.o: ..\..\..\..\..\..\components\device\compiler_abstraction.h
+.\_build\nrf_drv_clock.o: ..\..\..\..\..\..\components\libraries\util\sdk_os.h
+.\_build\nrf_drv_clock.o: ..\..\..\..\..\..\components\libraries\util\sdk_errors.h
+.\_build\nrf_drv_clock.o: ..\..\..\..\..\..\components\softdevice\s130\headers\nrf_error.h
+.\_build\nrf_drv_clock.o: ..\..\..\..\..\..\components\libraries\util\app_util.h
+.\_build\nrf_drv_clock.o: ..\..\..\..\..\..\components\device\nrf.h
+.\_build\nrf_drv_clock.o: ..\..\..\..\..\..\components\device\nrf51.h

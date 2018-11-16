@@ -1,0 +1,12 @@
+.\_build\bsp_nfc.o: ..\..\..\..\..\..\components\libraries\bsp\bsp_nfc.c
+.\_build\bsp_nfc.o: ..\..\..\..\..\..\components\libraries\bsp\bsp_nfc.h
+.\_build\bsp_nfc.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\_build\bsp_nfc.o: ..\..\..\..\..\..\components\libraries\util\sdk_errors.h
+.\_build\bsp_nfc.o: ..\..\..\..\..\..\components\softdevice\s130\headers\nrf_error.h
+.\_build\bsp_nfc.o: ..\config\sdk_config.h
+.\_build\bsp_nfc.o: ..\..\..\..\..\..\components\libraries\bsp\bsp.h
+.\_build\bsp_nfc.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
+.\_build\bsp_nfc.o: ..\..\..\..\..\..\components\boards\boards.h
+.\_build\bsp_nfc.o: ..\..\..\..\..\..\components\drivers_nrf\hal\nrf_gpio.h
+.\_build\bsp_nfc.o: ..\..\..\..\..\..\components\device\nrf.h
+.\_build\bsp_nfc.o: ..\..\..\..\..\..\components\device\nrf51.h
