@@ -3760,13 +3760,31 @@
 #ifndef SEGGER_RTT_DEBUG_NB86_CFUN
 #define SEGGER_RTT_DEBUG_NB86_CFUN 0
 #endif
+// <q> debug at cgatt?
+#ifndef SEGGER_RTT_DEBUG_NB86_CGATT
+#define SEGGER_RTT_DEBUG_NB86_CGATT 0
+#endif
 #endif
 // </h> 
 
-// <q> debug uart
+// <h> debug uart
 #ifndef SEGGER_RTT_DEBUG_UART
-#define SEGGER_RTT_DEBUG_UART 0
+#define SEGGER_RTT_DEBUG_UART 1
 #endif
+
+#if  SEGGER_RTT_DEBUG_UART
+// <q> debug cmdproc
+#ifndef SEGGER_RTT_DEBUG_NB86_CMDPROC
+#define SEGGER_RTT_DEBUG_NB86_CMDPROC 1
+#endif
+
+// <q> debug uart data
+#ifndef SEGGER_RTT_DEBUG_UART_DATA
+#define SEGGER_RTT_DEBUG_UART_DATA 0
+#endif
+
+#endif
+// </h> 
 
 #endif //RTT_LOG_ENABLE
 

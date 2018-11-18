@@ -41,197 +41,219 @@ const NB_Cmd_Data_Type AT_CmdTbl[] =
     /*------cmdstr-----------------------------------revtimeout(s)--cmdtruebackstr----------retry_times */
     /************************* GPRS  network ***************************/
       {"AT+CFUN=0\r\n",                                  3,       "OK",                     3},
+			{"AT+CFUN=1\r\n",                                  3,       "OK",                     3},
       {"AT+CFUN?\r\n",                                   3,       "CFUN:0",                 3},
+			{"AT+CFUN?\r\n",                                   3,       "CFUN:1",                 3},
 			{"AT+NCDP=180.101.147.115,5683\r\n",               3,       "OK",                     3},
 			{"AT+NRB\r\n",                                     3,       "REBOOTING",              3},
 			
-			
-      {"AT+CFUN=0\r\n",                                  3,       "OK",                     3},
-      {"AT+CFUN?\r\n",                                   3,       "CFUN:0",                 3},
 			{"AT+CGSN=1\r\n",                                  3,       "CGSN",                   3},
 			{"AT+NCSEARFCN\r\n",                               3,       "OK",                     3},
 			{"AT+NCONFIG=CELL_RESELECTION,TRUE\r\n",           3,       "OK",                     3},
-			{"AT+CMEE=1\r\n",                                  3,       "OK",                     3},
-			{"AT+CFUN=1\r\n",                                  3,       "OK",                     3},
-			{"AT+CFUN?\r\n",                                   3,       "CFUN:1",                 3},
-			{"AT+NCCID\r\n",                                   3,       "NCCID",                  3},
-			{"AT+CGDCONT=1,\"IP\",\"ctnet\"\r\n",              3,       "OK",                     3},
-			 
-			{"AT+CGATT=1\r\n",                                 3,       "OK",                     3},
-			{"AT+CGATT?\r\n",                                  30,      "CGATT:1",               15},	
-      {"AT+CFUN=0\r\n",                                  3,       "OK",                     3},
-      {"AT+CFUN?\r\n",                                   3,       "CFUN:0",                 3},
 			{"AT+NCONFIG=CELL_RESELECTION,FALSE\r\n",          3,       "OK",                     3},
+			{"AT+CMEE=1\r\n",                                  3,       "OK",                     3},
+			{"AT+NCCID\r\n",                                   3,       "CCID:",                  3},
+			
+			{"AT+CGDCONT=1,\"IP\",\"ctnet\"\r\n",              3,       "OK",                     3},
+			{"AT+CGATT=1\r\n",                                 3,       "OK",                     3},
+			{"AT+CGATT=0\r\n",                                 3,       "OK",                     3},
+			{"AT+CGATT?\r\n",                                  30,      "CGATT:1",               15},	
+			{"AT+CGATT?\r\n",                                  30,      "CGATT:0",               15},	
 			{"AT+CPSMS=1,,,01000011,01000011\r\n",             3,       "OK",                     3},
 			{"AT+CEDRXS=0,5,0101\r\n",                         3,       "OK",                     3},
 			{"AT+NPSMR=1\r\n",                                 3,       "OK",                     3},
-			{"AT+CFUN=1\r\n",                                  3,       "OK",                     3},
-			{"AT+CFUN?\r\n",                                   3,       "CFUN:1",                 3},
-			{"AT+CGATT=1\r\n",                                 3,       "OK",                     3},
-			{"AT+CGATT?\r\n",                                  30,      "CGATT:1",               15},	
 			{"AT+CGPADDR\r\n",                                 30,      "OK",                    15},	
       {"AT+CSQ\r\n",   			                             3,	      "+CSQ",         	        3},
 			
-			
       {"AT+NMGS=37,00\r\n",   			                     3,	      "OK",         	          3},
       {"AT+NQMGS\r\n",   			                           3,	      "OK",         	          3},
-			
-			{"AT+CSQ\r\n",   			                             3,	      "+CSQ",         	        3},
-      {"AT+NMGS=29,01\r\n",   			                     3,	      "OK",         	          3},
-      {"AT+NQMGS\r\n",   			                           3,	      "OK",         	          3},
-			
-      {"AT+NMGR\r\n",   			                           3,	      "",           	          3},
-      {"AT+NQMGR\r\n",   			                           3,	      "OK",         	          3},
-			{"AT+CGATT?\r\n",                                  30,      "CGATT:1",               15},
-			{"AT+NPSMR?\r\n",                                  30,      "NPSMR:1,1",             15},
+//			
+//			{"AT+CSQ\r\n",   			                             3,	      "+CSQ",         	        3},
+//      {"AT+NMGS=29,01\r\n",   			                     3,	      "OK",         	          3},
+//      {"AT+NQMGS\r\n",   			                           3,	      "OK",         	          3},
+//			
+//      {"AT+NMGR\r\n",   			                           3,	      "",           	          3},
+//      {"AT+NQMGR\r\n",   			                           3,	      "OK",         	          3},
+//			{"AT+CGATT?\r\n",                                  30,      "CGATT:1",               15},
+//			{"AT+NPSMR?\r\n",                                  30,      "NPSMR:1,1",             15},
 
 
-//      {"AT+CPIN?\r\n",                                   3,       "READY",                  3},
-      {"AT+CGREG?\r\n",   			                     		 3,	      "+CGREG: 0,1",         	 15},
+////      {"AT+CPIN?\r\n",                                   3,       "READY",                  3},
+//      {"AT+CGREG?\r\n",   			                     		 3,	      "+CGREG: 0,1",         	 15},
 
-//      {"AT+MIPKEEPCONF=1,240,50,4\r\n",   			         3,	      "OK",         	          3},  /*去掉TCP底层心跳机制*/
-/*当设置为0时，原始输出格式(1字节转2字节)*/
-/*当设置为1时，不转换直接输出，且不带标识头*/
-/*当设置为2时，不转换直接输出，带标识头*/
-      {"AT+GTSET=\"IPRFMT\",2\r\n",   			             3,	      "OK",         	          3},   //待选，
+////      {"AT+MIPKEEPCONF=1,240,50,4\r\n",   			         3,	      "OK",         	          3},  /*去掉TCP底层心跳机制*/
+///*当设置为0时，原始输出格式(1字节转2字节)*/
+///*当设置为1时，不转换直接输出，且不带标识头*/
+///*当设置为2时，不转换直接输出，带标识头*/
+//      {"AT+GTSET=\"IPRFMT\",2\r\n",   			             3,	      "OK",         	          3},   //待选，
 
-/*建立网络连接*/
-      {"AT+MIPCALL=1,\"CMNET\"\r\n",                     30,      "+MIPCALL:",              3},
-      {"AT+MIPCALL?\r\n",                                3,       "+MIPCALL: 1",            3},
-      {"AT+MIPOPEN=1,,\"120.77.174.116\",9292,0\r\n",    20,      "+MIPOPEN: 1,1",          3},
-      {"AT+MIPOPEN?\r\n",                                3,       "+MIPOPEN: 1",            2},
-/* 数据发送*/
-      {"AT+MIPSEND=1\r\n",                               10,      ">",                      2},
-      {"DATA",                                           6,       "OK",                     1},  //需要发送的数据，待优化
-      
-      
-      {"AT+CSQ\r\n",   			                             3,	      "+CSQ",         	        3},  //待优化
-      {"AT+CCID\r\n",                                    4,       "898",                    2},
-      {"AT+CGSN\r\n",                                    4,       "OK",                     2},
+///*建立网络连接*/
+//      {"AT+MIPCALL=1,\"CMNET\"\r\n",                     30,      "+MIPCALL:",              3},
+//      {"AT+MIPCALL?\r\n",                                3,       "+MIPCALL: 1",            3},
+//      {"AT+MIPOPEN=1,,\"120.77.174.116\",9292,0\r\n",    20,      "+MIPOPEN: 1,1",          3},
+//      {"AT+MIPOPEN?\r\n",                                3,       "+MIPOPEN: 1",            2},
+///* 数据发送*/
+//      {"AT+MIPSEND=1\r\n",                               10,      ">",                      2},
+//      {"DATA",                                           6,       "OK",                     1},  //需要发送的数据，待优化
+//      
+//      
+//      {"AT+CSQ\r\n",   			                             3,	      "+CSQ",         	        3},  //待优化
+//      {"AT+CCID\r\n",                                    4,       "898",                    2},
+//      {"AT+CGSN\r\n",                                    4,       "OK",                     2},
 
-      {NULL,                                          NULL,       "+MIPRTCP",            NULL},
+//      {NULL,                                          NULL,       "+MIPRTCP",            NULL},
       
 };
 
 /*************************初始化流程***************************/
 static const uint8_t s_ATCmdStep_Init[] = 
 {
-    NULL,
-    NB_AT_CFUN_0_A,      
-		NB_AT_CFUN1_A,      
+//    NULL,
+    NB_AT_CFUN_0,      
+		NB_AT_CFUN0,      
 		NB_AT_NCDP,                    
 };
 
 /************************* TCP/IP数据链路建立连接***************************/
 static const uint8_t s_ATCmdStep_Connnect[] = 
 {
-    NB_AT_MIPCALL_1, NB_AT_MIPCALL1, NB_AT_MIPOPEN_1, //NB_AT_MIPOPEN1,                               
+		NB_AT_CGDCONT,        
+		NB_AT_CGATT_1,
+		NB_AT_CGATT1,	
+	  NB_AT_CFUN_0, 
+		NB_AT_CFUN0,  
+		NB_AT_CPSMS_1,
+		NB_AT_CEDRXS_0,
+		NB_AT_NPSMR_1,
+	  NB_AT_CFUN_1, 
+		NB_AT_CFUN1,  
+		NB_AT_CGATT_1,
+		NB_AT_CGATT1,
+		NB_AT_CGPADDR,
+		NB_AT_CSQ,
 };
 
 /*************************数据发送流程***************************/
 static const uint8_t s_ATCmdStep_Comm[] = 
 {
-    NB_AT_MIPSEND_1, NB_AT_DATA,                             
+    NB_AT_NMGS, NB_AT_NQMGS,                             
 };
 
 static const uint8_t s_ATCmdStep_Mess[] = 
 {
-	  NB_AT_CFUN_0_B, 
-		NB_AT_CFUN1_B,  
+	  NB_AT_CFUN_0, 
+		NB_AT_CFUN0,  
 		NB_AT_CGSN_1,
-	                     
+		NB_AT_NCSEARFCN,
+		NB_AT_NCONFIG_TRUE,
+		NB_AT_CMEE_1,	
+		NB_AT_CFUN_1,
+		NB_AT_CFUN1,
+		NB_AT_NCCID,
 };
 
 
 /*校验AT指令应答结果是否正确*/
 static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 {   
-    //判断是否是服务器下行数据
-    if(Check_Strstr((char*)RxBuf, (char*)(char*)AT_CmdTbl[NB_AT_MIPRTCP].ExpResultStr, NB_ATCmdCB.ucRxLen) == true)
-    {
-        NB_ATCmdCB.RspType = RSP_TYPE_DATA;  //通信数据
-        return BACK_TRUE;   //接收到正确应答
-    }
+
+//    //判断是否是服务器下行数据
+//    if(Check_Strstr((char*)RxBuf, (char*)(char*)AT_CmdTbl[NB_AT_MIPRTCP].ExpResultStr, NB_ATCmdCB.ucRxLen) == true)
+//    {
+//        NB_ATCmdCB.RspType = RSP_TYPE_DATA;  //通信数据
+//        return BACK_TRUE;   //接收到正确应答
+//    }
     if(Check_Strstr((char*)RxBuf, "Lierda", NB_ATCmdCB.ucRxLen) == true) //GPRS模块准备就绪推送
     {
         Task_Flag_Struct.atReday_F = ENABLE;
         NB_ATCmdCB.RspType = RSP_TYPE_CMD;
-	    return BACK_TRUE;
+		#if SEGGER_RTT_DEBUG_NB86_CMDPROC
+				SEGGER_RTT_printf(0, "gprs model ready");
+		#endif
+				return BACK_TRUE;
     }
-
-    if(NB_ATCmdCB.ATCmdPt != NB_AT_MIPOPEN_1)//socket连接时,也有可能回复MIPSTAT: 1,1
-    {
-        if(Check_Strstr((char*)RxBuf, "MIPSTAT: 1,1", NB_ATCmdCB.ucRxLen) == true)
-        {
-            NB_NetPar.NetConnSta = CONN_OFF;
-            g_stNB_Handler.State = NB_STATE_CONNECT_NET;    //重新连接socket
-						g_stNB_Handler.StepPt = 2;
-						g_stNB_Handler.AuthStatus = NOT_AUTH;
-						NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_AUTH);
-        }
-    }
-    if(NB_ATCmdCB.ATCmdPt != NB_AT_MIPCALL1) //由于IP获取错误，也会去查询有无IP
-    {
-        if(Check_Strstr((char*)RxBuf, "MIPCALL: 0", NB_ATCmdCB.ucRxLen) == true)
-        
-        { 
-            NB_NetPar.NetConnSta = CONN_OFF;
-						g_stNB_Handler.State = NB_STATE_CONNECT_NET;    //重新连接网络
-						g_stNB_Handler.StepPt = 0;
-						g_stNB_Handler.AuthStatus = NOT_AUTH;
-						NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_AUTH);
-        }
-    }
+		#if SEGGER_RTT_DEBUG_NB86_CMDPROC
+			SEGGER_RTT_printf(0, (char*)RxBuf);
+//			SEGGER_RTT_printf(0, NB_ATCmdCB.ExpResultStr);
+//			SEGGER_RTT_printf(0, "\r\n");
+		#endif
+//    if(NB_ATCmdCB.ATCmdPt != NB_AT_MIPOPEN_1)//socket连接时,也有可能回复MIPSTAT: 1,1
+//    {
+//        if(Check_Strstr((char*)RxBuf, "MIPSTAT: 1,1", NB_ATCmdCB.ucRxLen) == true)
+//        {
+//            NB_NetPar.NetConnSta = CONN_OFF;
+//            g_stNB_Handler.State = NB_STATE_CONNECT_NET;    //重新连接socket
+//						g_stNB_Handler.StepPt = 2;
+//						g_stNB_Handler.AuthStatus = NOT_AUTH;
+//						NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_AUTH);
+//        }
+//    }
+//    if(NB_ATCmdCB.ATCmdPt != NB_AT_MIPCALL1) //由于IP获取错误，也会去查询有无IP
+//    {
+//        if(Check_Strstr((char*)RxBuf, "MIPCALL: 0", NB_ATCmdCB.ucRxLen) == true)
+//        
+//        { 
+//            NB_NetPar.NetConnSta = CONN_OFF;
+//						g_stNB_Handler.State = NB_STATE_CONNECT_NET;    //重新连接网络
+//						g_stNB_Handler.StepPt = 0;
+//						g_stNB_Handler.AuthStatus = NOT_AUTH;
+//						NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_AUTH);
+//        }
+//    }
     
      //判断接收的数据是否含有期望应答
 		if(Check_Strstr((char*)RxBuf, NB_ATCmdCB.ExpResultStr, NB_ATCmdCB.ucRxLen) == true)
 		{
-				if(NB_ATCmdCB.ATCmdPt == NB_AT_CFUN1_A)
+				if((NB_ATCmdCB.ATCmdPt == NB_AT_CFUN0) ||
+					 (NB_ATCmdCB.ATCmdPt == NB_AT_CFUN1))
 				{
-						if(Check_Strstr((char*)RxBuf, "OK", 20) != true)   //去掉这一句再试
+						if(Check_Strstr((char*)RxBuf, "OK", 20) != true)
 						{
 								#if SEGGER_RTT_DEBUG_NB86_CFUN
-										SEGGER_RTT_printf(0, "at+cfun_A? error !\r\n");
+										SEGGER_RTT_printf(0, "at+cfun? error !\r\n");
 										SEGGER_RTT_printf(0, (char*)RxBuf);
 								#endif	
-								return BACK_ERROR;   //第一条"OK"返回正确，所以继续等待
+								return BACK_ERROR;  
 						}
 						#if SEGGER_RTT_DEBUG_NB86_CFUN
-								SEGGER_RTT_printf(0, "at+cfun_A? ok !\r\n");
+								SEGGER_RTT_printf(0, "at+cfun? ok !\r\n");
 						#endif
 				}
-				if(NB_ATCmdCB.ATCmdPt == NB_AT_CFUN1_B)
+				
+				if((NB_ATCmdCB.ATCmdPt == NB_AT_CGATT1) ||
+					 (NB_ATCmdCB.ATCmdPt == NB_AT_CGATT0))
 				{
-						if(Check_Strstr((char*)RxBuf, "OK", 20) != true)   //去掉这一句再试
+						if(Check_Strstr((char*)RxBuf, "OK", 20) != true)
 						{
-								#if SEGGER_RTT_DEBUG_NB86_CFUN
-										SEGGER_RTT_printf(0, "at+cfun_B? error !\r\n");
+								#if SEGGER_RTT_DEBUG_NB86_CGATT
+										SEGGER_RTT_printf(0, "at+cgatt? error !\r\n");
 										SEGGER_RTT_printf(0, (char*)RxBuf);
 								#endif	
-								return BACK_ERROR;   //第一条"OK"返回正确，所以继续等待
+								return BACK_ERROR;  
 						}
-						#if SEGGER_RTT_DEBUG_NB86_CFUN
-								SEGGER_RTT_printf(0, "at+cfun_B? ok !\r\n");
+						#if SEGGER_RTT_DEBUG_NB86_CGATT
+								SEGGER_RTT_printf(0, "at+cgatt? ok !\r\n");
 						#endif
 				}
+				
 				NB_ATCmdCB.RspType = RSP_TYPE_CMD;//应答AT指令
 				return BACK_TRUE;                 //接收到正确应答
 		} 
     else
 		{   
-				//由于获取网络侧地址和建立soctet连接都是分两条返回的，第一条都为"OK"
-				if((NB_ATCmdCB.ATCmdPt == NB_AT_MIPCALL_1) || NB_ATCmdCB.ATCmdPt == NB_AT_MIPOPEN_1)
-				{
-						if(Check_Strstr((char*)RxBuf, "OK", 4) == true)   //去掉这一句再试
-						{
-								return NO_BACK;   /*第一条"OK"返回正确，所以继续等待*/
-						}
-				}
-			  //查询是否驻网成功，如不成功，那么等待3S，而不是返回错误，该条指令特殊
-				if(NB_ATCmdCB.ATCmdPt == NB_AT_CGREG1) 
-				{
-						return NO_BACK;
-				}
+//				//由于获取网络侧地址和建立soctet连接都是分两条返回的，第一条都为"OK"
+//				if((NB_ATCmdCB.ATCmdPt == NB_AT_MIPCALL_1) || NB_ATCmdCB.ATCmdPt == NB_AT_MIPOPEN_1)
+//				{
+//						if(Check_Strstr((char*)RxBuf, "OK", 4) == true)   //去掉这一句再试
+//						{
+//								return NO_BACK;   /*第一条"OK"返回正确，所以继续等待*/
+//						}
+//				}
+//			  //查询是否驻网成功，如不成功，那么等待3S，而不是返回错误，该条指令特殊
+//				if(NB_ATCmdCB.ATCmdPt == NB_AT_CGREG1) 
+//				{
+//						return NO_BACK;
+//				}
 			return BACK_ERROR;   		
 		}	
 }
@@ -835,7 +857,7 @@ static void APP_NB_State_Connect_Proc(uint8_t *RxBuf)
 				if(g_stNB_Handler.StepPt >= CONNECT_STEP_NUM)
 				{
 						////// GPRS模块状态切换 ///////////////
-						g_stNB_Handler.State = NB_STATE_READ_MESS;//切换到下一个流程
+						g_stNB_Handler.State = NB_STATE_IDLE;//切换到下一个流程
 						g_stNB_Handler.StepPt = 0;//clr step
 						NB_NetPar.NetConnSta = CONN_ON;
 				}
@@ -849,13 +871,13 @@ static void APP_NB_State_Connect_Proc(uint8_t *RxBuf)
 		{
 				switch(ATCmdIndex)
 				{
-						case NB_AT_MIPCALL_1:   //直接开始下一条指令
-						{
-								g_stNB_Handler.StepPt++;
-								g_stNB_Handler.State = NB_STATE_CONNECT_NET; //继续当前流程
-								
-						}
-								break;
+//						case NB_AT_MIPCALL_1:   //直接开始下一条指令
+//						{
+//								g_stNB_Handler.StepPt++;
+//								g_stNB_Handler.State = NB_STATE_CONNECT_NET; //继续当前流程
+//								
+//						}
+//								break;
 						
 						default:
 						{
@@ -898,20 +920,20 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 						case NB_AT_CGSN_1:
 						{
 								//save cgsn
-								NB_CommPacket.MessRead.CSQ = Get_Uint_Data((char*)&RxBuf[Get_Comma(1, RxBuf)] - 3);
+//								NB_CommPacket.MessRead.CSQ = Get_Uint_Data((char*)&RxBuf[Get_Comma(1, RxBuf)] - 3);
 
 						}
 								break;	
 						
-//						case NB_AT_CCID:
-//						{
-//								//获取ICCID
+						case NB_AT_NCCID:
+						{
+								//获取ICCID
 //								p=strstr((char*)RxBuf,str);
 //								asi_len = strlen(p);
 //								if(asi_len > 20) asi_len = 20;    
 //								Ascii_To_Hex(p, NB_CommPacket.AuthData.iccid, (uint16_t)asi_len); 
-//						
-//						}
+						
+						}
 								break;	
 				
 						default:
@@ -1368,6 +1390,9 @@ void APP_NB_TimeProc(uint16_t usPeriod)
 /*模块AT指令解析任务*/
 void APP_SubTask_CmdProc(void)
 {
+		#if SEGGER_RTT_DEBUG_NB86_CMDPROC
+//			SEGGER_RTT_printf(0, "APP SubTask CmdProc !\r\n");
+		#endif
     nrf_uart_disable(NRF_UART0);
 //		disableInterrupts();
     NB_ATCmdCB.Busy = 0;   
@@ -1393,8 +1418,8 @@ void APP_SubTask_CmdProc(void)
     if(RSP_TYPE_DATA == NB_ATCmdCB.RspType)
     {
         Set_Task(COMM,COMM_DECODE);
-        #if DEBUG_LOG
-					BSP_LOG("START DECODE\r\n");
+        #if SEGGER_RTT_DEBUG_NB86
+						SEGGER_RTT_printf(0, "START DECODE\r\n");
         #endif
     }  
     NB_ATCmdCB.ATCmdResult = NO_BACK;
@@ -1443,7 +1468,23 @@ void APP_SubTask_StateProc(void)
 						{
 								return;
 						}
-            if(0 == g_stNB_Handler.StepPt)
+						if(0 == g_stNB_Handler.StepPt)
+						{
+                 // G510 Power on流程：
+                 // ___         ___
+                 //    |_______|
+                 //     800ms
+                 //   电路转换 高->低；低->高
+								BSP_NB_POWERON_CLEAR;
+								BSP_NB_RESET_CLEAR
+						#if SEGGER_RTT_DEBUG_NB86
+								SEGGER_RTT_printf(0, "clear nb poweron and reset !\r\n");
+						#endif
+								g_stNB_Handler.StepPt++;
+								g_stNB_Handler.ulDelayCnt = 10;      //拉低10ms
+								//LED_Status = CONN_INDI;            //正在联网LED指示
+						}
+            else if(1 == g_stNB_Handler.StepPt)
 						{
                  // G510 Power on流程：
                  // ___         ___
@@ -1458,14 +1499,14 @@ void APP_SubTask_StateProc(void)
 								g_stNB_Handler.ulDelayCnt = 10;      //拉低10ms
 								//LED_Status = CONN_INDI;            //正在联网LED指示
 						}
-						else if(1 == g_stNB_Handler.StepPt)
+						else if(2 == g_stNB_Handler.StepPt)
 						{
 								BSP_NB_RESET_SET;
 						#if SEGGER_RTT_DEBUG_NB86
 								SEGGER_RTT_printf(0, "set nb reset !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
-								g_stNB_Handler.ulDelayCnt = 500; //等待1S后再操作GPRS模块
+								g_stNB_Handler.ulDelayCnt = 50; //等待50ms后再操作GPRS模块
 						}
 						else//next state
 						{
@@ -1491,9 +1532,9 @@ void APP_SubTask_StateProc(void)
             if(0 == g_stNB_Handler.StepPt)
 						{
 								//引脚操作
-								BSP_NB_RESET_RESET;
+								BSP_NB_RESET_CLEAR;
 								g_stNB_Handler.StepPt++;
-								g_stNB_Handler.ulDelayCnt = 200; //拉低3.5S
+								g_stNB_Handler.ulDelayCnt = 200; //拉低200ms
 //								LED_Status = SYS_INDI;     //系统LED指示
 						}
 						else if(1 == g_stNB_Handler.StepPt)
@@ -1501,7 +1542,7 @@ void APP_SubTask_StateProc(void)
 								//引脚操作
 								BSP_NB_RESET_SET;
 								g_stNB_Handler.StepPt++;
-								g_stNB_Handler.ulDelayCnt = 100;
+								g_stNB_Handler.ulDelayCnt = 50;
 						}
 						else//next state
 						{
@@ -1587,41 +1628,41 @@ void APP_SubTask_StateProc(void)
 //								LED_Status = DATA_SEND_INDI;    //正在通讯LED指示
 						}
             
-						if(NB_AT_DATA == s_ATCmdStep_Comm[g_stNB_Handler.StepPt]) 
-						{   
-								//APP_NB_WriteReturnIDPacket与APP_NB_WriteDataIDPacket函数可以合二为一
-								//但考虑到后续项目协议可能增多，最终还是得把主动上传和应答消息分开
-								switch(g_stNB_Handler.ucSendType)
-								{
-										case RESPOND_TYPE:
-										{
-												g_stNB_Handler.ucDataID = Get_CommEvent(NB_EvtProc.ucRespondEvt);
-												g_stNB_Handler.ucTxLen = (uint8_t)APP_NB_WriteReturnIDPacket(g_stNB_Handler.ucDataID, g_stNB_Handler.TxBuf);
-										}
-												break;
-										
-										case RTY_TYPE:
-										{
-												g_stNB_Handler.ucDataID = Get_CommEvent(NB_EvtProc.ucRetryEvt);
-										#if CONFIG_RETRY_COPY
-												g_stNB_Handler.ucTxLen = (uint8_t)APP_NB_WriteRetryIDPacket(g_stNB_Handler.TxBuf);
-										#else
-												g_stNB_Handler.ucTxLen = (uint8_t)APP_NB_WriteDataIDPacket(g_stNB_Handler.ucDataID, g_stNB_Handler.TxBuf);
-										#endif
-										}
-												break;
-										
-										case UPLOAD_TYPE:
-										{
-												g_stNB_Handler.ucDataID = Get_CommEvent(NB_EvtProc.ucUploadEvt);
-												g_stNB_Handler.ucTxLen = (uint8_t)APP_NB_WriteDataIDPacket(g_stNB_Handler.ucDataID, g_stNB_Handler.TxBuf);
-										}
-												break;
-										
-										default:
-												break;
-								}
-						}
+//						if(NB_AT_DATA == s_ATCmdStep_Comm[g_stNB_Handler.StepPt]) 
+//						{   
+//								//APP_NB_WriteReturnIDPacket与APP_NB_WriteDataIDPacket函数可以合二为一
+//								//但考虑到后续项目协议可能增多，最终还是得把主动上传和应答消息分开
+//								switch(g_stNB_Handler.ucSendType)
+//								{
+//										case RESPOND_TYPE:
+//										{
+//												g_stNB_Handler.ucDataID = Get_CommEvent(NB_EvtProc.ucRespondEvt);
+//												g_stNB_Handler.ucTxLen = (uint8_t)APP_NB_WriteReturnIDPacket(g_stNB_Handler.ucDataID, g_stNB_Handler.TxBuf);
+//										}
+//												break;
+//										
+//										case RTY_TYPE:
+//										{
+//												g_stNB_Handler.ucDataID = Get_CommEvent(NB_EvtProc.ucRetryEvt);
+//										#if CONFIG_RETRY_COPY
+//												g_stNB_Handler.ucTxLen = (uint8_t)APP_NB_WriteRetryIDPacket(g_stNB_Handler.TxBuf);
+//										#else
+//												g_stNB_Handler.ucTxLen = (uint8_t)APP_NB_WriteDataIDPacket(g_stNB_Handler.ucDataID, g_stNB_Handler.TxBuf);
+//										#endif
+//										}
+//												break;
+//										
+//										case UPLOAD_TYPE:
+//										{
+//												g_stNB_Handler.ucDataID = Get_CommEvent(NB_EvtProc.ucUploadEvt);
+//												g_stNB_Handler.ucTxLen = (uint8_t)APP_NB_WriteDataIDPacket(g_stNB_Handler.ucDataID, g_stNB_Handler.TxBuf);
+//										}
+//												break;
+//										
+//										default:
+//												break;
+//								}
+//						}
             //此时重发计数为3，并且为第一条指令。因为第二条指令会把重传计数加1
 						if((NB_RetryCtrol.rtycnt >= RTY_TIMES_MAX) && (g_stNB_Handler.StepPt ==0))   
 						{

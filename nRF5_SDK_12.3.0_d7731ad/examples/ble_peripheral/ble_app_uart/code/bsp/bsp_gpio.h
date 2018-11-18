@@ -32,10 +32,10 @@
 //                                                
 ///*****  GPRS GPIO ******/
 #define  BSP_NB_RESET_SET                        nrf_gpio_pin_set(NB_RESET);                                          
-#define  BSP_NB_RESET_RESET                      nrf_gpio_pin_clear(NB_RESET);
+#define  BSP_NB_RESET_CLEAR                      nrf_gpio_pin_clear(NB_RESET);
 
 #define  BSP_NB_POWERON_SET                      nrf_gpio_pin_set(NB_POWER_ON);                                          
-#define  BSP_NB_POWERON_RESET                    nrf_gpio_pin_clear(NB_POWER_ON);
+#define  BSP_NB_POWERON_CLEAR                    nrf_gpio_pin_clear(NB_POWER_ON);
 
 //#define  GPRS_WAKE_UP_PORT                     GPIOG
 //#define  GPRS_WAKE_UP_PIN                      GPIO_Pin_2

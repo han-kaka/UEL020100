@@ -648,8 +648,8 @@ int main(void)
     err_code = nrf_drv_rng_init(NULL);
     APP_ERROR_CHECK(err_code);
 
-    err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
-    APP_ERROR_CHECK(err_code);
+    //err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
+    //APP_ERROR_CHECK(err_code);
 		#ifdef RTT_LOG_ENABLE
 			SEGGER_RTT_printf(0, "Adv Start!\r\n");
 		#endif

@@ -267,56 +267,54 @@ typedef enum
 /**********GPRSָ�*****************/
 typedef enum 
 {
-		NB_AT_CFUN_0_A=0,
-		NB_AT_CFUN1_A,
+		NB_AT_CFUN_0=0,
+		NB_AT_CFUN_1,
+		NB_AT_CFUN0,
+		NB_AT_CFUN1,
 		NB_AT_NCDP,
 	  NB_AT_NRB,
 	
-		NB_AT_CFUN_0_B,
-		NB_AT_CFUN1_B,
 		NB_AT_CGSN_1,
-		NB_AT_NCSEARFCN_TRUE,
-		NB_AT_NCONFIG,
+		NB_AT_NCSEARFCN,
+		NB_AT_NCONFIG_TRUE,
+		NB_AT_NCONFIG_FALSE,
 		NB_AT_CMEE_1,
-		NB_AT_CFUN_1,
-		NB_AT_CFUN1_C,
+	
+	
+	
 		NB_AT_NCCID,
+	
 		NB_AT_CGDCONT,
-		NB_AT_CGATT_1_A,
-		NB_AT_CGATT1_A,
-		NB_AT_CFUN_0_D,
-		NB_AT_CFUN1_D,
-		NB_AT_NCSEARFCN_FALSE,
+		NB_AT_CGATT_1,
+		NB_AT_CGATT_0,
+		NB_AT_CGATT1,
+		NB_AT_CGATT0,
 		NB_AT_CPSMS_1,
-		NB_AT_CEDRXSD,
-		NB_AT_NPSMR,
-		NB_AT_CFUN_1_E,
-		NB_AT_CFUN1_E,	
-		NB_AT_CGATT_1_B,
-		NB_AT_CGATT1_B,
+		NB_AT_CEDRXS_0,
+		NB_AT_NPSMR_1,
 		NB_AT_CGPADDR,
 		NB_AT_CSQ,
+		NB_AT_NMGS,
+		NB_AT_NQMGS,
 			
 			
-      {"AT+NMGS=37,00\r\n",   			                     3,	      "OK",         	          3},
-      {"AT+NQMGS\r\n",   			                           3,	      "OK",         	          3},
-//	NB_AT_AT_CPIN1,
-    NB_AT_CGREG1,
-//    NB_AT_KEEPCONF,
-    NB_AT_GTSET,
-    NB_AT_MIPCALL_1,
-		NB_AT_MIPCALL1,
-    NB_AT_MIPOPEN_1,
-		NB_AT_MIPOPEN1,
-	
-		NB_AT_MIPSEND_1,
-		NB_AT_DATA,
-	
-		NB_AT_CSQ,
-		NB_AT_CCID,
-		NB_AT_CGSN,
+////	NB_AT_AT_CPIN1,
+//    NB_AT_CGREG1,
+////    NB_AT_KEEPCONF,
+//    NB_AT_GTSET,
+//    NB_AT_MIPCALL_1,
+//		NB_AT_MIPCALL1,
+//    NB_AT_MIPOPEN_1,
+//		NB_AT_MIPOPEN1,
+//	
+//		NB_AT_MIPSEND_1,
+//		NB_AT_DATA,
+//	
+//		//NB_AT_CSQ,
+//		NB_AT_CCID,
+//		NB_AT_CGSN,
 
-		NB_AT_MIPRTCP,
+//		NB_AT_MIPRTCP,
 
 }AT_CMD_Type;
 

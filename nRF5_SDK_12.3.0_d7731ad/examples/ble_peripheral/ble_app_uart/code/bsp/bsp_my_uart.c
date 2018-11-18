@@ -77,7 +77,7 @@ void init_uart_buf(void)
 			
 				NB_ATCmdCB.RxBuf[NB_ATCmdCB.ucRxCnt++] = nrf_uart_rxd_get(NRF_UART0);
 			
-     #if SEGGER_RTT_DEBUG_UART
+     #if SEGGER_RTT_DEBUG_UART_DATA
           SEGGER_RTT_printf(0, "%c", NB_ATCmdCB.RxBuf[NB_ATCmdCB.ucRxCnt-1]);
      #endif
 			
