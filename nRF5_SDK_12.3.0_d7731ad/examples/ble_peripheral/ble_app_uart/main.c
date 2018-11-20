@@ -625,10 +625,10 @@ int main(void)
     // Initialize.
     APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, false);
 	
-		#if RTT_LOG_ENABLE
-			SEGGER_RTT_Init();
-			SEGGER_RTT_printf(0, "Main Start!\r\n");
-		#endif
+#if RTT_LOG_ENABLE
+		SEGGER_RTT_Init();
+		SEGGER_RTT_printf(0, "Main Start!\r\n");
+#endif
 
 //    uart_init();
 
@@ -648,11 +648,11 @@ int main(void)
     err_code = nrf_drv_rng_init(NULL);
     APP_ERROR_CHECK(err_code);
 
-    //err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
-    //APP_ERROR_CHECK(err_code);
-		#ifdef RTT_LOG_ENABLE
-			SEGGER_RTT_printf(0, "Adv Start!\r\n");
-		#endif
+    err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
+    APP_ERROR_CHECK(err_code);
+#ifdef RTT_LOG_ENABLE
+		SEGGER_RTT_printf(0, "Adv Start!\r\n");
+#endif
 		
 		Com_Bsp_Init();
 		

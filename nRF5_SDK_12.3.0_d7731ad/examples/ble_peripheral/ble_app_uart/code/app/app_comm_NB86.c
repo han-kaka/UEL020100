@@ -57,8 +57,8 @@ const NB_Cmd_Data_Type AT_CmdTbl[] =
 			{"AT+CGDCONT=1,\"IP\",\"ctnet\"\r\n",              3,       "OK",                     3},
 			{"AT+CGATT=1\r\n",                                 3,       "OK",                     3},
 			{"AT+CGATT=0\r\n",                                 3,       "OK",                     3},
-			{"AT+CGATT?\r\n",                                  30,      "CGATT:1",               15},	
-			{"AT+CGATT?\r\n",                                  30,      "CGATT:0",               15},	
+			{"AT+CGATT?\r\n",                                  5,       "CGATT:1",               20},	
+			{"AT+CGATT?\r\n",                                  5,       "CGATT:0",               20},	
 			{"AT+CPSMS=1,,,01000011,01000011\r\n",             3,       "OK",                     3},
 			{"AT+CEDRXS=0,5,0101\r\n",                         3,       "OK",                     3},
 			{"AT+NPSMR=1\r\n",                                 3,       "OK",                     3},
@@ -108,16 +108,17 @@ const NB_Cmd_Data_Type AT_CmdTbl[] =
 /*************************初始化流程***************************/
 static const uint8_t s_ATCmdStep_Init[] = 
 {
-//    NULL,
+    NULL,
     NB_AT_CFUN_0,      
 		NB_AT_CFUN0,      
-		NB_AT_NCDP,                    
+		NB_AT_NCDP, 
+		NB_AT_NRB,	
 };
 
 /************************* TCP/IP数据链路建立连接***************************/
 static const uint8_t s_ATCmdStep_Connnect[] = 
 {
-		NB_AT_CGDCONT,        
+		NB_AT_CGDCONT,
 		NB_AT_CGATT_1,
 		NB_AT_CGATT1,	
 	  NB_AT_CFUN_0, 
@@ -141,6 +142,7 @@ static const uint8_t s_ATCmdStep_Comm[] =
 
 static const uint8_t s_ATCmdStep_Mess[] = 
 {
+    NULL,
 	  NB_AT_CFUN_0, 
 		NB_AT_CFUN0,  
 		NB_AT_CGSN_1,
@@ -173,7 +175,7 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 				return BACK_TRUE;
     }
 		#if SEGGER_RTT_DEBUG_NB86_CMDPROC
-			SEGGER_RTT_printf(0, (char*)RxBuf);
+//			SEGGER_RTT_printf(0, (char*)RxBuf);
 //			SEGGER_RTT_printf(0, NB_ATCmdCB.ExpResultStr);
 //			SEGGER_RTT_printf(0, "\r\n");
 		#endif
@@ -205,37 +207,38 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 		if(Check_Strstr((char*)RxBuf, NB_ATCmdCB.ExpResultStr, NB_ATCmdCB.ucRxLen) == true)
 		{
 				if((NB_ATCmdCB.ATCmdPt == NB_AT_CFUN0) ||
-					 (NB_ATCmdCB.ATCmdPt == NB_AT_CFUN1))
+					 (NB_ATCmdCB.ATCmdPt == NB_AT_CFUN1) ||
+					 (NB_ATCmdCB.ATCmdPt == NB_AT_CGATT1) ||
+					 (NB_ATCmdCB.ATCmdPt == NB_AT_CGATT0))
 				{
 						if(Check_Strstr((char*)RxBuf, "OK", 20) != true)
 						{
 								#if SEGGER_RTT_DEBUG_NB86_CFUN
-										SEGGER_RTT_printf(0, "at+cfun? error !\r\n");
+										SEGGER_RTT_printf(0, "at+cfun?/at+cgatt? error !\r\n");
 										SEGGER_RTT_printf(0, (char*)RxBuf);
 								#endif	
 								return BACK_ERROR;  
 						}
 						#if SEGGER_RTT_DEBUG_NB86_CFUN
-								SEGGER_RTT_printf(0, "at+cfun? ok !\r\n");
+								SEGGER_RTT_printf(0, "at+cfun?/at+cgatt? ok !\r\n");
 						#endif
 				}
 				
-				if((NB_ATCmdCB.ATCmdPt == NB_AT_CGATT1) ||
-					 (NB_ATCmdCB.ATCmdPt == NB_AT_CGATT0))
+				if((NB_ATCmdCB.ATCmdPt == NB_AT_CGSN_1) ||
+					(NB_ATCmdCB.ATCmdPt == NB_AT_NCCID))
 				{
-						if(Check_Strstr((char*)RxBuf, "OK", 20) != true)
+						if(Check_Strstr((char*)RxBuf, "OK", 65) != true)
 						{
-								#if SEGGER_RTT_DEBUG_NB86_CGATT
-										SEGGER_RTT_printf(0, "at+cgatt? error !\r\n");
+								#if SEGGER_RTT_DEBUG_NB86_CGSN
+										SEGGER_RTT_printf(0, "at+cgsn=1/at+nccid error !\r\n");
 										SEGGER_RTT_printf(0, (char*)RxBuf);
 								#endif	
 								return BACK_ERROR;  
 						}
-						#if SEGGER_RTT_DEBUG_NB86_CGATT
-								SEGGER_RTT_printf(0, "at+cgatt? ok !\r\n");
+						#if SEGGER_RTT_DEBUG_NB86_CGSN
+								SEGGER_RTT_printf(0, "at+cgsn=1/at+nccid ok !\r\n");
 						#endif
 				}
-				
 				NB_ATCmdCB.RspType = RSP_TYPE_CMD;//应答AT指令
 				return BACK_TRUE;                 //接收到正确应答
 		} 
@@ -249,11 +252,11 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 //								return NO_BACK;   /*第一条"OK"返回正确，所以继续等待*/
 //						}
 //				}
-//			  //查询是否驻网成功，如不成功，那么等待3S，而不是返回错误，该条指令特殊
-//				if(NB_ATCmdCB.ATCmdPt == NB_AT_CGREG1) 
-//				{
-//						return NO_BACK;
-//				}
+			  //查询是否驻网成功，如不成功，那么等待3S，而不是返回错误，该条指令特殊
+				if(NB_ATCmdCB.ATCmdPt == NB_AT_CGATT1) 
+				{
+						return NO_BACK;
+				}
 			return BACK_ERROR;   		
 		}	
 }
@@ -805,7 +808,7 @@ static void APP_NB_State_Init_Proc(uint8_t *RxBuf)
 						////// GPRS模块状态切换 ///////////////
 						g_stNB_Handler.State = NB_STATE_READ_MESS;//切换到下一个流程
 						g_stNB_Handler.StepPt = 0;     //clr step
-						NB_NetPar.NetType = NET_NB;//联网状态状态
+						NB_NetPar.NetType = NET_NO_NET;//无联网状态状态
 				}
 				else
 				{
@@ -1309,15 +1312,13 @@ void APP_COMM_Init(void)
 #if DEBUG_TROPE_FUN
     PacketHead.TerminalMeageFlowNum = 0x19;
 #endif
-	g_stNB_Handler.State = NB_STATE_POWER_ON; 
-	g_stNB_Handler.StateOld = NB_STATE_POWER_ON; 
-	g_stNB_Handler.StepPt = 0;
-	g_stNB_Handler.AuthStatus = NOT_AUTH;
-	NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_AUTH);//上电需发送一个登录包
-	Set_Task(COMM, COMM_STATE_PROC);     //启动GPRS状态处理任务
+		g_stNB_Handler.State = NB_STATE_POWER_ON; 
+		g_stNB_Handler.StateOld = NB_STATE_POWER_ON; 
+		g_stNB_Handler.StepPt = 0;
+		g_stNB_Handler.AuthStatus = NOT_AUTH;
+		//NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_AUTH);//上电需发送一个登录包
+		Set_Task(COMM, COMM_STATE_PROC);     //启动GPRS状态处理任务
 }
-
-
 
 void APP_NB_TimeProc(uint16_t usPeriod)
 {
@@ -1470,14 +1471,9 @@ void APP_SubTask_StateProc(void)
 						}
 						if(0 == g_stNB_Handler.StepPt)
 						{
-                 // G510 Power on流程：
-                 // ___         ___
-                 //    |_______|
-                 //     800ms
-                 //   电路转换 高->低；低->高
 								BSP_NB_POWERON_CLEAR;
 								BSP_NB_RESET_CLEAR
-						#if SEGGER_RTT_DEBUG_NB86
+						#if SEGGER_RTT_DEBUG_NB86_POWER_ON
 								SEGGER_RTT_printf(0, "clear nb poweron and reset !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
@@ -1492,7 +1488,7 @@ void APP_SubTask_StateProc(void)
                  //     800ms
                  //   电路转换 高->低；低->高
 								BSP_NB_POWERON_SET;
-						#if SEGGER_RTT_DEBUG_NB86
+						#if SEGGER_RTT_DEBUG_NB86_POWER_ON
 								SEGGER_RTT_printf(0, "set nb poweron !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
@@ -1502,7 +1498,7 @@ void APP_SubTask_StateProc(void)
 						else if(2 == g_stNB_Handler.StepPt)
 						{
 								BSP_NB_RESET_SET;
-						#if SEGGER_RTT_DEBUG_NB86
+						#if SEGGER_RTT_DEBUG_NB86_POWER_ON
 								SEGGER_RTT_printf(0, "set nb reset !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
@@ -1511,7 +1507,7 @@ void APP_SubTask_StateProc(void)
 						else//next state
 						{
 								//一些变量清0
-						#if SEGGER_RTT_DEBUG_NB86
+						#if SEGGER_RTT_DEBUG_NB86_POWER_ON
 								SEGGER_RTT_printf(0, "next state init !\r\n");
 						#endif
                 NB_NetPar.NetType = NET_NO_NET;//无网络状态连接
@@ -1575,16 +1571,16 @@ void APP_SubTask_StateProc(void)
             }
             if(0 == g_stNB_Handler.StepPt)
 						{
-						#if SEGGER_RTT_DEBUG_NB86
-								SEGGER_RTT_printf(0, "wait nb start !\r\n");
+						#if SEGGER_RTT_DEBUG_NB86_INIT
+								SEGGER_RTT_printf(0, "init wait nb start !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
 								g_stNB_Handler.ulDelayCnt = 20000; //20S GPRS AT准备就绪超时时间
 						}
 						else
 						{
-						#if SEGGER_RTT_DEBUG_NB86
-								SEGGER_RTT_printf(0, "nb has start !\r\n");
+						#if SEGGER_RTT_DEBUG_NB86_INIT
+								SEGGER_RTT_printf(0, "init nb has start !\r\n");
 						#endif
 								g_stNB_Handler.ulDelayCnt = 0;  //计数清0
 								Task_Flag_Struct.atReday_F = DISABLE; //AT就绪失能
@@ -1607,10 +1603,30 @@ void APP_SubTask_StateProc(void)
 				 
         case NB_STATE_READ_MESS:
         {
-            g_stNB_Handler.StateOld = g_stNB_Handler.State; 
-						g_stNB_Handler.State = NB_STATE_WAIT_ACK;
-						NB_ATCmdCB.SendATCmdEn = 1;//enable send ATCmd
-						NB_ATCmdCB.ATCmdPt = s_ATCmdStep_Mess[g_stNB_Handler.StepPt];
+						if((g_stNB_Handler.ulDelayCnt > 0) && (Task_Flag_Struct.atReday_F == DISABLE))
+            {
+								return;
+            }
+            if(0 == g_stNB_Handler.StepPt)
+						{
+						#if SEGGER_RTT_DEBUG_NB86_MESS
+								SEGGER_RTT_printf(0, "mess wait nb start !\r\n");
+						#endif
+								g_stNB_Handler.StepPt++;
+								g_stNB_Handler.ulDelayCnt = 20000; //20S GPRS AT准备就绪超时时间
+						}
+						else
+						{
+						#if SEGGER_RTT_DEBUG_NB86_MESS
+								SEGGER_RTT_printf(0, "mess nb has start !\r\n");
+						#endif
+								g_stNB_Handler.ulDelayCnt = 0;  //计数清0
+								Task_Flag_Struct.atReday_F = DISABLE; //AT就绪失能
+								g_stNB_Handler.StateOld = g_stNB_Handler.State; 
+								g_stNB_Handler.State = NB_STATE_WAIT_ACK;
+								NB_ATCmdCB.SendATCmdEn = 1;//enable send ATCmd
+								NB_ATCmdCB.ATCmdPt = s_ATCmdStep_Mess[g_stNB_Handler.StepPt];
+						}
         }
 						break;
 				

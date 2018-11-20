@@ -33,6 +33,7 @@ void initial_board(void)
     nrf_gpio_cfg_output(NB_POWER_ON);		
     nrf_gpio_pin_clear(NB_POWER_ON);	                         //NB电源关闭
     
+		
     nrf_gpio_cfg_output(NB_RESET);	
     nrf_gpio_pin_clear(NB_RESET);	                             //复位NB模块
     
@@ -50,9 +51,9 @@ void start_initial_task(void)
 	
     //------初始化各功能块---------------------	
     //------初始化uart模块---------------------
-	#if SEGGER_RTT_DEBUG_UART
+#if SEGGER_RTT_DEBUG_UART
     SEGGER_RTT_printf(0, "UART Start!\r\n");
-	#endif
+#endif
     myuart_start();
     //init_dsr_detection();
     //setWDI();	

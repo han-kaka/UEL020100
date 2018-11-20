@@ -3760,9 +3760,25 @@
 #ifndef SEGGER_RTT_DEBUG_NB86_CFUN
 #define SEGGER_RTT_DEBUG_NB86_CFUN 0
 #endif
+// <q> debug at cgsn?
+#ifndef SEGGER_RTT_DEBUG_NB86_CGSN
+#define SEGGER_RTT_DEBUG_NB86_CGSN 0
+#endif
 // <q> debug at cgatt?
 #ifndef SEGGER_RTT_DEBUG_NB86_CGATT
 #define SEGGER_RTT_DEBUG_NB86_CGATT 0
+#endif
+// <q> debug at cmd step power on?
+#ifndef SEGGER_RTT_DEBUG_NB86_POWER_ON
+#define SEGGER_RTT_DEBUG_NB86_POWER_ON 0
+#endif
+// <q> debug at cmd step init?
+#ifndef SEGGER_RTT_DEBUG_NB86_INIT
+#define SEGGER_RTT_DEBUG_NB86_INIT 0
+#endif
+// <q> debug at cmd step mess?
+#ifndef SEGGER_RTT_DEBUG_NB86_MESS
+#define SEGGER_RTT_DEBUG_NB86_MESS 0
 #endif
 #endif
 // </h> 
