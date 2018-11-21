@@ -2239,6 +2239,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\code\bsp\bsp_my_uart.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\code\bsp\bsp_motor.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4540,6 +4545,11 @@
               <FileName>bsp_my_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\code\bsp\bsp_my_uart.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_motor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\code\bsp\bsp_motor.c</FilePath>
             </File>
           </Files>
         </Group>

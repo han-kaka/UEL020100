@@ -33,7 +33,6 @@ void initial_board(void)
     nrf_gpio_cfg_output(NB_POWER_ON);		
     nrf_gpio_pin_clear(NB_POWER_ON);	                         //NB电源关闭
     
-		
     nrf_gpio_cfg_output(NB_RESET);	
     nrf_gpio_pin_clear(NB_RESET);	                             //复位NB模块
     

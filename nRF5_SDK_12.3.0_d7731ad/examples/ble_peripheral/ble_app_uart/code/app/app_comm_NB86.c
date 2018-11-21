@@ -67,42 +67,6 @@ const NB_Cmd_Data_Type AT_CmdTbl[] =
 			
       {"AT+NMGS=37,00\r\n",   			                     3,	      "OK",         	          3},
       {"AT+NQMGS\r\n",   			                           3,	      "OK",         	          3},
-//			
-//			{"AT+CSQ\r\n",   			                             3,	      "+CSQ",         	        3},
-//      {"AT+NMGS=29,01\r\n",   			                     3,	      "OK",         	          3},
-//      {"AT+NQMGS\r\n",   			                           3,	      "OK",         	          3},
-//			
-//      {"AT+NMGR\r\n",   			                           3,	      "",           	          3},
-//      {"AT+NQMGR\r\n",   			                           3,	      "OK",         	          3},
-//			{"AT+CGATT?\r\n",                                  30,      "CGATT:1",               15},
-//			{"AT+NPSMR?\r\n",                                  30,      "NPSMR:1,1",             15},
-
-
-////      {"AT+CPIN?\r\n",                                   3,       "READY",                  3},
-//      {"AT+CGREG?\r\n",   			                     		 3,	      "+CGREG: 0,1",         	 15},
-
-////      {"AT+MIPKEEPCONF=1,240,50,4\r\n",   			         3,	      "OK",         	          3},  /*去掉TCP底层心跳机制*/
-///*当设置为0时，原始输出格式(1字节转2字节)*/
-///*当设置为1时，不转换直接输出，且不带标识头*/
-///*当设置为2时，不转换直接输出，带标识头*/
-//      {"AT+GTSET=\"IPRFMT\",2\r\n",   			             3,	      "OK",         	          3},   //待选，
-
-///*建立网络连接*/
-//      {"AT+MIPCALL=1,\"CMNET\"\r\n",                     30,      "+MIPCALL:",              3},
-//      {"AT+MIPCALL?\r\n",                                3,       "+MIPCALL: 1",            3},
-//      {"AT+MIPOPEN=1,,\"120.77.174.116\",9292,0\r\n",    20,      "+MIPOPEN: 1,1",          3},
-//      {"AT+MIPOPEN?\r\n",                                3,       "+MIPOPEN: 1",            2},
-///* 数据发送*/
-//      {"AT+MIPSEND=1\r\n",                               10,      ">",                      2},
-//      {"DATA",                                           6,       "OK",                     1},  //需要发送的数据，待优化
-//      
-//      
-//      {"AT+CSQ\r\n",   			                             3,	      "+CSQ",         	        3},  //待优化
-//      {"AT+CCID\r\n",                                    4,       "898",                    2},
-//      {"AT+CGSN\r\n",                                    4,       "OK",                     2},
-
-//      {NULL,                                          NULL,       "+MIPRTCP",            NULL},
-      
 };
 
 /*************************初始化流程***************************/
@@ -169,12 +133,12 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
     {
         Task_Flag_Struct.atReday_F = ENABLE;
         NB_ATCmdCB.RspType = RSP_TYPE_CMD;
-		#if SEGGER_RTT_DEBUG_NB86_CMDPROC
+		#if SEGGER_RTT_DEBUG_CMDPROC
 				SEGGER_RTT_printf(0, "gprs model ready");
 		#endif
 				return BACK_TRUE;
     }
-		#if SEGGER_RTT_DEBUG_NB86_CMDPROC
+		#if SEGGER_RTT_DEBUG_CMDPROC
 //			SEGGER_RTT_printf(0, (char*)RxBuf);
 //			SEGGER_RTT_printf(0, NB_ATCmdCB.ExpResultStr);
 //			SEGGER_RTT_printf(0, "\r\n");
@@ -213,13 +177,13 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 				{
 						if(Check_Strstr((char*)RxBuf, "OK", 20) != true)
 						{
-								#if SEGGER_RTT_DEBUG_NB86_CFUN
+								#if SEGGER_RTT_DEBUG_CFUN || SEGGER_RTT_DEBUG_CGATT
 										SEGGER_RTT_printf(0, "at+cfun?/at+cgatt? error !\r\n");
 										SEGGER_RTT_printf(0, (char*)RxBuf);
 								#endif	
 								return BACK_ERROR;  
 						}
-						#if SEGGER_RTT_DEBUG_NB86_CFUN
+						#if SEGGER_RTT_DEBUG_CFUN || SEGGER_RTT_DEBUG_CGATT
 								SEGGER_RTT_printf(0, "at+cfun?/at+cgatt? ok !\r\n");
 						#endif
 				}
@@ -229,13 +193,13 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 				{
 						if(Check_Strstr((char*)RxBuf, "OK", 65) != true)
 						{
-								#if SEGGER_RTT_DEBUG_NB86_CGSN
+								#if SEGGER_RTT_DEBUG_CGSN || SEGGER_RTT_DEBUG_NCCID
 										SEGGER_RTT_printf(0, "at+cgsn=1/at+nccid error !\r\n");
 										SEGGER_RTT_printf(0, (char*)RxBuf);
 								#endif	
 								return BACK_ERROR;  
 						}
-						#if SEGGER_RTT_DEBUG_NB86_CGSN
+						#if SEGGER_RTT_DEBUG_CGSN || SEGGER_RTT_DEBUG_NCCID
 								SEGGER_RTT_printf(0, "at+cgsn=1/at+nccid ok !\r\n");
 						#endif
 				}
@@ -822,7 +786,7 @@ static void APP_NB_State_Init_Proc(uint8_t *RxBuf)
 				{
 						default:
 						{
-								#if SEGGER_RTT_DEBUG_NB86
+								#if SEGGER_RTT_DEBUG_INIT
 										SEGGER_RTT_printf(0, "Init Reset\r\n");
 								#endif
 								g_stNB_Handler.State = NB_STATE_RESET;       //进行复位
@@ -878,14 +842,13 @@ static void APP_NB_State_Connect_Proc(uint8_t *RxBuf)
 //						{
 //								g_stNB_Handler.StepPt++;
 //								g_stNB_Handler.State = NB_STATE_CONNECT_NET; //继续当前流程
-//								
 //						}
 //								break;
 						
 						default:
 						{
-								#if DEBUG_LOG
-										BSP_LOG("Connect Reset\r\n");
+								#if SEGGER_RTT_DEBUG_CONN
+										SEGGER_RTT_printf(0, "Connect Reset\r\n");
 								#endif
 								g_stNB_Handler.State = NB_STATE_RESET;       //进行复位
 								g_stNB_Handler.StepPt = 0;//clr step
@@ -924,7 +887,6 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 						{
 								//save cgsn
 //								NB_CommPacket.MessRead.CSQ = Get_Uint_Data((char*)&RxBuf[Get_Comma(1, RxBuf)] - 3);
-
 						}
 								break;	
 						
@@ -935,7 +897,6 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 //								asi_len = strlen(p);
 //								if(asi_len > 20) asi_len = 20;    
 //								Ascii_To_Hex(p, NB_CommPacket.AuthData.iccid, (uint16_t)asi_len); 
-						
 						}
 								break;	
 				
@@ -958,7 +919,7 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 		//////////////////////// AT 指令达到重发次数 //////////////////////////	
 		else if(BACK_PERTIMES_OUT == NB_ATCmdCB.ATCmdResult)//AT指令重发次数到了
 		{
-				#if SEGGER_RTT_DEBUG_NB86
+				#if SEGGER_RTT_DEBUG_MESS
 						SEGGER_RTT_printf(0, "Mess Reset\r\n");
 				#endif
 				g_stNB_Handler.State = NB_STATE_RESET;  //进行复位
@@ -1071,6 +1032,7 @@ static void APP_NB_State_Comm_Proc(uint8_t *RxBuf)
 //		GPRS_ATCmdCB.ATCmdPt = s_ATCmdStep_Comm[g_stGPRS_Handler.StepPt];
 //	} 
 }
+
 /*如果服务器下发数据不加标识头，此函数可放入AT指令解析中*/
 
 //U8 APP_GPRS_RxDataCheck(U8 *rxBuff)   
@@ -1391,7 +1353,7 @@ void APP_NB_TimeProc(uint16_t usPeriod)
 /*模块AT指令解析任务*/
 void APP_SubTask_CmdProc(void)
 {
-		#if SEGGER_RTT_DEBUG_NB86_CMDPROC
+		#if SEGGER_RTT_DEBUG_CMDPROC
 //			SEGGER_RTT_printf(0, "APP SubTask CmdProc !\r\n");
 		#endif
     nrf_uart_disable(NRF_UART0);
@@ -1473,12 +1435,11 @@ void APP_SubTask_StateProc(void)
 						{
 								BSP_NB_POWERON_CLEAR;
 								BSP_NB_RESET_CLEAR
-						#if SEGGER_RTT_DEBUG_NB86_POWER_ON
+						#if SEGGER_RTT_DEBUG_POWER_ON
 								SEGGER_RTT_printf(0, "clear nb poweron and reset !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
 								g_stNB_Handler.ulDelayCnt = 10;      //拉低10ms
-								//LED_Status = CONN_INDI;            //正在联网LED指示
 						}
             else if(1 == g_stNB_Handler.StepPt)
 						{
@@ -1488,17 +1449,17 @@ void APP_SubTask_StateProc(void)
                  //     800ms
                  //   电路转换 高->低；低->高
 								BSP_NB_POWERON_SET;
-						#if SEGGER_RTT_DEBUG_NB86_POWER_ON
+						#if SEGGER_RTT_DEBUG_POWER_ON
 								SEGGER_RTT_printf(0, "set nb poweron !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
 								g_stNB_Handler.ulDelayCnt = 10;      //拉低10ms
-								//LED_Status = CONN_INDI;            //正在联网LED指示
+								LED_Status = CONN_INDI;            //正在联网LED指示
 						}
 						else if(2 == g_stNB_Handler.StepPt)
 						{
 								BSP_NB_RESET_SET;
-						#if SEGGER_RTT_DEBUG_NB86_POWER_ON
+						#if SEGGER_RTT_DEBUG_POWER_ON
 								SEGGER_RTT_printf(0, "set nb reset !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
@@ -1507,7 +1468,7 @@ void APP_SubTask_StateProc(void)
 						else//next state
 						{
 								//一些变量清0
-						#if SEGGER_RTT_DEBUG_NB86_POWER_ON
+						#if SEGGER_RTT_DEBUG_POWER_ON
 								SEGGER_RTT_printf(0, "next state init !\r\n");
 						#endif
                 NB_NetPar.NetType = NET_NO_NET;//无网络状态连接
@@ -1531,7 +1492,7 @@ void APP_SubTask_StateProc(void)
 								BSP_NB_RESET_CLEAR;
 								g_stNB_Handler.StepPt++;
 								g_stNB_Handler.ulDelayCnt = 200; //拉低200ms
-//								LED_Status = SYS_INDI;     //系统LED指示
+								LED_Status = SYS_INDI;     //系统LED指示
 						}
 						else if(1 == g_stNB_Handler.StepPt)
 						{
@@ -1553,7 +1514,7 @@ void APP_SubTask_StateProc(void)
 								{
 										ResetTimesCount = 0;
 										Task_Flag_Struct.closeStaProc = ENABLE;
-								#if SEGGER_RTT_DEBUG_NB86
+								#if SEGGER_RTT_DEBUG_RESET
 										SEGGER_RTT_printf(0, "Close State Proc\r\n");
 								#endif
 								}
@@ -1571,7 +1532,7 @@ void APP_SubTask_StateProc(void)
             }
             if(0 == g_stNB_Handler.StepPt)
 						{
-						#if SEGGER_RTT_DEBUG_NB86_INIT
+						#if SEGGER_RTT_DEBUG_INIT
 								SEGGER_RTT_printf(0, "init wait nb start !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
@@ -1579,7 +1540,7 @@ void APP_SubTask_StateProc(void)
 						}
 						else
 						{
-						#if SEGGER_RTT_DEBUG_NB86_INIT
+						#if SEGGER_RTT_DEBUG_INIT
 								SEGGER_RTT_printf(0, "init nb has start !\r\n");
 						#endif
 								g_stNB_Handler.ulDelayCnt = 0;  //计数清0
@@ -1609,7 +1570,7 @@ void APP_SubTask_StateProc(void)
             }
             if(0 == g_stNB_Handler.StepPt)
 						{
-						#if SEGGER_RTT_DEBUG_NB86_MESS
+						#if SEGGER_RTT_DEBUG_MESS
 								SEGGER_RTT_printf(0, "mess wait nb start !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
@@ -1617,7 +1578,7 @@ void APP_SubTask_StateProc(void)
 						}
 						else
 						{
-						#if SEGGER_RTT_DEBUG_NB86_MESS
+						#if SEGGER_RTT_DEBUG_MESS
 								SEGGER_RTT_printf(0, "mess nb has start !\r\n");
 						#endif
 								g_stNB_Handler.ulDelayCnt = 0;  //计数清0

@@ -10,9 +10,10 @@
 #include "bsp_var.h"
 #include "bsp_mem.h"
 #include "bsp_gpio.h"
+#include "bsp_my_uart.h"
+#include "bsp_motor.h"
 #if SEGGER_RTT_DEBUG_BLUETOOTH
 #include "bsp_rtt_debug.h"
-#include "bsp_my_uart.h"
 #endif
 
 

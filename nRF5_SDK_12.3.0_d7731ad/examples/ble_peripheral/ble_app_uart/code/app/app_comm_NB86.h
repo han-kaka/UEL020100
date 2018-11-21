@@ -297,25 +297,10 @@ typedef enum
 		NB_AT_NMGS,
 		NB_AT_NQMGS,
 			
-			
 ////	NB_AT_AT_CPIN1,
 //    NB_AT_CGREG1,
 ////    NB_AT_KEEPCONF,
 //    NB_AT_GTSET,
-//    NB_AT_MIPCALL_1,
-//		NB_AT_MIPCALL1,
-//    NB_AT_MIPOPEN_1,
-//		NB_AT_MIPOPEN1,
-//	
-//		NB_AT_MIPSEND_1,
-//		NB_AT_DATA,
-//	
-//		//NB_AT_CSQ,
-//		NB_AT_CCID,
-//		NB_AT_CGSN,
-
-//		NB_AT_MIPRTCP,
-
 }AT_CMD_Type;
 
 typedef enum 

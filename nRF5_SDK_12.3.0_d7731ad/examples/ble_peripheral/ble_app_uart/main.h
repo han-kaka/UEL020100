@@ -43,6 +43,8 @@
 #if SEGGER_RTT_DEBUG_BLUETOOTH
 #include "bsp_rtt_debug.h"
 #endif
+#include "bsp_my_uart.h"
+#include "bsp_motor.h"
 #include "bsp_gpio.h"
 #include "bsp_mem.h"
 #include "bsp_var.h"

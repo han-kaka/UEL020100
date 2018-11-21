@@ -3757,28 +3757,40 @@
 
 #if  SEGGER_RTT_DEBUG_NB86
 // <q> debug at cfun?
-#ifndef SEGGER_RTT_DEBUG_NB86_CFUN
-#define SEGGER_RTT_DEBUG_NB86_CFUN 0
+#ifndef SEGGER_RTT_DEBUG_CFUN
+#define SEGGER_RTT_DEBUG_CFUN 0
 #endif
 // <q> debug at cgsn?
-#ifndef SEGGER_RTT_DEBUG_NB86_CGSN
-#define SEGGER_RTT_DEBUG_NB86_CGSN 0
+#ifndef SEGGER_RTT_DEBUG_CGSN
+#define SEGGER_RTT_DEBUG_CGSN 0
+#endif
+// <q> debug at nccid?
+#ifndef SEGGER_RTT_DEBUG_NCCID
+#define SEGGER_RTT_DEBUG_NCCID 0
 #endif
 // <q> debug at cgatt?
-#ifndef SEGGER_RTT_DEBUG_NB86_CGATT
-#define SEGGER_RTT_DEBUG_NB86_CGATT 0
+#ifndef SEGGER_RTT_DEBUG_CGATT
+#define SEGGER_RTT_DEBUG_CGATT 0
 #endif
-// <q> debug at cmd step power on?
-#ifndef SEGGER_RTT_DEBUG_NB86_POWER_ON
-#define SEGGER_RTT_DEBUG_NB86_POWER_ON 0
+// <q> debug at cmd step power on
+#ifndef SEGGER_RTT_DEBUG_POWER_ON
+#define SEGGER_RTT_DEBUG_POWER_ON 0
 #endif
-// <q> debug at cmd step init?
-#ifndef SEGGER_RTT_DEBUG_NB86_INIT
-#define SEGGER_RTT_DEBUG_NB86_INIT 0
+// <q> debug at cmd step init
+#ifndef SEGGER_RTT_DEBUG_INIT
+#define SEGGER_RTT_DEBUG_INIT 0
 #endif
-// <q> debug at cmd step mess?
-#ifndef SEGGER_RTT_DEBUG_NB86_MESS
-#define SEGGER_RTT_DEBUG_NB86_MESS 0
+// <q> debug at cmd step mess
+#ifndef SEGGER_RTT_DEBUG_MESS
+#define SEGGER_RTT_DEBUG_MESS 0
+#endif
+// <q> debug at cmd step reset
+#ifndef SEGGER_RTT_DEBUG_RESET
+#define SEGGER_RTT_DEBUG_RESET 0
+#endif
+// <q> debug at cmd step conn
+#ifndef SEGGER_RTT_DEBUG_CONN
+#define SEGGER_RTT_DEBUG_CONN 0
 #endif
 #endif
 // </h> 
@@ -3790,8 +3802,8 @@
 
 #if  SEGGER_RTT_DEBUG_UART
 // <q> debug cmdproc
-#ifndef SEGGER_RTT_DEBUG_NB86_CMDPROC
-#define SEGGER_RTT_DEBUG_NB86_CMDPROC 1
+#ifndef SEGGER_RTT_DEBUG_CMDPROC
+#define SEGGER_RTT_DEBUG_CMDPROC 1
 #endif
 
 // <q> debug uart data
