@@ -35,14 +35,18 @@ typedef struct
 
 extern ProtocolAppFormat_t  sProtocolAppFormat;
 extern uint8_t              tempkey[16];
-extern uint8_t              data_encrypt[16];
+extern uint8_t              data_encrypt[256];
+extern uint8_t              *pRecvBuffer;
 
-void bsp_ble_command_explain(uint8_t * p_data, uint16_t length);
+void bsp_ble_command_rx(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length);
+
+//void bsp_ble_command_explain(uint8_t * p_data, uint16_t length);
 
 uint8_t UserParseAppProtocolFormat(uint8_t *data_encrypt, uint16_t length);
 uint8_t UserCheckAppProtocolFormat(uint8_t *pBuf, uint16_t inputLen);
 
-void bsp_ble_command_rx(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length);
+uint8_t CRC_8(uint8_t *pdata, uint16_t size);
+
 //uint32_t bsp_ble_value_tx(uint8_t * p_data, uint16_t length);
 //void ble_process_task(void);
 

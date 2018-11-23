@@ -15,11 +15,9 @@ uint8_t defualtaes128key[16] = {0x98, 0x76, 0x23, 0xE8, 0xA9, 0x23, 0xA1, 0xBB, 
 uint8_t tempkey[16] = {0x98, 0x76, 0x23, 0xE8, 0xA9, 0x23, 0xA1, 0xBB, 0x3D, 0x9E, 0x7D, 0x03, 0x78, 0x12, 0x45, 0x88};
 uint8_t useraeskeybuf[16] = {0x98, 0x76, 0x23, 0xE8, 0xA9, 0x23, 0xA1, 0xBB, 0x3D, 0x9E, 0x7D, 0x03, 0x78, 0x12, 0x45, 0x88};
 
-uint8_t              data_encrypt[16];
+uint8_t              data_encrypt[256];
 
-static uint8_t *pRecvBuffer;
-
-unsigned char const CRC_TABLE[];
+uint8_t *pRecvBuffer;
 
 uint8_t const CRC_TABLE[256] =
 {
@@ -43,7 +41,7 @@ uint8_t const CRC_TABLE[256] =
 
 
 
-static uint8_t CRC_8(uint8_t *pdata, uint16_t size)
+uint8_t CRC_8(uint8_t *pdata, uint16_t size)
 {
 		uint8_t  CRC_result = 0;
 
@@ -63,37 +61,33 @@ static uint8_t CRC_8(uint8_t *pdata, uint16_t size)
  */
 void bsp_ble_command_rx(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length)
 {   
-		memcpy(data_encrypt, p_data, sizeof(data_encrypt)); 
+		memcpy(data_encrypt, p_data, length); 
 		
-//		if(0 == UserCheckAppProtocolFormat(data_encrypt, sizeof(data_encrypt)))
-//		{
-//				AES128_ECB_decrypt(data_encrypt, useraeskeybuf, data_decode);
-//		bsp_ble_command_explain(data_decode,sizeof(data_decode));
-		Set_Task(BLUETOOTH, BLUETOOTH_DECODE);
+		Set_Task(BLUETOOTH, BLUETOOTH_PARSE_PROTOCOL);
 		#if SEGGER_RTT_DEBUG_BLUETOOTH
 				ble_command_rx_log(length, data_encrypt);
 		#endif
 //		}
 }
 
-void bsp_ble_command_explain(uint8_t * p_data, uint16_t length)
-{
-		UserParseAppProtocolFormat(p_data, length);
-		
-		if (CRC_8(pRecvBuffer, sProtocolAppFormat.headData.dataLen + sizeof(ProtocolAppHeadFormat_t)) != sProtocolAppFormat.tailData.crc8)
-		{
-				return;
-		}
-		
-		AES128_ECB_decrypt(sProtocolAppFormat.pData, useraeskeybuf, sProtocolAppFormat.pData);
-		
-		ProcessCommand(sProtocolAppFormat.pData, sProtocolAppFormat.headData.command, sProtocolAppFormat.headData.dataLen);
-}
+//void bsp_ble_command_explain(uint8_t * p_data, uint16_t length)
+//{
+//		UserParseAppProtocolFormat(p_data, length);
+//		
+//		if (CRC_8(pRecvBuffer, sProtocolAppFormat.headData.dataLen + sizeof(ProtocolAppHeadFormat_t)) != sProtocolAppFormat.tailData.crc8)
+//		{
+//				return;
+//		}
+//		
+//		AES128_ECB_decrypt(sProtocolAppFormat.pData, useraeskeybuf, sProtocolAppFormat.pData);
+//		
+//		ProcessCommand(sProtocolAppFormat.pData, sProtocolAppFormat.headData.command, sProtocolAppFormat.headData.dataLen);
+//}
 
 
-uint8_t UserParseAppProtocolFormat(uint8_t * data_encrypt, uint16_t length)
+uint8_t UserParseAppProtocolFormat(uint8_t * pBuf, uint16_t length)
 {
-		uint8_t  *p = data_encrypt;
+		uint8_t  *p = pBuf;
 		uint16_t tmp16;
 		
 //		if (gLimitALL != 0xA5) return 0;
@@ -136,7 +130,7 @@ uint8_t UserParseAppProtocolFormat(uint8_t * data_encrypt, uint16_t length)
 		{
 				return 0;
 		}
-		pRecvBuffer = data_encrypt;															                    // 获取协议总长度 
+		pRecvBuffer = pBuf;															                            // 获取协议总长度 
 		
 		return 1;
 }

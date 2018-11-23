@@ -55,11 +55,12 @@
 #define MEM_STORE_DYNAMIC_ROMDATA     1                             //动态数据存储任务1
 
 #define BLUETOOTH                     5                             //蓝牙任务5
-#define BLUETOOTH_DECODE              0                             //数据解析任务0
-#define BLUETOOTH_VLOTAGE             1                             //电压温度任务1
-#define BLUETOOTH_LOCK                2                             //开锁任务2
-#define BLUETOOTH_KEY                 3                             //秘钥任务3
-#define BLUETOOTH_DFU                 4                             //升级任务4
+#define BLUETOOTH_PARSE_PROTOCOL      0                             //数据协议解析任务0
+#define BLUETOOTH_CRC_CHECK           1                             //数据crc校验任务1
+#define BLUETOOTH_AES_DECODE          2                             //数据解密任务2
+#define BLUETOOTH_LOCK                3                             //开锁任务2
+#define BLUETOOTH_KEY                 4                             //秘钥任务3
+#define BLUETOOTH_DFU                 5                             //升级任务4
 
 #define COMM                          6                             //NB通讯任务6  
 #define COMM_CMD_PROC                 0
