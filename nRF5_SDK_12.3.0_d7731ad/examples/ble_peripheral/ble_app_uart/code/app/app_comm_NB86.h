@@ -279,9 +279,6 @@ typedef enum
 		NB_AT_NCONFIG_TRUE,
 		NB_AT_NCONFIG_FALSE,
 		NB_AT_CMEE_1,
-	
-	
-	
 		NB_AT_NCCID,
 	
 		NB_AT_CGDCONT,
@@ -293,14 +290,15 @@ typedef enum
 		NB_AT_CEDRXS_0,
 		NB_AT_NPSMR_1,
 		NB_AT_CGPADDR,
+		
 		NB_AT_CSQ,
 		NB_AT_NMGS,
 		NB_AT_NQMGS,
 			
-////	NB_AT_AT_CPIN1,
-//    NB_AT_CGREG1,
-////    NB_AT_KEEPCONF,
-//    NB_AT_GTSET,
+		NB_AT_NMGR,
+		NB_AT_NQMGR,
+
+		NB_AT_NPSMR1,
 }AT_CMD_Type;
 
 typedef enum 

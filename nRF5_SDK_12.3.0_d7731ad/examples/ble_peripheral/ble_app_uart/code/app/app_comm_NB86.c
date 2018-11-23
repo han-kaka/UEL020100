@@ -62,11 +62,17 @@ const NB_Cmd_Data_Type AT_CmdTbl[] =
 			{"AT+CPSMS=1,,,01000011,01000011\r\n",             3,       "OK",                     3},
 			{"AT+CEDRXS=0,5,0101\r\n",                         3,       "OK",                     3},
 			{"AT+NPSMR=1\r\n",                                 3,       "OK",                     3},
-			{"AT+CGPADDR\r\n",                                 30,      "OK",                    15},	
-      {"AT+CSQ\r\n",   			                             3,	      "+CSQ",         	        3},
-			
+			{"AT+CGPADDR\r\n",                                 5,       "OK",                    20},	
+      
+			{"AT+CSQ\r\n",   			                             3,	      "+CSQ",         	        3},
       {"AT+NMGS=37,00\r\n",   			                     3,	      "OK",         	          3},
       {"AT+NQMGS\r\n",   			                           3,	      "OK",         	          3},
+			
+      {"AT+NMGR\r\n",   			                           3,	      "OK",         	          3},			
+			{"AT+NQMGR\r\n",   			                           3,	      "OK",         	          3},	
+
+			{"AT+NPSMR?\r\n",   			                         3,	      "NPSMR:1,1",         	    3},				
+			
 };
 
 /*************************初始化流程***************************/
@@ -95,13 +101,14 @@ static const uint8_t s_ATCmdStep_Connnect[] =
 		NB_AT_CGATT_1,
 		NB_AT_CGATT1,
 		NB_AT_CGPADDR,
-		NB_AT_CSQ,
 };
 
 /*************************数据发送流程***************************/
 static const uint8_t s_ATCmdStep_Comm[] = 
 {
-    NB_AT_NMGS, NB_AT_NQMGS,                             
+		NB_AT_CSQ,
+    NB_AT_NMGS,
+		NB_AT_NQMGS,   	
 };
 
 static const uint8_t s_ATCmdStep_Mess[] = 
@@ -118,6 +125,16 @@ static const uint8_t s_ATCmdStep_Mess[] =
 		NB_AT_NCCID,
 };
 
+static const uint8_t s_ATCmdStep_Read[] = 
+{
+		NB_AT_NMGR,
+		NB_AT_NQMGR,
+};
+
+static const uint8_t s_ATCmdStep_Inquire[] = 
+{
+		NB_AT_NPSMR1,
+};
 
 /*校验AT指令应答结果是否正确*/
 static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
@@ -134,7 +151,7 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
         Task_Flag_Struct.atReday_F = ENABLE;
         NB_ATCmdCB.RspType = RSP_TYPE_CMD;
 		#if SEGGER_RTT_DEBUG_CMDPROC
-				SEGGER_RTT_printf(0, "gprs model ready");
+				SEGGER_RTT_printf(0, "gprs model ready\r\n");
 		#endif
 				return BACK_TRUE;
     }
