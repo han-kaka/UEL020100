@@ -188,7 +188,7 @@ static void services_init(void)
     memset(&nus_init, 0, sizeof(nus_init));
 
     nus_init.data_handler = bsp_ble_command_rx;
-
+		m_nus.uuid_type       = BLE_UUID_TYPE_BLE;
     err_code = ble_nus_init(&m_nus, &nus_init);
     APP_ERROR_CHECK(err_code);
 }

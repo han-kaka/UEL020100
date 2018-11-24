@@ -42,8 +42,8 @@
 #include "ble_nus.h"
 #include "ble_srv_common.h"
 
-#define BLE_UUID_NUS_TX_CHARACTERISTIC 0x0002                      /**< The UUID of the TX Characteristic. */
-#define BLE_UUID_NUS_RX_CHARACTERISTIC 0x0003                      /**< The UUID of the RX Characteristic. */
+#define BLE_UUID_NUS_TX_CHARACTERISTIC 0xfff2                      /**< The UUID of the TX Characteristic. */
+#define BLE_UUID_NUS_RX_CHARACTERISTIC 0xfff4                      /**< The UUID of the RX Characteristic. */
 
 #define BLE_NUS_MAX_RX_CHAR_LEN        BLE_NUS_MAX_DATA_LEN        /**< Maximum length of the RX Characteristic (in bytes). */
 #define BLE_NUS_MAX_TX_CHAR_LEN        BLE_NUS_MAX_DATA_LEN        /**< Maximum length of the TX Characteristic (in bytes). */
@@ -144,7 +144,7 @@ static uint32_t rx_char_add(ble_nus_t * p_nus, const ble_nus_init_t * p_nus_init
     char_md.p_cccd_md         = &cccd_md;
     char_md.p_sccd_md         = NULL;
 
-    ble_uuid.type = p_nus->uuid_type;
+    ble_uuid.type = BLE_UUID_TYPE_BLE;
     ble_uuid.uuid = BLE_UUID_NUS_RX_CHARACTERISTIC;
 
     memset(&attr_md, 0, sizeof(attr_md));
@@ -197,7 +197,7 @@ static uint32_t tx_char_add(ble_nus_t * p_nus, const ble_nus_init_t * p_nus_init
     char_md.p_cccd_md                = NULL;
     char_md.p_sccd_md                = NULL;
 
-    ble_uuid.type = p_nus->uuid_type;
+    ble_uuid.type = BLE_UUID_TYPE_BLE;
     ble_uuid.uuid = BLE_UUID_NUS_TX_CHARACTERISTIC;
 
     memset(&attr_md, 0, sizeof(attr_md));
@@ -272,7 +272,7 @@ uint32_t ble_nus_init(ble_nus_t * p_nus, const ble_nus_init_t * p_nus_init)
     err_code = sd_ble_uuid_vs_add(&nus_base_uuid, &p_nus->uuid_type);
     VERIFY_SUCCESS(err_code);
 
-    ble_uuid.type = p_nus->uuid_type;
+    ble_uuid.type = BLE_UUID_TYPE_BLE;
     ble_uuid.uuid = BLE_UUID_NUS_SERVICE;
 
     // Add the service.

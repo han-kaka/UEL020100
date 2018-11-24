@@ -3733,7 +3733,7 @@
 // </h> 
 //==========================================================
 
-//<h> RTT Debug
+//<e> RTT Debug
 
 #ifndef RTT_LOG_ENABLE
 #define RTT_LOG_ENABLE 1
@@ -3742,38 +3742,58 @@
 #if  RTT_LOG_ENABLE
 // <q> debug led
 #ifndef SEGGER_RTT_DEBUG_LED
-#define SEGGER_RTT_DEBUG_LED 1
+#define SEGGER_RTT_DEBUG_LED 0
 #endif
 
-// <q> debug bluetooth
+// <e> debug bluetooth
 #ifndef SEGGER_RTT_DEBUG_BLUETOOTH
 #define SEGGER_RTT_DEBUG_BLUETOOTH 1
 #endif
 
+#if SEGGER_RTT_DEBUG_BLUETOOTH
+// <q> debug ble original data
+#ifndef SEGGER_RTT_DEBUG_ORIGINAL_DATA
+#define SEGGER_RTT_DEBUG_ORIGINAL_DATA 0
+#endif
+// <q> debug ble parse protocol
+#ifndef SEGGER_RTT_DEBUG_PARSE_PROTOCOL
+#define SEGGER_RTT_DEBUG_PARSE_PROTOCOL 0
+#endif
+// <q> debug ble crc check
+#ifndef SEGGER_RTT_DEBUG_CRC_CHECK
+#define SEGGER_RTT_DEBUG_CRC_CHECK 0
+#endif
+// <q> debug ble aes decode 
+#ifndef SEGGER_RTT_DEBUG_AES_DECODE
+#define SEGGER_RTT_DEBUG_AES_DECODE 1
+#endif
+#endif
+// </e> 
+
 // <q> debug adv
 #ifndef SEGGER_RTT_DEBUG_ADV
-#define SEGGER_RTT_DEBUG_ADV 1
+#define SEGGER_RTT_DEBUG_ADV 0
 #endif
 
-// <h> debug NB86
+// <e> debug NB86
 #ifndef SEGGER_RTT_DEBUG_NB86
-#define SEGGER_RTT_DEBUG_NB86 1
+#define SEGGER_RTT_DEBUG_NB86 0
 #endif
 
 #if  SEGGER_RTT_DEBUG_NB86
-// <q> debug at cfun?
+// <q> debug at cfun
 #ifndef SEGGER_RTT_DEBUG_CFUN
 #define SEGGER_RTT_DEBUG_CFUN 0
 #endif
-// <q> debug at cgsn?
+// <q> debug at cgsn
 #ifndef SEGGER_RTT_DEBUG_CGSN
 #define SEGGER_RTT_DEBUG_CGSN 0
 #endif
-// <q> debug at nccid?
+// <q> debug at nccid
 #ifndef SEGGER_RTT_DEBUG_NCCID
 #define SEGGER_RTT_DEBUG_NCCID 0
 #endif
-// <q> debug at cgatt?
+// <q> debug at cgatt
 #ifndef SEGGER_RTT_DEBUG_CGATT
 #define SEGGER_RTT_DEBUG_CGATT 0
 #endif
@@ -3798,17 +3818,17 @@
 #define SEGGER_RTT_DEBUG_CONN 0
 #endif
 #endif
-// </h> 
+// </e> 
 
-// <h> debug uart
+// <e> debug uart
 #ifndef SEGGER_RTT_DEBUG_UART
-#define SEGGER_RTT_DEBUG_UART 1
+#define SEGGER_RTT_DEBUG_UART 0
 #endif
 
 #if  SEGGER_RTT_DEBUG_UART
 // <q> debug cmdproc
 #ifndef SEGGER_RTT_DEBUG_CMDPROC
-#define SEGGER_RTT_DEBUG_CMDPROC 1
+#define SEGGER_RTT_DEBUG_CMDPROC 0
 #endif
 
 // <q> debug uart data
@@ -3817,11 +3837,11 @@
 #endif
 
 #endif
-// </h> 
+// </e> 
 
 #endif //RTT_LOG_ENABLE
 
-// </h> 
+// </e> 
 //==========================================================
 
 
