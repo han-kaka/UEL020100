@@ -69,7 +69,7 @@
 extern "C" {
 #endif
 
-#define BLE_UUID_NUS_SERVICE 0x0001                      /**< The UUID of the Nordic UART Service. */
+#define BLE_UUID_NUS_SERVICE 0x1910                      /**< The UUID of the Nordic UART Service. */
 #define BLE_NUS_MAX_DATA_LEN (GATT_MTU_SIZE_DEFAULT - 3) /**< Maximum length of data (in bytes) that can be transmitted to the peer by the Nordic UART service module. */
 
 /* Forward declaration of the ble_nus_t type. */

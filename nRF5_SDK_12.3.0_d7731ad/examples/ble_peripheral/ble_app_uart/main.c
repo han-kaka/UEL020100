@@ -81,11 +81,11 @@
 #define CENTRAL_LINK_COUNT              0                                           /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
 #define PERIPHERAL_LINK_COUNT           1                                           /**< Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
 
-#define DEVICE_NAME                     "ANGUMEN"                               /**< Name of device. Will be included in the advertising data. */
-#define NUS_SERVICE_UUID_TYPE           BLE_UUID_TYPE_VENDOR_BEGIN                  /**< UUID type for the Nordic UART Service (vendor specific). */
+#define DEVICE_NAME                     "ANGUMEN"                                   /**< Name of device. Will be included in the advertising data. */
+#define NUS_SERVICE_UUID_TYPE           BLE_UUID_TYPE_BLE                           /**< UUID type for the Nordic UART Service (vendor specific). */
 
 #define APP_ADV_INTERVAL                1600                                        /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
-#define APP_ADV_TIMEOUT_IN_SECONDS      180                                         /**< The advertising timeout (in units of seconds). */
+#define APP_ADV_TIMEOUT_IN_SECONDS      0                                           /**< The advertising timeout (in units of seconds). */
 
 #define APP_TIMER_PRESCALER             0                                           /**< Value of the RTC1 PRESCALER register. */
 #define APP_TIMER_OP_QUEUE_SIZE         4                                           /**< Size of timer operation queues. */
@@ -556,6 +556,41 @@ static void uart_init(void)
 }
 /**@snippet [UART Initialization] */
 
+static void adv_manuf_data_get(uint8_t *src)
+{
+    uint32_t err_code = 1;
+    ble_gap_addr_t device_addr;
+    
+    uint8_t MAC_ADDR[6];
+    // Get BLE address.
+#if (NRF_SD_BLE_API_VERSION == 3)
+    err_code = sd_ble_gap_addr_get(&device_addr);
+
+#else
+    err_code = sd_ble_gap_address_get(&device_addr);
+#endif
+#if SEGGER_RTT_DEBUG_ADV
+		SEGGER_RTT_printf(0, "get mac addr err_code = 0x%02X \r\n",err_code);
+#endif
+		
+    for(int i = 0;i<BLE_GAP_ADDR_LEN;i++)
+    {
+        MAC_ADDR[i] = device_addr.addr[BLE_GAP_ADDR_LEN-1-i];
+    }
+    src[0] = 0xf6;
+		src[1] = 0xcb;
+		src[2] = 0x9a;
+		src[3] = 0x3b;
+		src[4] = 0x01;
+		src[5] = 0x01;
+		src[6] = 0x01;		
+		src[7] = 0x08;
+		src[8] = 0x00;
+		src[9] = 0x00;
+		src[10] = 0xa5;		
+		src[11] = 0x02;
+    memcpy(&src[12], MAC_ADDR, sizeof(MAC_ADDR));
+}
 
 /**@brief Function for initializing the Advertising functionality.
  */
@@ -565,12 +600,14 @@ static void advertising_init(void)
     ble_advdata_t          advdata;
     ble_advdata_t          scanrsp;
     ble_adv_modes_config_t options;
+    ble_advdata_manuf_data_t  manufdata; 
+    uint8_t manuf_data[18];			// Manufacturer Data
 
     // Build advertising data struct to pass into @ref ble_advertising_init.
     memset(&advdata, 0, sizeof(advdata));
     advdata.name_type          = BLE_ADVDATA_FULL_NAME;
     advdata.include_appearance = false;
-    advdata.flags              = BLE_GAP_ADV_FLAGS_LE_ONLY_LIMITED_DISC_MODE;
+    advdata.flags              = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE;
 
     memset(&scanrsp, 0, sizeof(scanrsp));
     scanrsp.uuids_complete.uuid_cnt = sizeof(m_adv_uuids) / sizeof(m_adv_uuids[0]);
@@ -581,6 +618,13 @@ static void advertising_init(void)
     options.ble_adv_fast_interval = APP_ADV_INTERVAL;
     options.ble_adv_fast_timeout  = APP_ADV_TIMEOUT_IN_SECONDS;
 
+	  memset(manuf_data, 0, sizeof(manuf_data));
+    adv_manuf_data_get(manuf_data);
+    manufdata.company_identifier       = 0x0059; // Nordics company ID
+    manufdata.data.p_data              = manuf_data;    
+    manufdata.data.size                = sizeof(manuf_data);
+    scanrsp.p_manuf_specific_data = &manufdata;	
+	
     err_code = ble_advertising_init(&advdata, &scanrsp, &options, on_adv_evt, NULL);
     APP_ERROR_CHECK(err_code);
 }

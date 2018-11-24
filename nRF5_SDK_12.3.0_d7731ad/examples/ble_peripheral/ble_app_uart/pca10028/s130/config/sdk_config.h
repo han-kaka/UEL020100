@@ -3750,6 +3750,11 @@
 #define SEGGER_RTT_DEBUG_BLUETOOTH 1
 #endif
 
+// <q> debug adv
+#ifndef SEGGER_RTT_DEBUG_ADV
+#define SEGGER_RTT_DEBUG_ADV 1
+#endif
+
 // <h> debug NB86
 #ifndef SEGGER_RTT_DEBUG_NB86
 #define SEGGER_RTT_DEBUG_NB86 1
