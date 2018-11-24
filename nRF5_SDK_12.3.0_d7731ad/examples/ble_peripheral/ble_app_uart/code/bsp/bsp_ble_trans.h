@@ -45,9 +45,7 @@ void bsp_ble_command_rx(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length);
 
 //void bsp_ble_command_explain(uint8_t * p_data, uint16_t length);
 
-
-
-//uint32_t bsp_ble_value_tx(uint8_t * p_data, uint16_t length);
+uint32_t bsp_ble_value_tx(uint8_t * p_data, uint16_t length);
 //void ble_process_task(void);
 
 #endif

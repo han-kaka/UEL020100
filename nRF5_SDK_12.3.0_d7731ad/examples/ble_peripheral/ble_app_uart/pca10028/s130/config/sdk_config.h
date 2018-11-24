@@ -3753,7 +3753,7 @@
 #if SEGGER_RTT_DEBUG_BLUETOOTH
 // <q> debug ble original data
 #ifndef SEGGER_RTT_DEBUG_ORIGINAL_DATA
-#define SEGGER_RTT_DEBUG_ORIGINAL_DATA 0
+#define SEGGER_RTT_DEBUG_ORIGINAL_DATA 1
 #endif
 // <q> debug ble parse protocol
 #ifndef SEGGER_RTT_DEBUG_PARSE_PROTOCOL
@@ -3763,10 +3763,27 @@
 #ifndef SEGGER_RTT_DEBUG_CRC_CHECK
 #define SEGGER_RTT_DEBUG_CRC_CHECK 0
 #endif
-// <q> debug ble aes decode 
+// <e> debug ble aes decode 
 #ifndef SEGGER_RTT_DEBUG_AES_DECODE
 #define SEGGER_RTT_DEBUG_AES_DECODE 1
 #endif
+
+#if SEGGER_RTT_DEBUG_AES_DECODE
+// <q> debug ble get aeskey
+#ifndef SEGGER_RTT_DEBUG_GET_AESKEY
+#define SEGGER_RTT_DEBUG_GET_AESKEY 1
+#endif
+// <q> debug ble switch
+#ifndef SEGGER_RTT_DEBUG_SWITCH
+#define SEGGER_RTT_DEBUG_SWITCH 1
+#endif
+// <q> debug ble adjust time
+#ifndef SEGGER_RTT_DEBUG_ADJUST_TIME
+#define SEGGER_RTT_DEBUG_ADJUST_TIME 1
+#endif
+#endif
+// </e> 
+
 #endif
 // </e> 
 

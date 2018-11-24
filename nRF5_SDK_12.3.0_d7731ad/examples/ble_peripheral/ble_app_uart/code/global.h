@@ -34,5 +34,12 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 #define NB_MS_TO_S                (1000UL)
 #define HEARTBEAT_TIME              (240UL)
 
+#ifndef BV
+#define BV(n)      (1 << (n))
+#endif
+
+#define HI_UINT16(a) (((a) >> 8) & 0xFF)
+#define LO_UINT16(a) ((a) & 0xFF)
+
 #endif
 

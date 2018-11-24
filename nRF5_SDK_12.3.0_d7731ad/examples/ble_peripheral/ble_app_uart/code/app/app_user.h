@@ -3,6 +3,14 @@
 
 #include "global.h"
 
+#define SECONDS2000YEAR				946656000	/* 时间(2000/01/01 00:00:00)相对于Linux时间(1970/01/01 08:00:00)开始的秒数 */
+
+#ifdef FLASHUSERINFO
+	#define MAX_USER_NUM			128			/* 最大用户数量 */
+#else
+	#define MAX_USER_NUM			16			/* 最大用户数量 */
+#endif
+#define MAX_LOG_NUM					100			/* 最大日志数量 */
 
 #ifdef PCB_L1_2_3
 	#define HARD_VERSION_INFO		"HV1.2.3"	/* 硬件版本信息 */
@@ -26,7 +34,7 @@ typedef struct
 } SystemRunParam_t;
 
 extern SystemRunParam_t gSystemRunParam;
-
+extern uint16_t gFlagAdjustTime;
 #endif
 
 

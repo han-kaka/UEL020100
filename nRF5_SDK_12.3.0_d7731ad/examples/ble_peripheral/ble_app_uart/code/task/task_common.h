@@ -59,8 +59,6 @@
 #define BLUETOOTH_CRC_CHECK           1                             //数据crc校验任务1
 #define BLUETOOTH_AES_DECODE          2                             //数据解密任务2
 #define BLUETOOTH_PROCESS_CMD         3                             //解析指令任务3
-#define BLUETOOTH_KEY                 4                             //秘钥任务3
-#define BLUETOOTH_DFU                 5                             //升级任务4
 
 #define COMM                          6                             //NB通讯任务6  
 #define COMM_CMD_PROC                 0

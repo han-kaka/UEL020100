@@ -3,14 +3,14 @@
 
 //BLE_Handler_t        g_stBLE_Handler;
 
-////uint8_t              Char2_Once_Receive_Len = 0;//用于数据接收
-////uint8_t              char2_all_receive_len = 0;//用于数据接收
-////uint8_t              char2_all_receive[256];//用于数据接收
-////uint8_t              char4_all_send_flag = 0;//用于数据发送
-////uint8_t              char4_all_send_len = 0;//用于数据发送
-////uint8_t              char4_all_send[256];//用于数据发送
+//uint8_t              Char2_Once_Receive_Len = 0;//用于数据接收
+//uint8_t              char2_all_receive_len = 0;//用于数据接收
+//uint8_t              char2_all_receive[256];//用于数据接收
+uint8_t              char4_all_send_flag = 0;//用于数据发送
+uint8_t              char4_all_send_len = 0;//用于数据发送
+uint8_t              char4_all_send[256];//用于数据发送
 
-//static uint8_t f_tempkey = 0; /* 更新秘钥标志位 */
+static uint8_t f_tempkey = 0; /* 更新秘钥标志位 */
 
 uint8_t *pRecvBuffer;
 uint8_t  stateProcessCommand = 0;
@@ -174,78 +174,143 @@ uint8_t UserCheckAppProtocolFormat(uint8_t *pBuf, uint16_t inputLen)					// 协议
 ////	
 ////}
 
-///**************************************************************************************************
-// * @brief       返回错误代码
-// * @param       command：命令
-// * @param       errCode：错误代码
-// * @return      None
-// **************************************************************************************************
-// */
-//static void UserReturnErrCode(uint8_t command, uint8_t errCode)
-//{
-//	uint8_t  postion = 0;
-//	uint8_t  *pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
-//	
-//	pSendbuf[postion++] = errCode;
-////	Put_Return(command, postion);
-//}
+static void Put_Return(uint8_t command, uint8_t length)
+{
+		uint8_t  *pBuf;
+		uint16_t tmpLen, postion;
+		
+		postion = 0;
+		pBuf = char4_all_send;
+		pBuf[postion++] = HI_UINT16(PROTOCOL_APP_HEAD);
+		pBuf[postion++] = LO_UINT16(PROTOCOL_APP_HEAD);
+		pBuf[postion++] = HI_UINT16(PROTOCOL_APP_VERSION);
+		pBuf[postion++] = LO_UINT16(PROTOCOL_APP_VERSION);
+		pBuf[postion++] = PROTOCOL_APP_SCENARIOS;
+		pBuf[postion++] = PROTOCOL_APP_VENDORCODE;
+		pBuf[postion++] = PROTOCOL_APP_RESERVE;
+		pBuf[postion++] = PROTOCOL_APP_RESERVE;
+		pBuf[postion++] = PROTOCOL_APP_RESERVE;
+		pBuf[postion++] = command;
+		pBuf[postion++] = sProtocolAppFormat.headData.dataSources;
+		if (((command == CMD_READ_LOG) || (command == CMD_ADD_USER)) && (length > 0))
+		{
+//				tmpLen = AES_get_length(length - 1);
+//				pBuf[postion++] = tmpLen + 1;
+//				postion++;
+//				AES_Init(useraeskeybuf);
+//				AES_Encrypt_PKCS7(pBuf + postion, pBuf + postion, length - 1, useraeskeybuf);
+//				postion += tmpLen;
+//				tmpLen = postion;
+//				pBuf[postion++] = CRC_8(pBuf, tmpLen);
+//				pBuf[postion++] = HI_UINT16(PROTOCOL_APP_TAIL);
+//				pBuf[postion++] = LO_UINT16(PROTOCOL_APP_TAIL);
+		}
+		else
+		{
+				pBuf[postion++] = length;
+				postion += length;
+				tmpLen = postion;
+				pBuf[postion++] = CRC_8(pBuf, tmpLen);
+				pBuf[postion++] = HI_UINT16(PROTOCOL_APP_TAIL);
+				pBuf[postion++] = LO_UINT16(PROTOCOL_APP_TAIL);
+		}
+
+		bsp_ble_value_tx(pBuf, postion);
+
+//		if (f_tempkey)
+//		{
+//				f_tempkey = 0;
+//				osal_memcpy(useraeskeybuf, tempkey, 16);
+//				UserSaveAppData(P_EE_ADDR_AES128KEY, useraeskeybuf);
+//		}
+}
+
+/**************************************************************************************************
+ * @brief       返回错误代码
+ * @param       command：命令
+ * @param       errCode：错误代码
+ * @return      None
+ **************************************************************************************************
+ */
+static void UserReturnErrCode(uint8_t command, uint8_t errCode)
+{
+		uint8_t  postion = 0;
+		uint8_t  *pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
+		
+		pSendbuf[postion++] = errCode;
+	Put_Return(command, postion);
+}
 
 
-///**************************************************************************************************
-// * @brief       返回错误代码带数据
-// * @param       command：命令
-// * @param       errCode：错误代码
-// * @param       pData：数据
-// * @param       len：数据长度
-// * @return      0-成功；other-失败；
-// **************************************************************************************************
-// */
-//static void UserReturnErrCodeAndData(uint8_t command, uint8_t errCode, char *pData, uint8_t len)
-//{
-//	uint8_t  postion = 0;
-//	uint8_t  *pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
-//	
-//	pSendbuf[postion++] = errCode;
-//	memcpy(pSendbuf + postion, pData, len);
-//	postion += len;
-////	Put_Return(command, postion++);
-//}
+/**************************************************************************************************
+ * @brief       返回错误代码带数据
+ * @param       command：命令
+ * @param       errCode：错误代码
+ * @param       pData：数据
+ * @param       len：数据长度
+ * @return      0-成功；other-失败；
+ **************************************************************************************************
+ */
+static void UserReturnErrCodeAndData(uint8_t command, uint8_t errCode, char *pData, uint8_t len)
+{
+	uint8_t  postion = 0;
+	uint8_t  *pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
+	
+	pSendbuf[postion++] = errCode;
+	memcpy(pSendbuf + postion, pData, len);
+	postion += len;
+	Put_Return(command, postion++);
+}
 
 uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 {
-//		uint8_t  i, tmp;
+		uint8_t  i, tmp;
 		uint8_t  ret = 0;
-//		uint8_t  *pSendbuf;
-//		uint16_t sendLength = 0;
-////	#if (defined USER_FINGERMODE) && (defined USER_FINGERMODEVENA)
-////	uint16 temp16;
-////	#endif
-////	uint32 tmp32;
+		uint8_t  *pSendbuf;
+		uint16_t sendLength = 0;
+		#if (defined USER_FINGERMODE) && (defined USER_FINGERMODEVENA)
+		uint16 temp16;
+		#endif
+		uint32_t tmp32;
 ////	static uint8  sTemp;
 ////	static uint8  sReadUserCnt = 0;
 ////	static uint8  sFlagAddUser = 0;
-//		uint8_t  buf[16];
+		uint8_t  buf[16];
 ////	static UserInfo_t tempUserInfo;
 ////	UTCTimeStruct *pTempTimeStruct = (UTCTimeStruct *)(buf + 6);
 ////	LogInfo_t *pTmpLogInfo = (LogInfo_t *)buf;
 ////	
 		if (sProtocolAppFormat.headData.version != PROTOCOL_APP_VERSION)			// 判断协议头正确性
 		{
-//				UserReturnErrCode(command, PROTOCOL_APP_ERR_VERSION);
+				#if SEGGER_RTT_DEBUG_AES_DECODE
+						SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_VERSION!\r\n");
+				#endif
+				UserReturnErrCode(command, PROTOCOL_APP_ERR_VERSION);
 				return ret;
 		}
 		if (dataLen == 0)
 		{
-//				UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+				#if SEGGER_RTT_DEBUG_AES_DECODE
+						SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_PARAM!\r\n");
+				#endif
+				UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
 				return ret;
 		}
 		if ((gSystemRunParam.flagInit != 0xA5) && (command != CMD_GET_AESKEY))
 		{
-//				UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+				#if SEGGER_RTT_DEBUG_AES_DECODE
+						SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_PARAM!\r\n");
+				#endif
+				UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
 				return ret;
 		}
-//		switch (command)
-//		{
+		#if SEGGER_RTT_DEBUG_AES_DECODE
+				SEGGER_RTT_printf(0, "command = %d\r\n",command);
+		#endif
+		
+		switch (command)
+		{
+			
 //				case CMD_GET_HARD_INFO_VERSION:											/* 获取硬件版本信息 */
 //						UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, HARD_VERSION_INFO, sizeof(HARD_VERSION_INFO));
 //						break;
@@ -254,29 +319,49 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 //						UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, SOFT_VERSION_INFO, sizeof(SOFT_VERSION_INFO));
 //						break;
 //				
-//				case CMD_GET_AESKEY:													/* 初始化 */
-//				{
-//						if (*pData != 0x01)
-//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}
-//						
-//						if(gSystemRunParam.flagInit == 0xA5) break;
-//						
-//						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
-//						pSendbuf[sendLength++] = PROTOCOL_APP_ERR_NONE;
-//						nrf_drv_rng_rand(tempkey, 16); 
-////						LL_PseudoRand( tempkey, 16 );
-//						memcpy(pSendbuf + sendLength, tempkey, 16);
-//						sendLength += 16;
-//						f_tempkey = 1;
-//						memset(buf, 0, 8);
-////						UserSaveAppData(P_EE_ADDR_TIMESTAMP, buf);
-////						Put_Return(command, sendLength);
-//						gSystemRunParam.flagInit = 0xA5;
-////						SaveSetup();
-////						UserSoundSuccess();
-//				}
-//						break;
-//				
+				case CMD_GET_AESKEY:													/* 初始化 */
+				{
+						#if SEGGER_RTT_DEBUG_GET_AESKEY
+								SEGGER_RTT_printf(0, "cmd get aeskey!\r\n");
+						#endif
+						
+						if (*pData != 0x10)
+						{
+								if(gSystemRunParam.flagInit == 0xA5) 
+										break;
+								
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
+								break;
+						}
+						else if (*pData == 0x01)
+						{
+								if(gSystemRunParam.flagInit == 0xA5) 
+										break;
+							
+								pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
+								pSendbuf[sendLength++] = PROTOCOL_APP_ERR_NONE;
+								nrf_drv_rng_rand(tempkey, 16); 
+		////						LL_PseudoRand( tempkey, 16 );
+								memcpy(pSendbuf + sendLength, tempkey, 16);
+								sendLength += 16;
+								f_tempkey = 1;
+								memset(buf, 0, 8);
+		//						UserSaveAppData(P_EE_ADDR_TIMESTAMP, buf);
+								Put_Return(command, sendLength);
+								gSystemRunParam.flagInit = 0xA5;
+		//						SaveSetup();
+						}
+						else
+						{
+						#if SEGGER_RTT_DEBUG_GET_AESKEY
+								SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_PARAM!\r\n");
+						#endif
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+								break;
+						}
+				}
+						break;
+				
 //				case CMD_ADD_ADMIN:														/* 添加管理员 */
 //				case CMD_ADD_USER:														/* 添加用户 */
 //				{
@@ -518,73 +603,104 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 //				}
 //						break;
 //					
-//				case CMD_SWITCH:														/* 开关指令 */
-//				{
-////						if (dataLen != 9)
-////						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}
-////						UserGetAppData(P_EE_ADDR_TIMESTAMP, buf);
-////						if (UserMemCmp(pData, buf, 8) <= 0) break;
-////						UserSaveAppData(P_EE_ADDR_TIMESTAMP, pData);
-////						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
-////						pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_NONE;
-////						pSendbuf[sendLength ++] = gSystemRunParam.batterPercent;
-////						tmp = 0;
-////						if (gFlagAdjustTime <= 1) {tmp |= BV(0);}
-////						if (UserGetLogInfo(0) == 1) {tmp |= BV(1);}
-////						pSendbuf[sendLength ++] = tmp;
-////						Put_Return(command, sendLength);
-////						if (pData[8] == 0xA1)
-////							UserMotorON(motorOpenTyp_mobile);
-////						else if (pData[8] == 0xA2)
-////							UserMotorOFF();
-//				}
-//						break;
-//				
-//				case CMD_ADJUST_TIME:													/* 校时指令 */
-//				{
-////						#if PROTOCOL_APP_VERSION == 0x0100
-////			/****************************** V1.0 版本程序开始 *****************************/
-////						if (dataLen != 4)
-////						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
-////						//if (UserGetCurrentUser() == 0)
-////						//{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
-////						tmp32 = pData[0];
-////						tmp32 = (tmp32 << 8) | pData[1];
-////						tmp32 = (tmp32 << 8) | pData[2];
-////						tmp32 = (tmp32 << 8) | pData[3];
-////			/****************************** V1.0 版本程序结束 *****************************/
-////						#else
-////			/****************************** V1.1 版本程序开始 *****************************/
-////						if (dataLen != 12)
-////						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
-////						
-////						UserGetAppData(P_EE_ADDR_TIMESTAMP, buf);
-////						if (UserMemCmp(pData, buf, 8) <= 0) break;
-////						UserSaveAppData(P_EE_ADDR_TIMESTAMP, pData);
-////						
-////						tmp32 = pData[8];
-////						tmp32 = (tmp32 << 8) | pData[9];
-////						tmp32 = (tmp32 << 8) | pData[10];
-////						tmp32 = (tmp32 << 8) | pData[11];
-////			/****************************** V1.1 版本程序结束 *****************************/
-////						#endif
-////						
-////						if (tmp32 < SECONDS2000YEAR)
-////						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}
-////						tmp32 -= SECONDS2000YEAR;
-////						osal_setClock(tmp32);
-////						osal_ConvertUTCTime( pTempTimeStruct, tmp32 );
-////						buf[0] = pTempTimeStruct->year - 2000;
-////						buf[1] = pTempTimeStruct->month + 1;
-////						buf[2] = pTempTimeStruct->day + 1;
-////						buf[3] = pTempTimeStruct->hour;
-////						buf[4] = pTempTimeStruct->minutes;
-////						buf[5] = pTempTimeStruct->seconds;
-////						UserSetPCF8563Hex(buf);
-////						gFlagAdjustTime = 60000; /* 大约一周时间 */
-////						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
-//				}
-//						break;
+				case CMD_SWITCH:														/* 开关指令 */
+				{
+						#if SEGGER_RTT_DEBUG_SWITCH
+								SEGGER_RTT_printf(0, "cmd switch!\r\n");
+						#endif
+					
+						if (dataLen != 9)
+						{
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+								break;
+						}
+//						UserGetAppData(P_EE_ADDR_TIMESTAMP, buf);
+//						if (UserMemCmp(pData, buf, 8) <= 0) break;
+//						UserSaveAppData(P_EE_ADDR_TIMESTAMP, pData);
+						
+						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
+						pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_NONE;
+						pSendbuf[sendLength ++] = gSystemRunParam.batterPercent;
+						tmp = 0;
+						if (gFlagAdjustTime <= 1) 
+						{
+								tmp |= BV(0);
+						}
+//						if (UserGetLogInfo(0) == 1) 
+//						{
+//								tmp |= BV(1);
+//						}
+						pSendbuf[sendLength ++] = tmp;
+						Put_Return(command, sendLength);
+						if (pData[8] == 0xA1)
+						{
+								Foreward_Motor();
+//							UserMotorON(motorOpenTyp_mobile);
+						}
+						else if (pData[8] == 0xA2)
+						{
+								Inversion_Motor();
+//							UserMotorOFF();
+						}
+				}
+						break;
+				
+				case CMD_ADJUST_TIME:													/* 校时指令 */
+				{
+						#if SEGGER_RTT_DEBUG_ADJUST_TIME
+								SEGGER_RTT_printf(0, "cmd adjust time!\r\n");
+						#endif
+					
+						#if PROTOCOL_APP_VERSION == 0x0100
+			/****************************** V1.0 版本程序开始 *****************************/
+						if (dataLen != 4)
+						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
+						//if (UserGetCurrentUser() == 0)
+						//{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
+						tmp32 = pData[0];
+						tmp32 = (tmp32 << 8) | pData[1];
+						tmp32 = (tmp32 << 8) | pData[2];
+						tmp32 = (tmp32 << 8) | pData[3];
+			/****************************** V1.0 版本程序结束 *****************************/
+						#else
+			/****************************** V1.1 版本程序开始 *****************************/
+						if (dataLen != 12)
+						{
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+								break;
+						}			/* 数据长度错误，返回参数错误 */
+						
+						UserGetAppData(P_EE_ADDR_TIMESTAMP, buf);
+						if (UserMemCmp(pData, buf, 8) <= 0) 
+								break;
+						UserSaveAppData(P_EE_ADDR_TIMESTAMP, pData);
+						
+						tmp32 = pData[8];
+						tmp32 = (tmp32 << 8) | pData[9];
+						tmp32 = (tmp32 << 8) | pData[10];
+						tmp32 = (tmp32 << 8) | pData[11];
+			/****************************** V1.1 版本程序结束 *****************************/
+						#endif
+						
+						if (tmp32 < SECONDS2000YEAR)
+						{
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+								break;
+						}
+						tmp32 -= SECONDS2000YEAR;
+//						osal_setClock(tmp32);
+//						osal_ConvertUTCTime( pTempTimeStruct, tmp32 );
+//						buf[0] = pTempTimeStruct->year - 2000;
+//						buf[1] = pTempTimeStruct->month + 1;
+//						buf[2] = pTempTimeStruct->day + 1;
+//						buf[3] = pTempTimeStruct->hour;
+//						buf[4] = pTempTimeStruct->minutes;
+//						buf[5] = pTempTimeStruct->seconds;
+//						UserSetPCF8563Hex(buf);
+//						gFlagAdjustTime = 60000; /* 大约一周时间 */
+						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
+				}
+						break;
 //				
 //				case CMD_READ_LOG:														/* 读取日志 */
 //				{
@@ -824,20 +940,20 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 ////						}
 //				}
 //						break;
-//				default:
+				default:
 //						UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
-//						break;
-//		}
-//		
-//		if (ret == 0xFF)
-//		{
-//			
-//		}
-//		else
-//		{
-////				stateProcessCommand = 0;
-//		}
-//		
+						break;
+		}
+		
+		if (ret == 0xFF)
+		{
+			
+		}
+		else
+		{
+				stateProcessCommand = 0;
+		}
+		
 		return ret;
 }
 

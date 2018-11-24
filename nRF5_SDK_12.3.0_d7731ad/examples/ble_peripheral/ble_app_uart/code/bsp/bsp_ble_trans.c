@@ -3,9 +3,8 @@
 //#include "nrf_log.h"
 #include "aes.h"
 //#include "ble_nus.h"
-//#include "lpd_bsp_rtt_debug.h"
 
-//extern ble_nus_t             m_nus; 
+extern ble_nus_t             m_nus; 
 
 //bool ble_data_new = false;
 
@@ -61,18 +60,18 @@ void bsp_ble_command_rx(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length)
 
 
 
-///* 
-// * @brief function for ble data send
-// *
-// * @param p_data: pointer to tx data
-// * @param length: ble tx data length
-// *
-// * @return sdk error info
-// */
-//uint32_t bsp_ble_value_tx(uint8_t * p_data, uint16_t length)
-//{
-//		return ble_nus_string_send(&m_nus,p_data,length);
-//}
+/* 
+ * @brief function for ble data send
+ *
+ * @param p_data: pointer to tx data
+ * @param length: ble tx data length
+ *
+ * @return sdk error info
+ */
+uint32_t bsp_ble_value_tx(uint8_t * p_data, uint16_t length)
+{
+		return ble_nus_string_send(&m_nus, p_data, length); 
+}
 
 ///* 
 // * @brief ble handle task
