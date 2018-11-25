@@ -285,7 +285,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 		if (sProtocolAppFormat.headData.version != PROTOCOL_APP_VERSION)			// 判断协议头正确性
 		{
 				#if SEGGER_RTT_DEBUG_AES_DECODE
-						SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_VERSION!\r\n");
+						SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_VERSION_1!\r\n");
 				#endif
 				UserReturnErrCode(command, PROTOCOL_APP_ERR_VERSION);
 				return ret;
@@ -293,7 +293,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 		if (dataLen == 0)
 		{
 				#if SEGGER_RTT_DEBUG_AES_DECODE
-						SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_PARAM!\r\n");
+						SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_PARAM_2!\r\n");
 				#endif
 				UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
 				return ret;
@@ -301,7 +301,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 		if ((gSystemRunParam.flagInit != 0xA5) && (command != CMD_GET_AESKEY))
 		{
 				#if SEGGER_RTT_DEBUG_AES_DECODE
-						SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_PARAM!\r\n");
+						SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_PARAM_3!\r\n");
 				#endif
 				UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
 				return ret;
@@ -348,7 +348,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						SEGGER_RTT_printf(0, "sendLength = %d!\r\n", sendLength);
 				#endif
 						Put_Return(command, sendLength);
-						//gSystemRunParam.flagInit = 0xA5;
+						gSystemRunParam.flagInit = 0xA5;
 //						SaveSetup();
 				}
 						break;
@@ -613,10 +613,10 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_NONE;
 						pSendbuf[sendLength ++] = gSystemRunParam.batterPercent;
 						tmp = 0;
-						if (gFlagAdjustTime <= 1) 
-						{
-								tmp |= BV(0);
-						}
+//						if (gFlagAdjustTime <= 1) 
+//						{
+//								tmp |= BV(0);
+//						}
 //						if (UserGetLogInfo(0) == 1) 
 //						{
 //								tmp |= BV(1);
