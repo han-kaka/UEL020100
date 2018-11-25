@@ -103,15 +103,15 @@
 
 //void APP_BLETask_StateProc(void);
 uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen);
-
 extern uint8_t              *pRecvBuffer;
 extern uint8_t              stateProcessCommand;
-
+extern uint8_t              char4_all_send[256];//用于数据发送
 
 uint8_t CRC_8(uint8_t *pdata, uint16_t size);
 
 uint8_t UserParseAppProtocolFormat(uint8_t *data_encrypt, uint16_t length);
 uint8_t UserCheckAppProtocolFormat(uint8_t *pBuf, uint16_t inputLen);
+void Put_Return(uint8_t command, uint8_t length);
 #endif
 
 

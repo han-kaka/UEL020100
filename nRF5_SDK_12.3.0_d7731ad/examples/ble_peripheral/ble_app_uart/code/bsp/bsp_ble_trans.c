@@ -3,6 +3,7 @@
 //#include "nrf_log.h"
 #include "aes.h"
 //#include "ble_nus.h"
+#include "nrf_drv_rng.h"
 
 extern ble_nus_t             m_nus; 
 
@@ -26,6 +27,25 @@ uint8_t              Char2_Once_Receive_Len = 0;
  */
 void bsp_ble_command_rx(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length)
 {
+//		uint8_t  *pSendbuf;
+//		uint16_t sendLength = 0;
+//	
+//		if(p_data[0] == 0x01)
+//		{
+//						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
+//						pSendbuf[sendLength++] = PROTOCOL_APP_ERR_NONE;
+//						nrf_drv_rng_rand(tempkey, 16); 
+////						LL_PseudoRand( tempkey, 16 );
+//						memcpy(pSendbuf + sendLength, tempkey, 16);
+////						osal_memcpy(pSendbuf + sendLength, tempkey, 16);
+//						sendLength += 16;
+////						UserSaveAppData(P_EE_ADDR_TIMESTAMP, buf);
+//				#if SEGGER_RTT_DEBUG_GET_AESKEY
+//						SEGGER_RTT_printf(0, "sendLength = %d!\r\n", sendLength);
+//				#endif
+//						Put_Return(CMD_GET_AESKEY, sendLength);
+//		}
+	
 		if ((char2_all_receive_len + length) <= 128)
 		{
 				memcpy(&char2_all_receive[char2_all_receive_len], p_data, length);
@@ -70,6 +90,13 @@ void bsp_ble_command_rx(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length)
  */
 uint32_t bsp_ble_value_tx(uint8_t * p_data, uint16_t length)
 {
+		while(length>20)
+		{
+				ble_nus_string_send(&m_nus, p_data, 20); 
+				length -= 20;
+				p_data += 20;
+		}
+	
 		return ble_nus_string_send(&m_nus, p_data, length); 
 }
 

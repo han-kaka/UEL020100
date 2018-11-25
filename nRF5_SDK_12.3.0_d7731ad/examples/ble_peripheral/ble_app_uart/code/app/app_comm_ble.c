@@ -3,9 +3,6 @@
 
 //BLE_Handler_t        g_stBLE_Handler;
 
-//uint8_t              Char2_Once_Receive_Len = 0;//用于数据接收
-//uint8_t              char2_all_receive_len = 0;//用于数据接收
-//uint8_t              char2_all_receive[256];//用于数据接收
 uint8_t              char4_all_send_flag = 0;//用于数据发送
 uint8_t              char4_all_send_len = 0;//用于数据发送
 uint8_t              char4_all_send[256];//用于数据发送
@@ -174,7 +171,7 @@ uint8_t UserCheckAppProtocolFormat(uint8_t *pBuf, uint16_t inputLen)					// 协议
 ////	
 ////}
 
-static void Put_Return(uint8_t command, uint8_t length)
+void Put_Return(uint8_t command, uint8_t length)
 {
 		uint8_t  *pBuf;
 		uint16_t tmpLen, postion;
@@ -214,15 +211,20 @@ static void Put_Return(uint8_t command, uint8_t length)
 				pBuf[postion++] = HI_UINT16(PROTOCOL_APP_TAIL);
 				pBuf[postion++] = LO_UINT16(PROTOCOL_APP_TAIL);
 		}
-
+#if SEGGER_RTT_DEBUG_AES_DECODE
+		SEGGER_RTT_printf(0, "postion = %d!\r\n", postion);
+#endif
+#if SEGGER_RTT_DEBUG_SEND_DATA	
+		ble_command_rx_log(postion, pBuf, SEND_DATA);
+#endif	
 		bsp_ble_value_tx(pBuf, postion);
 
-//		if (f_tempkey)
-//		{
-//				f_tempkey = 0;
-//				osal_memcpy(useraeskeybuf, tempkey, 16);
-//				UserSaveAppData(P_EE_ADDR_AES128KEY, useraeskeybuf);
-//		}
+		if (f_tempkey)
+		{
+				f_tempkey = 0;
+				memcpy(useraeskeybuf, tempkey, 16);
+				//UserSaveAppData(P_EE_ADDR_AES128KEY, useraeskeybuf);
+		}
 }
 
 /**************************************************************************************************
@@ -321,44 +323,33 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 //				
 				case CMD_GET_AESKEY:													/* 初始化 */
 				{
-						#if SEGGER_RTT_DEBUG_GET_AESKEY
-								SEGGER_RTT_printf(0, "cmd get aeskey!\r\n");
-						#endif
+				#if SEGGER_RTT_DEBUG_GET_AESKEY
+						SEGGER_RTT_printf(0, "cmd get aeskey!\r\n");
+				#endif
 						
-						if (*pData != 0x10)
+						if (*pData != 0x01)
 						{
-								if(gSystemRunParam.flagInit == 0xA5) 
-										break;
-								
-								UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
-								break;
-						}
-						else if (*pData == 0x01)
-						{
-								if(gSystemRunParam.flagInit == 0xA5) 
-										break;
-							
-								pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
-								pSendbuf[sendLength++] = PROTOCOL_APP_ERR_NONE;
-								nrf_drv_rng_rand(tempkey, 16); 
-		////						LL_PseudoRand( tempkey, 16 );
-								memcpy(pSendbuf + sendLength, tempkey, 16);
-								sendLength += 16;
-								f_tempkey = 1;
-								memset(buf, 0, 8);
-		//						UserSaveAppData(P_EE_ADDR_TIMESTAMP, buf);
-								Put_Return(command, sendLength);
-								gSystemRunParam.flagInit = 0xA5;
-		//						SaveSetup();
-						}
-						else
-						{
-						#if SEGGER_RTT_DEBUG_GET_AESKEY
-								SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_PARAM!\r\n");
-						#endif
 								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
 								break;
 						}
+						if(gSystemRunParam.flagInit == 0xA5) 
+								break;
+						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
+						pSendbuf[sendLength++] = PROTOCOL_APP_ERR_NONE;
+						nrf_drv_rng_rand(tempkey, 16); 
+//						LL_PseudoRand( tempkey, 16 );
+						memcpy(pSendbuf + sendLength, tempkey, 16);
+//						osal_memcpy(pSendbuf + sendLength, tempkey, 16);
+						sendLength += 16;
+						f_tempkey = 1;
+						memset(buf, 0, 8);
+//						UserSaveAppData(P_EE_ADDR_TIMESTAMP, buf);
+				#if SEGGER_RTT_DEBUG_GET_AESKEY
+						SEGGER_RTT_printf(0, "sendLength = %d!\r\n", sendLength);
+				#endif
+						Put_Return(command, sendLength);
+						//gSystemRunParam.flagInit = 0xA5;
+//						SaveSetup();
 				}
 						break;
 				

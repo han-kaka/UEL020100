@@ -3783,6 +3783,10 @@
 #endif
 #endif
 // </e> 
+// <q> debug ble send data
+#ifndef SEGGER_RTT_DEBUG_SEND_DATA
+#define SEGGER_RTT_DEBUG_SEND_DATA 1
+#endif
 
 #endif
 // </e> 

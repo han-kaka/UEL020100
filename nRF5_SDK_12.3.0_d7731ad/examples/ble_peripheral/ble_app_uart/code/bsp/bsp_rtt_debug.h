@@ -9,6 +9,7 @@ typedef enum
 		PARSE_PROTOCOL,
 		CRC_CHECK,
 		AES_DECODE,
+		SEND_DATA,
 	
 }BLE_Data_Type;
 
