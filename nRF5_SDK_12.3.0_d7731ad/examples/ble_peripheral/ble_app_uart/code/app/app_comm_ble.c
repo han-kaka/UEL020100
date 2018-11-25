@@ -625,12 +625,14 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						Put_Return(command, sendLength);
 						if (pData[8] == 0xA1)
 						{
-								Foreward_Motor();
+								Motor_Status = FOREWARD;
+//								Foreward_Motor();
 //							UserMotorON(motorOpenTyp_mobile);
 						}
 						else if (pData[8] == 0xA2)
 						{
-								Inversion_Motor();
+								Motor_Status = INVERSION;
+//								Inversion_Motor();
 //							UserMotorOFF();
 						}
 				}

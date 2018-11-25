@@ -23,6 +23,7 @@ void m_clock_timeout_handler (void * p_context)
     }
 		
 		Bsp_Led_Tim(10);
+		Bsp_Motor_Tim(10);
 //    APP_PC_UART_TimeProc(10);
 //    APP_Charge_TimeProc(10);
     if(s_MsCount >= MS_TO_S)     // 1Sʱ�䵽
