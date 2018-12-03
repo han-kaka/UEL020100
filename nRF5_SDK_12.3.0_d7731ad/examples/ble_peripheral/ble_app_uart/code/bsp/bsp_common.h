@@ -12,6 +12,7 @@
 #include "bsp_gpio.h"
 #include "bsp_my_uart.h"
 #include "bsp_motor.h"
+#include "bsp_flash_rw.h"
 #if SEGGER_RTT_DEBUG_BLUETOOTH
 #include "bsp_rtt_debug.h"
 #endif

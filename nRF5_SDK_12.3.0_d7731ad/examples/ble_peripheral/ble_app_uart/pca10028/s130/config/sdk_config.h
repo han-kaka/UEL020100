@@ -3857,6 +3857,10 @@
 #define SEGGER_RTT_DEBUG_UART_DATA 0
 #endif
 
+// <q> debug flash
+#ifndef SEGGER_RTT_DEBUG_FLASH
+#define SEGGER_RTT_DEBUG_FLASH 1
+#endif
 #endif
 // </e> 
 

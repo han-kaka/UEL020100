@@ -2244,6 +2244,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\code\bsp\bsp_motor.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_flash_rw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\code\bsp\bsp_flash_rw.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4550,6 +4555,11 @@
               <FileName>bsp_motor.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\code\bsp\bsp_motor.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_flash_rw.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\code\bsp\bsp_flash_rw.c</FilePath>
             </File>
           </Files>
         </Group>
