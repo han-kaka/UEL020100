@@ -29,7 +29,7 @@
 //#define SUPER_DYNAMIC_ROM_DATA_A_PAGE       3
 //#define SUPER_DYNAMIC_ROM_DATA_B_PAGE       2 
 
-#define AES_KEY_LEN                         16
+
 
 
 //#define OPEN_LOCK_PWD_LEN                   6
@@ -73,19 +73,19 @@ typedef struct
 {	
 		uint8_t                            writed1;
 		uint8_t                            writed2;
-		uint8_t                            ee_addr_init;
-		uint8_t                            ee_addr_test;
-		uint8_t                            ee_addr_power;
-		uint16_t                           ee_addr_poweroncnt;
-		uint8_t                            ee_addr_timestamp[8];
-		uint8_t                            ee_addr_openlockdir;
+//		uint8_t                            ee_addr_init;
+//		uint8_t                            ee_addr_test;
+//		uint8_t                            ee_addr_power;
+//		uint16_t                           ee_addr_poweroncnt;
+//		uint8_t                            ee_addr_timestamp[8];
+//		uint8_t                            ee_addr_openlockdir;
 		uint8_t                            ee_addr_aes128key[AES_KEY_LEN];
-		uint8_t                            ee_addr_lockname[16];
-		uint8_t                            ee_addr_lockindex[5];
-		uint8_t                            ee_addr_imei[16];
-		uint8_t                            ee_addr_iccid[32];
-		uint8_t                            ee_addr_ip[32];
-		uint8_t                            ee_addr_apn[16];
+//		uint8_t                            ee_addr_lockname[16];
+//		uint8_t                            ee_addr_lockindex[5];
+		uint8_t                            ee_addr_imei[IMEI_LEN];
+		uint8_t                            ee_addr_iccid[ICCID_LEN];
+		uint8_t                            ee_addr_ip[SERVER_IP_LEN];
+		uint8_t                            ee_addr_apn[SERVER_APN_LEN];
 		uint8_t                            solid_data_cell_xor;
 }Solid_Data_Cell_Type;
 

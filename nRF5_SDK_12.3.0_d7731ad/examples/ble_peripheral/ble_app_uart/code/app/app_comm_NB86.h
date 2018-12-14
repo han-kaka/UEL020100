@@ -117,8 +117,7 @@
 #define SERVER_PORT_DEFAULT         (9292U)
 #define REPORT_PERIOD_DEFAULT       (30U)
 
-#define SERVER_APN_LEN       (7)
-#define SERVER_IP_LEN        (17)
+
 //#define SERVER_PORT_LEN      (6)
 
 ///*********************BUFF LEN***********************/
@@ -372,11 +371,9 @@ typedef struct
     
 }PACKET_HEAD_Type;
 
-#define IMEI_LEN    6
-#define ICCID_LEN   10
 typedef struct
 {
-   // U8 imei[IMEI_LEN];
+   uint8_t imei[IMEI_LEN];
    uint8_t iccid[ICCID_LEN];
     
 }AUTH_DATA_Type;

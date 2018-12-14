@@ -15,7 +15,7 @@ static void Read_Romdata(const uint32_t pg_num, p_Rom_Data_Type p_rom_data_struc
 
 	  // Start address:
     addr = (uint32_t *)(pg_size * pg_num);//计算页起始地址
-		setWDI();
+//		setWDI();
 		for (i=0;i<MAX_SAVE_SIZE;i++)//循环写入要保存的字
     {
 				p_rom_data_struct->data[i]=*addr; 
@@ -35,10 +35,10 @@ static void Write_Romdata(const uint32_t pg_num, const p_Rom_Data_Type p_rom_dat
 	
 		err_code = sd_flash_page_erase(pg_num);
 		APP_ERROR_CHECK(err_code);	
-		sys_ndelay(4);
+//		sys_ndelay(4);
 		p_src = (uint32_t *)p_rom_data_struct->data;
 		sd_flash_write(p_dst, p_src, MAX_SAVE_SIZE);
-		sys_ndelay(4);
+//		sys_ndelay(4);
 		__NOP();
 }
 /************************************************************************************************************/
@@ -50,21 +50,21 @@ bool Write_Solid_Romdata(const uint32_t pg_num, const p_Rom_Data_Type p_solid_da
 		Rom_Data_Type   rom_data_temp_struct;	
 		p_Rom_Data_Type p_rom_data_temp_struct = &rom_data_temp_struct;
 	
-		Write_Romdata(pg_num, p_solid_data_struct);
-		Read_Romdata(pg_num, p_rom_data_temp_struct);
-	
-		if((p_rom_data_temp_struct->solid_data_cell_struct.writed1 == 0xaa)
-			 && (p_rom_data_temp_struct->solid_data_cell_struct.writed2 == 0xaa)
-			 && (Xor_Check((uint8_t*)(&(p_rom_data_temp_struct->solid_data_cell_struct.solid_register_data_struct)),(sizeof(Solid_Register_Data_Type)+1)) == true) 
-			 && (Xor_Check((uint8_t*)(&(p_rom_data_temp_struct->solid_data_cell_struct.solid_param_data_struct)),(sizeof(Solid_Parameters_Data_Type)+1)) == true) 
-			 && (Xor_Check(p_rom_data_temp_struct->solid_data_cell_struct.aes_key,(AES_KEY_LEN+1)) == true)
-			)
-		{
-		#if SEGGER_RTT_DEBUG_FLASH	
-				SEGGER_RTT_printf(0, "store solid rom data true!\r\n");
-		#endif
-				return true;
-		}
+//		Write_Romdata(pg_num, p_solid_data_struct);
+//		Read_Romdata(pg_num, p_rom_data_temp_struct);
+//	
+//		if((p_rom_data_temp_struct->solid_data_cell_struct.writed1 == 0xaa)
+//			 && (p_rom_data_temp_struct->solid_data_cell_struct.writed2 == 0xaa)
+//			 && (Xor_Check((uint8_t*)(&(p_rom_data_temp_struct->solid_data_cell_struct.solid_register_data_struct)),(sizeof(Solid_Register_Data_Type)+1)) == true) 
+//			 && (Xor_Check((uint8_t*)(&(p_rom_data_temp_struct->solid_data_cell_struct.solid_param_data_struct)),(sizeof(Solid_Parameters_Data_Type)+1)) == true) 
+//			 && (Xor_Check(p_rom_data_temp_struct->solid_data_cell_struct.aes_key,(AES_KEY_LEN+1)) == true)
+//			)
+//		{
+//		#if SEGGER_RTT_DEBUG_FLASH	
+//				SEGGER_RTT_printf(0, "store solid rom data true!\r\n");
+//		#endif
+//				return true;
+//		}
 #if SEGGER_RTT_DEBUG_FLASH
 		SEGGER_RTT_printf(0, "store solid rom data false!\r\n");
 #endif
@@ -85,13 +85,15 @@ bool Store_Solid_Romdata(void)
 		p_solid_data_struct->solid_data_cell_struct.writed1 = 0xaa;
 		p_solid_data_struct->solid_data_cell_struct.writed2 = 0xaa;
 	
-//		memcpy((uint8_t*)(&(p_solid_data_struct->solid_data_cell_struct.solid_register_data_struct)), &Register_Package_Struct, sizeof(Register_Package_Type));
-//	
-//		memcpy((uint8_t*)(&(p_solid_data_struct->solid_data_cell_struct.solid_param_data_struct)), &Net_Parameters_Struct, sizeof(Net_Parameters_Type));
-//	
 		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_aes128key, useraeskeybuf, AES_KEY_LEN);
 	
-		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_imei, useraeskeybuf, IMEI_LEN);
+		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_imei, NB_CommPacket.AuthData.imei, IMEI_LEN);
+	
+		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_iccid, NB_CommPacket.AuthData.iccid, ICCID_LEN);
+		
+		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_ip, NB_NetPar.ServerIp, SERVER_IP_LEN);
+		
+		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_apn, NB_NetPar.ServerApn, SERVER_APN_LEN);
 	
 		p_solid_data_struct->solid_data_cell_struct.solid_data_cell_xor = Get_Xor((uint8_t*)(&solid_data_struct), sizeof(Rom_Data_Type));
 		

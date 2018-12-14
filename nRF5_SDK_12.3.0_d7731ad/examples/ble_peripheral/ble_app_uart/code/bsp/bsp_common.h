@@ -3,23 +3,23 @@
 
 #include "global.h"
 
-#include "bsp_system.h"
-#include "bsp_timer.h"
-#include "bsp_ble_trans.h"
-#include "bsp_led.h"
-#include "bsp_var.h"
-#include "bsp_mem.h"
-#include "bsp_gpio.h"
-#include "bsp_my_uart.h"
-#include "bsp_motor.h"
-#include "bsp_flash_rw.h"
-#if SEGGER_RTT_DEBUG_BLUETOOTH
-#include "bsp_rtt_debug.h"
-#endif
+//#include "bsp_system.h"
+//#include "bsp_timer.h"
+//#include "bsp_ble_trans.h"
+//#include "bsp_led.h"
+//#include "bsp_var.h"
+//#include "bsp_mem.h"
+//#include "bsp_gpio.h"
+//#include "bsp_my_uart.h"
+//#include "bsp_motor.h"
+//#include "bsp_flash_rw.h"
+//#if SEGGER_RTT_DEBUG_BLUETOOTH
+//#include "bsp_rtt_debug.h"
+//#endif
 
 
-#include "app_common.h"
-#include "task_common.h"
+//#include "app_common.h"
+//#include "task_common.h"
 
 
 typedef struct

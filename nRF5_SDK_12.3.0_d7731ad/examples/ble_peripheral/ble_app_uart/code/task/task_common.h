@@ -3,17 +3,17 @@
 
 #include "global.h"
 
-#include "task_safeguard.h"
-#include "task_control.h"
-#include "task_measure.h"
-#include "task_mem_read.h"
-#include "task_mem_write.h"
-#include "task_bluetooth.h"
-#include "task_communicate.h"
-#include "task_other.h"
+//#include "task_safeguard.h"
+//#include "task_control.h"
+//#include "task_measure.h"
+//#include "task_mem_read.h"
+//#include "task_mem_write.h"
+//#include "task_bluetooth.h"
+//#include "task_communicate.h"
+//#include "task_other.h"
 
-#include "bsp_common.h"
-#include "app_common.h"
+//#include "bsp_common.h"
+//#include "app_common.h"
 
 #define TASK0                         SG_Task
 #define TASK1                         Contrl_Task

@@ -13,6 +13,14 @@
 #ifndef  __MAIN_H
 #define  __MAIN_H
 
+#define AES_KEY_LEN                         (16)
+
+#define IMEI_LEN                            (16)
+#define ICCID_LEN                           (32)
+
+#define SERVER_APN_LEN                      (16)
+#define SERVER_IP_LEN                       (32)
+
 #include <stdint.h>
 #include <stdbool.h>
 //#include <stdio.h>

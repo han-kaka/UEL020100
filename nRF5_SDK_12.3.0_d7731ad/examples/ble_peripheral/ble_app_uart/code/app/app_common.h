@@ -3,12 +3,12 @@
 
 #include "global.h"
 
-#include "app_user.h"
-#include "app_comm_ble.h"
-#include "app_comm_NB86.h"
+//#include "app_user.h"
+//#include "app_comm_ble.h"
+//#include "app_comm_NB86.h"
 
-#include "bsp_common.h"
-#include "task_common.h"
+//#include "bsp_common.h"
+//#include "task_common.h"
 
 #define TASK_ALL                       0xff
 
