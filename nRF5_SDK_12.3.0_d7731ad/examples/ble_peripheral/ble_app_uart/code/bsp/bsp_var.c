@@ -24,7 +24,7 @@ static void Net_Par_Config(void)
     strcpy((char*)NB_NetPar.ServerApn, SERVER_APN_DEFAULT);
     NB_NetPar.ServerPort     = SERVER_PORT_DEFAULT;
     NB_NetPar.ulReportPeriod = REPORT_PERIOD_DEFAULT;
-		NB_NetPar.NetProtocol    = NET_PROTOCOL_DEFAULT;
+//		NB_NetPar.NetProtocol    = NET_PROTOCOL_DEFAULT;
     NB_NetPar.NetType        = NET_NO_NET;
 }
 

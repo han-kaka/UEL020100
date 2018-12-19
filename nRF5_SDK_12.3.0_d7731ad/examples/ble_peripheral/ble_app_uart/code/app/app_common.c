@@ -203,6 +203,31 @@ uint8_t CntLeadZeros(uint8_t ucData)
 //	 return location;
 //}
 
+uint8_t Get_Symbol(uint8_t num_symbol, uint8_t *buf, char symbol)
+{
+	 uint8_t i=0;
+	 uint8_t j=0;
+	 uint8_t len=0;
+	 char str = symbol;
+	 uint8_t location=0;
+	 uint8_t *p_buf=buf;
+	 len=strlen((char *)p_buf);
+	 for(i=0;i<num_symbol;i++)
+	 {
+		  while(p_buf[j]!=str)
+			{
+				 j++;
+				 if(j>=len)
+				 {
+					  return false;
+				 }
+			}
+			j+=1;
+			location=j;
+	 }
+	 return location;
+}
+
 uint8_t Get_Comma(uint8_t num_comma, uint8_t *buf)
 {
 	 uint8_t i=0;

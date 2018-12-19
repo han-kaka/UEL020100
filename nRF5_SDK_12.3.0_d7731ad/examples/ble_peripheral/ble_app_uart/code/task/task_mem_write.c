@@ -10,7 +10,7 @@ uint8_t MEM_Write_Task(uint8_t prio)
         { 
             case MEM_STORE_SOLID_ROMDATA:   
             {
-								Store_Solid_Romdata();
+//								Store_Solid_Romdata();
             }
                 break;  
             case MEM_STORE_DYNAMIC_ROMDATA:   

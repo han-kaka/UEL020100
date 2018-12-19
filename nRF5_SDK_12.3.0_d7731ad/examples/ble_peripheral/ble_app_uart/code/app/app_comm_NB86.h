@@ -112,8 +112,8 @@
 
 /*******默认网络连接情况*********/	 
 #define NET_PROTOCOL_DEFAULT        NET_PROTOCOL_TCP
-#define SERVER_APN_DEFAULT          "cmiot"
-#define SERVER_IP_DEFAULT           "120.77.174.116"
+#define SERVER_APN_DEFAULT          "ctnb"
+#define SERVER_IP_DEFAULT           "180.101.147.115"
 #define SERVER_PORT_DEFAULT         (9292U)
 #define REPORT_PERIOD_DEFAULT       (30U)
 
@@ -122,7 +122,7 @@
 
 ///*********************BUFF LEN***********************/
 //#define GPRS_RTY_MESS_LEN         (40)
-#define GPRS_RX_BUFF_LEN          (100)
+#define NB_RX_BUFF_LEN          (100)
 
 
 #define NB_SendATCmdStr(pTxBuff, usLen)	        myuart_send(pTxBuff, usLen)
@@ -178,14 +178,17 @@ typedef enum
 		NB_STATE_WAIT_ACK,
 		NB_STATE_MAX,
    
-}GPRS_STATE;
+}NB_STATE;
 
 //---------GPRS模块通讯的数据ID-----------
 typedef enum 
 {
-		UPLOAD_ID_AUTH = 0,          //发送登录包
-		UPLOAD_ID_STA_MESS,          //发送状态信息包
-		UPLOAD_ID_HEARTBEAT,         //发送心跳包
+//		UPLOAD_ID_AUTH = 0,          //发送登录包
+//		UPLOAD_ID_STA_MESS,          //发送状态信息包
+//		UPLOAD_ID_HEARTBEAT,         //发送心跳包
+	
+		UPLOAD_ID_INIT = 0,          //发送登录包
+		UPLOAD_ID_LOG,               //发送状态信息包
 		UPLOAD_ID_MAX,
 		UPLOAD_ID_INVALID = 0xFF,
 
@@ -193,14 +196,14 @@ typedef enum
 
 typedef enum 
 {
-		RETURN_ID_SET_PARMTE=0,
-		RETURN_ID_QUERY_PARMTE,
-		RETURN_ID_READ_MESS,
-		RETURN_ID_CTROL,
-		RETURN_ID_WRITE_ADDR,
-		RETURN_ID_READ_ADDR,
-		RETURN_ID_READ_STA_MESS,
-		RETURN_ID_SYS_PARMTE_SET,
+//		RETURN_ID_SET_PARMTE=0,
+//		RETURN_ID_QUERY_PARMTE,
+//		RETURN_ID_READ_MESS,
+//		RETURN_ID_CTROL,
+//		RETURN_ID_WRITE_ADDR,
+//		RETURN_ID_READ_ADDR,
+//		RETURN_ID_READ_STA_MESS,
+//		RETURN_ID_SYS_PARMTE_SET,
 		RETURN_ID_MAX,
 		RETURN_ID_INVALID = 0xFF,
 
@@ -209,18 +212,21 @@ typedef enum
 
 typedef enum 
 {
-		COMM_Event_AUTH             = (0x01 << UPLOAD_ID_AUTH),                  //发送登录包
-		COMM_Event_STA_MESS         = (0x01 << UPLOAD_ID_STA_MESS),              //发送状态信息包
-		COMM_Event_HEARTBEAT        = (0x01 << UPLOAD_ID_HEARTBEAT),             //发送心跳包
+//		COMM_Event_AUTH             = (0x01 << UPLOAD_ID_AUTH),                  //发送登录包
+//		COMM_Event_STA_MESS         = (0x01 << UPLOAD_ID_STA_MESS),              //发送状态信息包
+//		COMM_Event_HEARTBEAT        = (0x01 << UPLOAD_ID_HEARTBEAT),             //发送心跳包
 	
-    COMM_Event_SET_PARMTE       = (0x01 << RETURN_ID_SET_PARMTE),            
-    COMM_Event_QUERY_PARMTE     = (0x01 << RETURN_ID_QUERY_PARMTE),
-    COMM_Event_READ_MESS        = (0x01 << RETURN_ID_READ_MESS),
-    COMM_Event_CTROL            = (0x01 << RETURN_ID_CTROL),
-    COMM_Event_WRITE_ADDR       = (0x01 << RETURN_ID_WRITE_ADDR),
-    COMM_Event_READ_ADDR        = (0x01 << RETURN_ID_READ_ADDR),
-    COMM_Event_READ_STA_MESS    = (0x01 << RETURN_ID_READ_STA_MESS),
-    COMM_Event_SYS_PARMTE_SET   = (0x01 << RETURN_ID_SYS_PARMTE_SET),
+		COMM_Event_INIT             = (0x01 << UPLOAD_ID_INIT),                  //发送登录包
+		COMM_Event_LOG              = (0x01 << UPLOAD_ID_LOG),                   //发送心跳包
+	
+//    COMM_Event_SET_PARMTE       = (0x01 << RETURN_ID_SET_PARMTE),            
+//    COMM_Event_QUERY_PARMTE     = (0x01 << RETURN_ID_QUERY_PARMTE),
+//    COMM_Event_READ_MESS        = (0x01 << RETURN_ID_READ_MESS),
+//    COMM_Event_CTROL            = (0x01 << RETURN_ID_CTROL),
+//    COMM_Event_WRITE_ADDR       = (0x01 << RETURN_ID_WRITE_ADDR),
+//    COMM_Event_READ_ADDR        = (0x01 << RETURN_ID_READ_ADDR),
+//    COMM_Event_READ_STA_MESS    = (0x01 << RETURN_ID_READ_STA_MESS),
+//    COMM_Event_SYS_PARMTE_SET   = (0x01 << RETURN_ID_SYS_PARMTE_SET),
 	
 }NB_COMM_Event;
 
@@ -446,9 +452,9 @@ typedef struct
 
 typedef struct
 {
-    uint8_t ucRespondEvt;
-    uint8_t ucDelayEvt;
-    uint8_t ucRetryEvt;
+//    uint8_t ucRespondEvt;
+//    uint8_t ucDelayEvt;
+//    uint8_t ucRetryEvt;
     uint8_t ucUploadEvt;
 }Event_Type;
 
@@ -462,11 +468,11 @@ typedef struct
 		uint32_t ulTimeOut;                  /*接收超时*/
 		uint8_t ATCmdResult;                 /*当前AT指令通讯结果*/
 		bool Busy;                           /*MCU与模块通讯忙碌标志*/
-		uint8_t CmdStr[GPRS_RX_BUFF_LEN];    /*当前发送的指令符*/
+		uint8_t CmdStr[NB_RX_BUFF_LEN];      /*当前发送的指令符*/
 		uint8_t ucCmdStrLen;                 /*当前指令长度*/
 		char ExpResultStr[20];               /*当前发送的指令符的期望结果*/
 		uint16_t ucByteTimeOut;              /*字节超时*/
-		uint8_t RxBuf[GPRS_RX_BUFF_LEN];     /*接收数据缓存*/
+		uint8_t RxBuf[NB_RX_BUFF_LEN];       /*接收数据缓存*/
 		uint8_t ucRxCnt;                     /*接收数据计数*/
 		uint8_t ucRxLen;                     /*接收数据长度*/
 		uint8_t RxFrameOk;                   /*指示一帧接收完整*/
@@ -481,13 +487,13 @@ typedef struct
 		uint8_t StepPt;                      /*step ponit*/
 		uint16_t ulDelayCnt;                 /*延时计数*/
 		uint16_t ulProcCtrTaskPer;           /*状态函数处理计数*/
-		uint8_t  ucCommEvent;                /*标记需要发送的数据包*/
-		uint8_t  ucSendType;                 /*标记发送类型*/
+		uint8_t ucCommEvent;                 /*标记需要发送的数据包*/
+		uint8_t ucSendType;                  /*标记发送类型*/
 		uint8_t ucStateEvent;                /*当前的事件状态*/
 		uint8_t ucDataID;                    /*标记正在发送的消息ID*/
 		uint8_t ucCommBusy;                  /*通信忙碌标记*/
-		uint8_t RxBuf[GPRS_RX_BUFF_LEN];     /*应用层接收到的数据*/
-		uint8_t TxBuf[GPRS_RX_BUFF_LEN];     /*应用层需要发送的数据*/
+		uint8_t RxBuf[NB_RX_BUFF_LEN];       /*应用层接收到的数据*/
+		uint8_t TxBuf[NB_RX_BUFF_LEN];       /*应用层需要发送的数据*/
 		uint8_t ucTxLen;                     /*应用层发送数据长度*/ 
 		uint8_t AuthStatus;                  /*终端登录/鉴权状态*/
 		NB_Tim_Type      TimProc;

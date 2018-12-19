@@ -5,7 +5,7 @@
 
 #define MS_TO_S                 (100)
 #define REWRITE_TIME            (180)
-#define RE_OPEN_STA_PROC_TIME   (120UL)
+#define RE_OPEN_STA_PROC_TIME   (3600UL)
 
 #define APP_RTC_TIMER_PRESCALER 0
 

@@ -337,13 +337,12 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
 						pSendbuf[sendLength++] = PROTOCOL_APP_ERR_NONE;
 						nrf_drv_rng_rand(tempkey, 16); 
-//						LL_PseudoRand( tempkey, 16 );
 						memcpy(pSendbuf + sendLength, tempkey, 16);
-//						osal_memcpy(pSendbuf + sendLength, tempkey, 16);
+						Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 						sendLength += 16;
 						f_tempkey = 1;
 						memset(buf, 0, 8);
-//						UserSaveAppData(P_EE_ADDR_TIMESTAMP, buf);
+						Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 				#if SEGGER_RTT_DEBUG_GET_AESKEY
 						SEGGER_RTT_printf(0, "sendLength = %d!\r\n", sendLength);
 				#endif

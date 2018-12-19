@@ -45,7 +45,7 @@ void m_clock_timeout_handler (void * p_context)
 								 }
 						}
 				}		
-				if(Task_Flag_Struct.closeStaProc != DISABLE) //重新打开GPRS状态处理计数
+				if(Task_Flag_Struct.closeStaProc != DISABLE) //重新打开NB状态处理计数
 				{
 						Tim_1s_Struct.reOpenStaProcCount++;
 						if(Tim_1s_Struct.reOpenStaProcCount >= RE_OPEN_STA_PROC_TIME)

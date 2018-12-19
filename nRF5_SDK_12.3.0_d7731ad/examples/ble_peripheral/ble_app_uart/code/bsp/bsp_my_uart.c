@@ -81,7 +81,7 @@ void init_uart_buf(void)
           SEGGER_RTT_printf(0, "%c", NB_ATCmdCB.RxBuf[NB_ATCmdCB.ucRxCnt-1]);
      #endif
 			
-				if(NB_ATCmdCB.ucRxCnt >= GPRS_RX_BUFF_LEN)
+				if(NB_ATCmdCB.ucRxCnt >= NB_RX_BUFF_LEN)
 				{
 						 NB_ATCmdCB.ucRxCnt = 0;
 				}

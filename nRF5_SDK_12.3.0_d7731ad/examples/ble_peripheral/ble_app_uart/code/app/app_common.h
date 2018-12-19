@@ -33,6 +33,7 @@ uint8_t clear_task(uint8_t prio, uint8_t m_SYS_SubTask_prio);
 
 bool Check_Strstr(char *data1, char *data2, uint16_t len);
 uint8_t CntLeadZeros(uint8_t ucData);
+uint8_t Get_Symbol(uint8_t num_symbol, uint8_t *buf, char symbol);
 uint8_t Get_Comma(uint8_t num_comma, uint8_t *buf);
 //u8* DecimalToASCII(u16 port,u8*data);
 uint8_t Get_Xor(uint8_t *hex_data_buf, uint16_t len_hex);

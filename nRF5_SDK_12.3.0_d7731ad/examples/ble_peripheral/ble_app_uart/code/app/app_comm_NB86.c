@@ -57,8 +57,8 @@ const NB_Cmd_Data_Type AT_CmdTbl[] =
 			{"AT+CGDCONT=1,\"IP\",\"ctnet\"\r\n",              3,       "OK",                     3},
 			{"AT+CGATT=1\r\n",                                 3,       "OK",                     3},
 			{"AT+CGATT=0\r\n",                                 3,       "OK",                     3},
-			{"AT+CGATT?\r\n",                                  5,       "CGATT:1",               20},	
-			{"AT+CGATT?\r\n",                                  5,       "CGATT:0",               20},	
+			{"AT+CGATT?\r\n",                                  5,       "CGATT:1",               5},	
+			{"AT+CGATT?\r\n",                                  5,       "CGATT:0",               5},	
 			{"AT+CPSMS=1,,,01000011,01000011\r\n",             3,       "OK",                     3},
 			{"AT+CEDRXS=0,5,0101\r\n",                         3,       "OK",                     3},
 			{"AT+NPSMR=1\r\n",                                 3,       "OK",                     3},
@@ -89,6 +89,7 @@ static const uint8_t s_ATCmdStep_Init[] =
 static const uint8_t s_ATCmdStep_Connnect[] = 
 {
 		NB_AT_CGDCONT,
+		NB_AT_CSQ,
 		NB_AT_CGATT_1,
 		NB_AT_CGATT1,	
 	  NB_AT_CFUN_0, 
@@ -886,9 +887,10 @@ static void APP_NB_State_Connect_Proc(uint8_t *RxBuf)
 
 static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 {
+		uint8_t i;
 		uint8_t ATCmdIndex;
-		uint8_t asi_len=0;
-		char *str = "898";
+//		uint8_t asi_len=0;
+//		char *str = "898";
 		char *p   = NULL;
 		if(g_stNB_Handler.StepPt >= MESS_STEP_NUM)
 		{
@@ -903,17 +905,58 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 						case NB_AT_CGSN_1:
 						{
 								//save cgsn
-//								NB_CommPacket.MessRead.CSQ = Get_Uint_Data((char*)&RxBuf[Get_Comma(1, RxBuf)] - 3);
+								p = strstr((char*)RxBuf, "CGSN:");
+								#if SEGGER_RTT_DEBUG_MESS
+										SEGGER_RTT_printf(0, "cmd cgsn\r\n");
+								#endif
+								if(p != NULL)
+								{
+										for (i = 0; i < 16; i ++)
+										{
+												if (((p[5 + i] < '0') || (p[5 + i] > '9')) && 
+														((p[5 + i] < 'a') || (p[5 + i] > 'z')) && 
+														((p[5 + i] < 'A') || (p[5 + i] > 'Z')))
+												{
+														break;
+												}
+										}
+										if (i < 16) p[5 + i] = 0x00;
+										memcpy(NB_CommPacket.AuthData.imei, p+5, i);
+								#if SEGGER_RTT_DEBUG_MESS
+										SEGGER_RTT_printf(0, "len = %u, imei:%s. \r\n", i, NB_CommPacket.AuthData.imei);
+								#endif
+										//Ascii_To_Hex(p, NB_CommPacket.AuthData.imei, (uint16_t)asi_len); 
+										Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+								}
 						}
 								break;	
 						
 						case NB_AT_NCCID:
 						{
-								//获取ICCID
-//								p=strstr((char*)RxBuf,str);
-//								asi_len = strlen(p);
-//								if(asi_len > 20) asi_len = 20;    
-//								Ascii_To_Hex(p, NB_CommPacket.AuthData.iccid, (uint16_t)asi_len); 
+								//save nccid
+								p=strstr((char*)RxBuf, "NCCID:");
+								#if SEGGER_RTT_DEBUG_MESS
+										SEGGER_RTT_printf(0, "cmd nccid\r\n");
+								#endif
+								if(p != NULL)
+								{
+										for (i = 0; i < 32; i ++)
+										{
+												if (((p[6 + i] < '0') || (p[6 + i] > '9')) && 
+														((p[6 + i] < 'a') || (p[6 + i] > 'z')) && 
+														((p[6 + i] < 'A') || (p[6 + i] > 'Z')))
+												{
+														break;
+												}
+										}
+										if (i < 32) p[6 + i] = 0x00;
+										
+										memcpy(NB_CommPacket.AuthData.iccid, p+6, i);
+								#if SEGGER_RTT_DEBUG_MESS
+										SEGGER_RTT_printf(0, "len = %u, nccid:%s. \r\n", i, NB_CommPacket.AuthData.iccid);
+								#endif
+										Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+								}
 						}
 								break;	
 				
@@ -1226,35 +1269,41 @@ static void APP_NB_State_Comm_Proc(uint8_t *RxBuf)
 static void APP_NB_EventProc(uint8_t surEvt, uint8_t* objEvt)
 {
     uint8_t ucID=0;
-    if(NB_Event_IsEmpty(surEvt)== false)
+    if(false == NB_Event_IsEmpty(surEvt)) 
     {
-          ucID = Get_CommEvent(surEvt);
-          NB_Event_Set(*objEvt,(1<<ucID));
+				ucID = Get_CommEvent(surEvt);
+				NB_Event_Set(*objEvt, (1<<ucID));
     }
 }
 
 static uint8_t APP_NB_EvtTraverse(uint8_t mode)
 {    
-    if(NB_Event_IsEmpty(NB_EvtProc.ucRespondEvt) == false)
+//    if(false == NB_Event_IsEmpty(NB_EvtProc.ucRespondEvt))
+//    {
+//        if(mode == TRAVERSE_AND_ADDEVT)  APP_NB_EventProc(NB_EvtProc.ucRespondEvt,&g_stNB_Handler.ucCommEvent);
+//        return RESPOND_TYPE;
+//    }
+//    else if(false == NB_Event_IsEmpty(NB_EvtProc.ucDelayEvt))
+//    {        
+//        if(NB_Event_IsEmpty(NB_EvtProc.ucRetryEvt)== false)
+//        {
+//            if(mode == TRAVERSE_AND_ADDEVT)  APP_NB_EventProc(NB_EvtProc.ucRetryEvt,&g_stNB_Handler.ucCommEvent);
+//            return RTY_TYPE;
+//        }
+//        return 0;
+//    }
+//    else if(false == NB_Event_IsEmpty(NB_EvtProc.ucUploadEvt))
+//    {
+//        if(mode == TRAVERSE_AND_ADDEVT)  APP_NB_EventProc(NB_EvtProc.ucUploadEvt,&g_stNB_Handler.ucCommEvent);
+//        return UPLOAD_TYPE;
+//    }
+	
+    if(false == NB_Event_IsEmpty(NB_EvtProc.ucUploadEvt))
     {
-        if(mode == TRAVERSE_AND_ADDEVT)  APP_NB_EventProc(NB_EvtProc.ucRespondEvt,&g_stNB_Handler.ucCommEvent);
-        return RESPOND_TYPE;
-    }
-    else if(NB_Event_IsEmpty(NB_EvtProc.ucDelayEvt)== false)
-    {        
-        if(NB_Event_IsEmpty(NB_EvtProc.ucRetryEvt)== false)
-        {
-            if(mode == TRAVERSE_AND_ADDEVT)  APP_NB_EventProc(NB_EvtProc.ucRetryEvt,&g_stNB_Handler.ucCommEvent);
-            return RTY_TYPE;
-        }
-        return 0;
-    }
-    else if(NB_Event_IsEmpty(NB_EvtProc.ucUploadEvt)== false)
-    {
-        if(mode == TRAVERSE_AND_ADDEVT)  APP_NB_EventProc(NB_EvtProc.ucUploadEvt,&g_stNB_Handler.ucCommEvent);
+        if(mode == TRAVERSE_AND_ADDEVT)  APP_NB_EventProc(NB_EvtProc.ucUploadEvt, &g_stNB_Handler.ucCommEvent);
         return UPLOAD_TYPE;
     }
-    else if(NB_Event_IsEmpty(g_stNB_Handler.ucCommEvent)== false)
+    else if(false == NB_Event_IsEmpty(g_stNB_Handler.ucCommEvent))
     {
         //理论上程序无法运行到这里
         g_stNB_Handler.ucCommEvent = 0;
@@ -1274,12 +1323,12 @@ static void APP_NB_Reset_Init(void)
 {                 
     //延时事件添加至主动上传事件中
     //需把延时事件全部添加至主动上传事件中
-    APP_NB_EventProc(NB_EvtProc.ucDelayEvt, &NB_EvtProc.ucUploadEvt);  
+//    APP_NB_EventProc(NB_EvtProc.ucDelayEvt, &NB_EvtProc.ucUploadEvt);  
     g_stNB_Handler.AuthStatus = NOT_AUTH;
-    NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_AUTH);
-    NB_EvtProc.ucRespondEvt =0;
-    NB_EvtProc.ucRetryEvt =0;
-    NB_EvtProc.ucDelayEvt =0;
+    NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_INIT);
+//    NB_EvtProc.ucRespondEvt =0;
+//    NB_EvtProc.ucRetryEvt =0;
+//    NB_EvtProc.ucDelayEvt =0;
     g_stNB_Handler.ucCommEvent = 0;
     NB_NetPar.NetType = NET_NO_NET;           //无网络状态连接
     NB_NetPar.NetConnSta = CONN_OFF;
@@ -1295,7 +1344,7 @@ void APP_COMM_Init(void)
 		g_stNB_Handler.StateOld = NB_STATE_POWER_ON; 
 		g_stNB_Handler.StepPt = 0;
 		g_stNB_Handler.AuthStatus = NOT_AUTH;
-		//NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_AUTH);//上电需发送一个登录包
+		NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_INIT);//上电需发送一个登录包
 		Set_Task(COMM, COMM_STATE_PROC);     //启动GPRS状态处理任务
 }
 
@@ -1332,7 +1381,7 @@ void APP_NB_TimeProc(uint16_t usPeriod)
     {
         g_stNB_Handler.ulDelayCnt = 0;
     }
-		 /*****************CPRS 模块状态处理函数*************************/	
+		 /*****************NB 模块状态处理函数*************************/	
 		g_stNB_Handler.ulProcCtrTaskPer += usPeriod;
 		if(g_stNB_Handler.ulProcCtrTaskPer >= SUB_TASK_PROCCTR_PER)
 		{
@@ -1342,25 +1391,25 @@ void APP_NB_TimeProc(uint16_t usPeriod)
 		if(NB_msCount >= NB_MS_TO_S)   //ms to S
 		{
 				NB_msCount =0;
-				/*****************CPRS 模块重传处理*************************/
-				if(NB_RetryCtrol.rtycntEn != DISABLE)
-				{
-						NB_RetryCtrol.rtyTimCount++;
-						if(NB_RetryCtrol.rtyTimCount >= NB_RetryCtrol.rtyTime)
-						{
-								NB_RetryCtrol.rtyTimCount=0;
-								NB_RetryCtrol.rtycntEn = DISABLE;
-								APP_NB_EventProc(NB_EvtProc.ucDelayEvt,&NB_EvtProc.ucRetryEvt);
-						}
-				}
-				/*****************心跳包处理*************************/
+//				/**************** NB 模块重传处理*************************/
+//				if(NB_RetryCtrol.rtycntEn != DISABLE)
+//				{
+//						NB_RetryCtrol.rtyTimCount++;
+//						if(NB_RetryCtrol.rtyTimCount >= NB_RetryCtrol.rtyTime)
+//						{
+//								NB_RetryCtrol.rtyTimCount=0;
+//								NB_RetryCtrol.rtycntEn = DISABLE;
+//								APP_NB_EventProc(NB_EvtProc.ucDelayEvt,&NB_EvtProc.ucRetryEvt);
+//						}
+//				}
+				/***************** 心跳包处理 *************************/
 				if((NB_NetPar.NetConnSta   == CONN_ON) && (AUTH == g_stNB_Handler.AuthStatus))  /*心跳包*/
 				{
 						NB_TimProc.heartbeatCount++;
 						if(NB_TimProc.heartbeatCount >= HEARTBEAT_TIME)
 						{
 								NB_TimProc.heartbeatCount = 0;
-								NB_Event_Set(NB_EvtProc.ucUploadEvt,COMM_Event_HEARTBEAT);
+//								NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_HEARTBEAT);
 						}
 				}
 		}
@@ -1456,21 +1505,16 @@ void APP_SubTask_StateProc(void)
 								SEGGER_RTT_printf(0, "clear nb poweron and reset !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
-								g_stNB_Handler.ulDelayCnt = 10;      //拉低10ms
+								g_stNB_Handler.ulDelayCnt = 1200;      //拉低1.2s
 						}
             else if(1 == g_stNB_Handler.StepPt)
 						{
-                 // G510 Power on流程：
-                 // ___         ___
-                 //    |_______|
-                 //     800ms
-                 //   电路转换 高->低；低->高
 								BSP_NB_POWERON_SET;
 						#if SEGGER_RTT_DEBUG_POWER_ON
 								SEGGER_RTT_printf(0, "set nb poweron !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
-								g_stNB_Handler.ulDelayCnt = 10;      //拉低10ms
+								g_stNB_Handler.ulDelayCnt = 100;  //拉高10ms
 								LED_Status = CONN_INDI;            //正在联网LED指示
 						}
 						else if(2 == g_stNB_Handler.StepPt)
@@ -1480,7 +1524,7 @@ void APP_SubTask_StateProc(void)
 								SEGGER_RTT_printf(0, "set nb reset !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
-								g_stNB_Handler.ulDelayCnt = 50; //等待50ms后再操作GPRS模块
+								g_stNB_Handler.ulDelayCnt = 7000; //等待50ms后再操作NB模块
 						}
 						else//next state
 						{
@@ -1553,7 +1597,7 @@ void APP_SubTask_StateProc(void)
 								SEGGER_RTT_printf(0, "init wait nb start !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
-								g_stNB_Handler.ulDelayCnt = 20000; //20S GPRS AT准备就绪超时时间
+								g_stNB_Handler.ulDelayCnt = 20000; //20S NB AT准备就绪超时时间
 						}
 						else
 						{

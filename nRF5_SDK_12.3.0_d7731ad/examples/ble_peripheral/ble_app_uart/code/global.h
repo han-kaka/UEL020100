@@ -27,7 +27,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 
 //#define MY_WRITE_REG(REG, VAL)   ((REG) = (VAL))
 
-#define MY_READ_REG(REG)         ((REG))
+#define MY_READ_REG(REG)          ((REG))
 
 #define NumberOfElements(x) (sizeof(x)/sizeof((x)[0]))
 

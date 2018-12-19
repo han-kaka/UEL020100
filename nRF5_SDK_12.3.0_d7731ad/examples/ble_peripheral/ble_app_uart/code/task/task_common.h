@@ -19,9 +19,9 @@
 #define TASK1                         Contrl_Task
 #define TASK2                         Measure_Task
 #define TASK3                         MEM_Read_Task
-#define TASK4                         MEM_Write_Task
-#define TASK5                         BlueTooth_Task
-#define TASK6                         COMM_Task
+#define TASK4                         BlueTooth_Task
+#define TASK5                         COMM_Task
+#define TASK6                         MEM_Write_Task
 #define TASK7                         Other_Task
 
 
@@ -50,17 +50,13 @@
 #define MEM_SYS_FAULT_STATE_RECOVER   5
 #define MEM_SYS_RTC_RECOVER           6
 
-#define MEM_WRITE                     4                             //数据存储任务4
-#define MEM_STORE_SOLID_ROMDATA       0                             //固定数据存储任务0
-#define MEM_STORE_DYNAMIC_ROMDATA     1                             //动态数据存储任务1
-
-#define BLUETOOTH                     5                             //蓝牙任务5
+#define BLUETOOTH                     4                             //蓝牙任务5
 #define BLUETOOTH_PARSE_PROTOCOL      0                             //数据协议解析任务0
 #define BLUETOOTH_CRC_CHECK           1                             //数据crc校验任务1
 #define BLUETOOTH_AES_DECODE          2                             //数据解密任务2
 #define BLUETOOTH_PROCESS_CMD         3                             //解析指令任务3
 
-#define COMM                          6                             //NB通讯任务6  
+#define COMM                          5                             //NB通讯任务6  
 #define COMM_CMD_PROC                 0
 #define COMM_STATE_PROC               1
 #define COMM_DECODE                   2
@@ -68,9 +64,9 @@
 #define COMM_PC_RETURN  		      		4
 #define COMM_CHECK                    5
 
-#define COMM_G510_DECODE              5
-#define COMM_G510_RETURN  		      	6
-#define COMM_G510_UPLOAD		      		7
+#define MEM_WRITE                     6                             //数据存储任务4
+#define MEM_STORE_SOLID_ROMDATA       0                             //固定数据存储任务0
+#define MEM_STORE_DYNAMIC_ROMDATA     1                             //动态数据存储任务1
 
 #define OTHER                         7                             //其他任务
 
