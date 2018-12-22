@@ -46,8 +46,11 @@
 
 ///*****************************************************************/
 
-///************************包相关信息**********************************/
-////登录包相关信息
+/************************包相关信息**********************************/
+//登录包相关信息
+#define INIT_ID                   0xb010
+#define AUTH_CTROL_CODE                 0xa3
+#define AUTH_LEN    
 //#define AUTHENTICA_ID                   0xb010
 //#define AUTH_CTROL_CODE                 0xa3
 //#define AUTH_LEN                        0x09
@@ -103,7 +106,7 @@
 //#define SYS_PARMTE_SET_CTROL_CODE       0xa0
 //#define SYS_PARMTE_SET_LEN              0x03
 
-///*****************************************************************/
+/*****************************************************************/
 
 
 /***********各个子任务的运行周期*************************/
@@ -158,8 +161,6 @@
 #define NB_Event_Get(Event,Bit)                   MY_READ_BIT(Event, Bit)
 #define NB_Event_Set(Event,Bit)                   MY_SET_BIT(Event, Bit)
 #define NB_Event_Clr(Event,Bit)                   MY_CLEAR_BIT(Event, Bit)
-
-
 
 #define Get_CommEvent(Event)                        CntLeadZeros(Event)
 #define Get_NextState(Event)                        CntLeadZeros(Event)

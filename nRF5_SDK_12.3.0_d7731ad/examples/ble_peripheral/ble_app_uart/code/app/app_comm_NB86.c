@@ -1,5 +1,6 @@
 #include "app_comm_NB86.h"
 #include "nrf_drv_gpiote.h"
+//#include "nrf_delay.h"
 
 static uint16_t NB_msCount = 0;
 
@@ -57,8 +58,8 @@ const NB_Cmd_Data_Type AT_CmdTbl[] =
 			{"AT+CGDCONT=1,\"IP\",\"ctnet\"\r\n",              3,       "OK",                     3},
 			{"AT+CGATT=1\r\n",                                 3,       "OK",                     3},
 			{"AT+CGATT=0\r\n",                                 3,       "OK",                     3},
-			{"AT+CGATT?\r\n",                                  5,       "CGATT:1",               5},	
-			{"AT+CGATT?\r\n",                                  5,       "CGATT:0",               5},	
+			{"AT+CGATT?\r\n",                                  5,       "CGATT:1",               20},	
+			{"AT+CGATT?\r\n",                                  5,       "CGATT:0",               20},	
 			{"AT+CPSMS=1,,,01000011,01000011\r\n",             3,       "OK",                     3},
 			{"AT+CEDRXS=0,5,0101\r\n",                         3,       "OK",                     3},
 			{"AT+NPSMR=1\r\n",                                 3,       "OK",                     3},
@@ -337,8 +338,9 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 //    Packet[i++] = (GPRS_SysStaMess.refVolt) & 0xff;
 //    *num = i;
 //}
-//static U16 APP_GPRS_GetPacket(u16 messID,U8 ctrolcode,U8 datalen,U8* Packet)
-//{
+
+static uint16_t APP_NB_GetPacket(uint16_t messID, uint8_t ctrolcode, uint8_t datalen, uint8_t* Packet)
+{
 //    U8 i=0,j=0;
 //    U8 check=0;
 //    U8 ipLen=0;
@@ -360,8 +362,8 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 //    TxBuf[i++] = datalen&0xff;
 //    TxBuf[i++] = (messID>>8)&0xff;
 //    TxBuf[i++] = messID&0xff;
-//    switch(messID)
-//    {
+    switch(messID)
+    {
 //       case AUTHENTICA_ID:
 //       {
 //           TxBuf[i++] = PacketHead.TerminalMeageFlowNum;
@@ -369,7 +371,6 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 //           {
 //               TxBuf[i++] = GPRS_CommPacket.AuthData.iccid[j+4];
 //           }
-//           
 //       }
 //       break;
 //       
@@ -479,7 +480,7 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 //           //·µ»ØÊý¾ÝÄÚÈÝÎª¿Õ
 //       }
 //       break;
-//    }
+    }
 //    check = Get_Xor(TxBuf,i); //¼ÆËãÐ£ÑéºÍ
 //    TxBuf[i++] = check&0xff;
 //#if DEBUG_RTY_FUN
@@ -502,8 +503,7 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 //    TxBuf[i++] = FRAME_END;
 //    APP_GPRS_Encrypt(TxBuf,i,Packet,&newLen);
 //    return   (U16)newLen;
-//    
-//}
+}
 
 static void APP_NB_RetryMessInit(void)
 {
@@ -616,7 +616,33 @@ static uint16_t APP_NB_WriteDataIDPacket(uint8_t DataID, uint8_t* Packet)
 {
     uint16_t usPacketLen = 0;
 		switch(DataID)
-		{    
+		{   
+				case UPLOAD_ID_INIT:
+				{
+//						usPacketLen = APP_NB_GetPacket(AUTHENTICA_ID, AUTH_CTROL_CODE, AUTH_LEN, Packet);
+//				#if CONFIG_RETRY_COPY            
+//						GPRS_RetryCtrol.rtyLen = usPacketLen;                   //ÏûÏ¢³¤¶È±¸·Ý
+//						memcpy(GPRS_RetryCtrol.rtyBuff,Packet,usPacketLen);     //ÏûÏ¢±¸·Ý   
+//				#endif
+				#if SEGGER_RTT_DEBUG_MESS
+						SEGGER_RTT_printf(0, "init mess upload\r\n");
+				#endif
+				}
+						break;
+		
+				case UPLOAD_ID_LOG:
+				{
+//						usPacketLen = APP_NB_GetPacket(AUTHENTICA_ID, AUTH_CTROL_CODE, AUTH_LEN, Packet);
+//				#if CONFIG_RETRY_COPY            
+//						GPRS_RetryCtrol.rtyLen = usPacketLen;                   //ÏûÏ¢³¤¶È±¸·Ý
+//						memcpy(GPRS_RetryCtrol.rtyBuff,Packet,usPacketLen);     //ÏûÏ¢±¸·Ý   
+//				#endif
+				#if SEGGER_RTT_DEBUG_MESS
+						SEGGER_RTT_printf(0, "log mess upload\r\n");
+				#endif
+				}
+						break;
+				
 //				case UPLOAD_ID_AUTH:
 //				{
 //						usPacketLen = APP_GPRS_GetPacket(AUTHENTICA_ID,AUTH_CTROL_CODE,AUTH_LEN,Packet);
@@ -841,7 +867,7 @@ static void APP_NB_State_Connect_Proc(uint8_t *RxBuf)
 				g_stNB_Handler.StepPt++;
 				if(g_stNB_Handler.StepPt >= CONNECT_STEP_NUM)
 				{
-						////// GPRSÄ£¿é×´Ì¬ÇÐ»» ///////////////
+						////// NBÄ£¿é×´Ì¬ÇÐ»» ///////////////
 						g_stNB_Handler.State = NB_STATE_IDLE;//ÇÐ»»µ½ÏÂÒ»¸öÁ÷³Ì
 						g_stNB_Handler.StepPt = 0;//clr step
 						NB_NetPar.NetConnSta = CONN_ON;
@@ -967,7 +993,7 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 				g_stNB_Handler.StepPt++;
 				if(g_stNB_Handler.StepPt >= MESS_STEP_NUM)
 				{
-						////// GPRSÄ£¿é×´Ì¬ÇÐ»» ///////////////
+						////// NBÄ£¿é×´Ì¬ÇÐ»» ///////////////
 						g_stNB_Handler.State = NB_STATE_CONNECT_NET;//ÇÐ»»µ½ÏÂÒ»¸öÁ÷³Ì
 						g_stNB_Handler.StepPt = 0;     //clr step
 				}
@@ -1307,9 +1333,9 @@ static uint8_t APP_NB_EvtTraverse(uint8_t mode)
     {
         //ÀíÂÛÉÏ³ÌÐòÎÞ·¨ÔËÐÐµ½ÕâÀï
         g_stNB_Handler.ucCommEvent = 0;
-        #if SEGGER_RTT_DEBUG_NB86
-             SEGGER_RTT_printf(0, "Event is Error \r\n");
-        #endif
+    #if SEGGER_RTT_DEBUG_NB86
+        SEGGER_RTT_printf(0, "Event is Error \r\n");
+    #endif
         return 0;
     }
     else
@@ -1344,6 +1370,11 @@ void APP_COMM_Init(void)
 		g_stNB_Handler.StateOld = NB_STATE_POWER_ON; 
 		g_stNB_Handler.StepPt = 0;
 		g_stNB_Handler.AuthStatus = NOT_AUTH;
+//		BSP_NB_POWERON_SET;
+//		nrf_delay_us(1000); 
+//		BSP_NB_RESET_SET
+//		while(1)
+//		{}
 		NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_INIT);//ÉÏµçÐè·¢ËÍÒ»¸öµÇÂ¼°ü
 		Set_Task(COMM, COMM_STATE_PROC);     //Æô¶¯GPRS×´Ì¬´¦ÀíÈÎÎñ
 }
@@ -1372,7 +1403,7 @@ void APP_NB_TimeProc(uint16_t usPeriod)
 						Set_Task(COMM, COMM_CMD_PROC);
 				}
 		}
-		/*****************GPRSÄ£¿éÑÓÊ±¼ÆÊý*************************/
+		/***************** NB Ä£¿éÑÓÊ±¼ÆÊ ý*************************/
 		if(g_stNB_Handler.ulDelayCnt >= usPeriod)    
 		{
 				g_stNB_Handler.ulDelayCnt -= usPeriod;
@@ -1579,8 +1610,8 @@ void APP_SubTask_StateProc(void)
 										SEGGER_RTT_printf(0, "Close State Proc\r\n");
 								#endif
 								}
-              // Õâ±ßÌí¼Ó¸´Î»´ÎÊý¼ÆÊý£¬Èç³¬¹ýÉè¶¨¸´Î»´ÎÊý£¬ÄÇÃ´ÔÝÊ±²»½øÐÐ¶ÔGPRSµÄ²Ù×÷ //
-              //// ¾ßÌåÊµÏÖ¿É¹Ø±Õ¶¨Ê±Æ÷ÀïÃæµÄÖÜÆÚ×´Ì¬´¦Àíº¯Êý /////
+								// Õâ±ßÌí¼Ó¸´Î»´ÎÊý¼ÆÊý£¬Èç³¬¹ýÉè¶¨¸´Î»´ÎÊý£¬ÄÇÃ´ÔÝÊ±²»½øÐÐ¶ÔGPRSµÄ²Ù×÷ //
+								//// ¾ßÌåÊµÏÖ¿É¹Ø±Õ¶¨Ê±Æ÷ÀïÃæµÄÖÜÆÚ×´Ì¬´¦Àíº¯Êý /////
 						}
         }
 						break;
@@ -1666,12 +1697,12 @@ void APP_SubTask_StateProc(void)
 //								LED_Status = DATA_SEND_INDI;    //ÕýÔÚÍ¨Ñ¶LEDÖ¸Ê¾
 						}
             
-//						if(NB_AT_DATA == s_ATCmdStep_Comm[g_stNB_Handler.StepPt]) 
-//						{   
-//								//APP_NB_WriteReturnIDPacketÓëAPP_NB_WriteDataIDPacketº¯Êý¿ÉÒÔºÏ¶þÎªÒ»
-//								//µ«¿¼ÂÇµ½ºóÐøÏîÄ¿Ð­Òé¿ÉÄÜÔö¶à£¬×îÖÕ»¹ÊÇµÃ°ÑÖ÷¶¯ÉÏ´«ºÍÓ¦´ðÏûÏ¢·Ö¿ª
-//								switch(g_stNB_Handler.ucSendType)
-//								{
+						if(NB_AT_NMGS == s_ATCmdStep_Comm[g_stNB_Handler.StepPt]) 
+						{   
+								//APP_NB_WriteReturnIDPacketÓëAPP_NB_WriteDataIDPacketº¯Êý¿ÉÒÔºÏ¶þÎªÒ»
+								//µ«¿¼ÂÇµ½ºóÐøÏîÄ¿Ð­Òé¿ÉÄÜÔö¶à£¬×îÖÕ»¹ÊÇµÃ°ÑÖ÷¶¯ÉÏ´«ºÍÓ¦´ðÏûÏ¢·Ö¿ª
+								switch(g_stNB_Handler.ucSendType)
+								{
 //										case RESPOND_TYPE:
 //										{
 //												g_stNB_Handler.ucDataID = Get_CommEvent(NB_EvtProc.ucRespondEvt);
@@ -1690,17 +1721,17 @@ void APP_SubTask_StateProc(void)
 //										}
 //												break;
 //										
-//										case UPLOAD_TYPE:
-//										{
-//												g_stNB_Handler.ucDataID = Get_CommEvent(NB_EvtProc.ucUploadEvt);
-//												g_stNB_Handler.ucTxLen = (uint8_t)APP_NB_WriteDataIDPacket(g_stNB_Handler.ucDataID, g_stNB_Handler.TxBuf);
-//										}
-//												break;
-//										
-//										default:
-//												break;
-//								}
-//						}
+										case UPLOAD_TYPE:
+										{
+												g_stNB_Handler.ucDataID = Get_CommEvent(NB_EvtProc.ucUploadEvt);
+												g_stNB_Handler.ucTxLen = (uint8_t)APP_NB_WriteDataIDPacket(g_stNB_Handler.ucDataID, g_stNB_Handler.TxBuf);
+										}
+												break;
+										
+										default:
+												break;
+								}
+						}
             //´ËÊ±ÖØ·¢¼ÆÊýÎª3£¬²¢ÇÒÎªµÚÒ»ÌõÖ¸Áî¡£ÒòÎªµÚ¶þÌõÖ¸Áî»á°ÑÖØ´«¼ÆÊý¼Ó1
 						if((NB_RetryCtrol.rtycnt >= RTY_TIMES_MAX) && (g_stNB_Handler.StepPt ==0))   
 						{
