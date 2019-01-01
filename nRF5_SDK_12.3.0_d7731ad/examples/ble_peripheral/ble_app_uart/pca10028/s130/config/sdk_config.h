@@ -3838,6 +3838,10 @@
 #ifndef SEGGER_RTT_DEBUG_CONN
 #define SEGGER_RTT_DEBUG_CONN 1
 #endif
+// <q> debug at cmd step comm
+#ifndef SEGGER_RTT_DEBUG_COMM
+#define SEGGER_RTT_DEBUG_COMM 1
+#endif
 #endif
 // </e> 
 

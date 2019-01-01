@@ -17,6 +17,7 @@
 
 #define IMEI_LEN                            (16)
 #define ICCID_LEN                           (32)
+#define MAC_LEN                             (6)
 
 #define SERVER_APN_LEN                      (16)
 #define SERVER_IP_LEN                       (32)

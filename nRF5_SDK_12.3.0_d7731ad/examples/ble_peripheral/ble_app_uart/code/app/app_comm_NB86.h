@@ -47,10 +47,12 @@
 ///*****************************************************************/
 
 /************************包相关信息**********************************/
+//初始化包信息
+#define INIT_ID                         0x00
+
+//日志包信息
+#define LOG_ID                          0x01
 //登录包相关信息
-#define INIT_ID                   0xb010
-#define AUTH_CTROL_CODE                 0xa3
-#define AUTH_LEN    
 //#define AUTHENTICA_ID                   0xb010
 //#define AUTH_CTROL_CODE                 0xa3
 //#define AUTH_LEN                        0x09
@@ -378,56 +380,67 @@ typedef struct
     
 }PACKET_HEAD_Type;
 
+//typedef struct
+//{
+//   uint8_t imei[IMEI_LEN];
+//   uint8_t iccid[ICCID_LEN];
+//    
+//}AUTH_DATA_Type;
+
+
+//typedef union
+//{
+//    uint16_t state;
+//    struct
+//    {
+//        uint16_t staOfEle        :1;
+//        uint16_t staOfCharge     :1;
+//        uint16_t PhoneOnLineSta  :1;
+//        uint16_t reserve         :13;
+//    };
+//    
+//}DEVICE_STATE_Type;
+
+
+//typedef struct
+//{
+//    DEVICE_STATE_Type DeviceState;   //设备状态
+//    uint8_t CSQ;                     //GPRS信号强度
+//    uint8_t hardwareVerLen;          //硬件版本号长度
+//    uint8_t hardwareVer[4];          //硬件版本号
+//    uint8_t softwareVerLen;          //软件版本号长度
+//    uint8_t softwareVer[4];          //软件版本号
+//    
+//}MESS_READ_Type;
+
+
+//typedef struct
+//{
+//    uint16_t chargeTime;
+//    uint16_t chargeElec;
+//    uint16_t chargeVolt;
+//    uint16_t refVolt;
+//    
+//}SYS_STA_MESS_Type;
+
+
 typedef struct
 {
-   uint8_t imei[IMEI_LEN];
-   uint8_t iccid[ICCID_LEN];
-    
-}AUTH_DATA_Type;
-
-
-typedef union
-{
-    uint16_t state;
-    struct
-    {
-        uint16_t staOfEle        :1;
-        uint16_t staOfCharge     :1;
-        uint16_t PhoneOnLineSta  :1;
-        uint16_t reserve         :13;
-    };
-    
-}DEVICE_STATE_Type;
-
-
-typedef struct
-{
-    DEVICE_STATE_Type DeviceState;   //设备状态
-    uint8_t CSQ;                     //GPRS信号强度
-    uint8_t hardwareVerLen;          //硬件版本号长度
-    uint8_t hardwareVer[4];          //硬件版本号
-    uint8_t softwareVerLen;          //软件版本号长度
-    uint8_t softwareVer[4];          //软件版本号
-    
-}MESS_READ_Type;
-
-typedef struct
-{
-    uint16_t chargeTime;
-    uint16_t chargeElec;
-    uint16_t chargeVolt;
-    uint16_t refVolt;
-    
-}SYS_STA_MESS_Type;
-
+		uint8_t imei[IMEI_LEN];
+		uint8_t iccid[ICCID_LEN];
+    uint8_t CSQ;                     //NB信号强度
+    uint8_t mac[MAC_LEN];                     //NB信号强度
+}INIT_Type;
 
 /*********通讯的数据包类型**************/
 typedef struct
 {
-		AUTH_DATA_Type      AuthData;
-		MESS_READ_Type      MessRead;
-		SYS_STA_MESS_Type   SysStaMess;
+//		AUTH_DATA_Type      AuthData;
+//		MESS_READ_Type      MessRead;
+//		SYS_STA_MESS_Type   SysStaMess;
 		
+		INIT_Type          Init_Data;
+	
 }COMM_Packet_Type;
 
 #define RTY_TIME_INIT      (30UL)  /*30*1000 ms 即30s*/

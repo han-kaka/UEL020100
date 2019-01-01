@@ -87,9 +87,9 @@ bool Store_Solid_Romdata(void)
 	
 		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_aes128key, useraeskeybuf, AES_KEY_LEN);
 	
-		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_imei, NB_CommPacket.AuthData.imei, IMEI_LEN);
+		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_imei, NB_CommPacket.Init_Data.imei, IMEI_LEN);
 	
-		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_iccid, NB_CommPacket.AuthData.iccid, ICCID_LEN);
+		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_iccid, NB_CommPacket.Init_Data.iccid, ICCID_LEN);
 		
 		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_ip, NB_NetPar.ServerIp, SERVER_IP_LEN);
 		

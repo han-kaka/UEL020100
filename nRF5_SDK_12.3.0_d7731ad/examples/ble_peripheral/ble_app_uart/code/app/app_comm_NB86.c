@@ -208,7 +208,8 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 				}
 				
 				if((NB_ATCmdCB.ATCmdPt == NB_AT_CGSN_1) ||
-					(NB_ATCmdCB.ATCmdPt == NB_AT_NCCID))
+					 (NB_ATCmdCB.ATCmdPt == NB_AT_NCCID) ||
+				   (NB_ATCmdCB.ATCmdPt == NB_AT_CSQ))
 				{
 						if(Check_Strstr((char*)RxBuf, "OK", 65) != true)
 						{
@@ -242,6 +243,11 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 				}
 			return BACK_ERROR;   		
 		}	
+}
+
+static uint8_t APP_NB_Transition(uint8_t *hex_data_buf, uint8_t len_hex, uint8_t *new_hex_data_buf, uint8_t *new_len_hex)
+{
+		
 }
 
 //static U8 APP_GPRS_Encrypt(u8 *hex_data_buf,u8 len_hex,u8 *new_hex_data_buf,u8 *new_len_hex)
@@ -339,170 +345,68 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 //    *num = i;
 //}
 
-static uint16_t APP_NB_GetPacket(uint16_t messID, uint8_t ctrolcode, uint8_t datalen, uint8_t* Packet)
+static uint16_t APP_NB_GetPacket(uint16_t messID, uint8_t* Packet)
 {
-//    U8 i=0,j=0;
+    uint8_t i=0,j=0;
 //    U8 check=0;
 //    U8 ipLen=0;
 //    U8 apnLen=0;
 //    U8 fillZeroLen=0;
-//    U8 newLen=0;
-//    U8 TxBuf[GPRS_RX_BUFF_LEN]={0};
-//#if DEBUG_RTY_FUN
-//    static U8 rtyTestCnt=0;
-//#endif
-//   
-//    TxBuf[i++] = FRAME_HEAD;
-//    TxBuf[i++] = 0x02;    //产品类型
-//    for(j=0;j<ADDR_REGION_LEN;j++)
-//    {
-//       TxBuf[i++] = PacketHead.addrRegion[j]&0xff;
-//    }
-//    TxBuf[i++] = ctrolcode&0xff;
-//    TxBuf[i++] = datalen&0xff;
-//    TxBuf[i++] = (messID>>8)&0xff;
-//    TxBuf[i++] = messID&0xff;
+    uint8_t newLen = 0;
+    uint8_t TxBuf[NB_RX_BUFF_LEN]={0};
+		
     switch(messID)
     {
-//       case AUTHENTICA_ID:
-//       {
-//           TxBuf[i++] = PacketHead.TerminalMeageFlowNum;
-//           for(j=0;j<6;j++)
-//           {
-//               TxBuf[i++] = GPRS_CommPacket.AuthData.iccid[j+4];
-//           }
-//       }
-//       break;
-//       
-//       case STA_MESS_ID:
-//       {
-//           TxBuf[i++] = PacketHead.TerminalMeageFlowNum;
-//           GPRS_CommPacket.MessRead.DeviceState.staOfCharge = Charge_Flag.ChargeStatus;
-//           GPRS_CommPacket.MessRead.DeviceState.PhoneOnLineSta = Charge_Flag.PhoneOnLineStatus;
-//           APP_GPRS_GetSysStaMessPacket(GPRS_CommPacket.MessRead.DeviceState.staOfCharge,&i,TxBuf);
-//       }
-//       
-//       break;
-//       case HEARTBEAT_ID:
-//       {
-//           TxBuf[i++] = PacketHead.TerminalMeageFlowNum;
-//           //心跳包数据为空
-//       }
-//       
-//       break;
-
-//       case SET_PARMTE_ID:
-//       {
-//           TxBuf[i++] = PacketHead.AckMeageFlowNum;
-//           //返回数据内容为空
-//       }
-//       break;
-//       case QUERY_PARMTE_ID:
-//       {
-//            TxBuf[i++] = PacketHead.AckMeageFlowNum;
-//            ipLen  = strlen((char *)GPRS_NetPar.ServerIp);
-//            apnLen = strlen((char *)GPRS_NetPar.ServerApn);
-//            for(j=0;j<ipLen;j++)
-//            {
-//                TxBuf[i++] = (GPRS_NetPar.ServerIp[j]) & 0xff;
-//            }
-//            fillZeroLen = SERVER_IP_LEN-ipLen;
-//            for(j=0;j<fillZeroLen;j++)        //为了填满SERVER_IP_LEN(17)长度的字节
-//            {
-//                TxBuf[i++] = 0;
-//            }  
-//            
-//            TxBuf[i++] = (GPRS_NetPar.ServerPort>>8) & 0xff;
-//            TxBuf[i++] = (GPRS_NetPar.ServerPort) & 0xff;
-//            for(j=0;j<apnLen;j++)
-//            {
-//                TxBuf[i++] = GPRS_NetPar.ServerApn[j] & 0xff;
-//            }
-//            fillZeroLen = SERVER_APN_LEN - apnLen;
-//            for(j=0;j<fillZeroLen;j++)
-//            {
-//                TxBuf[i++] = 0;
-//            } 
-//       }
-//       break;
-//       case READ_MESS_ID:
-//       {
-//            GPRS_CommPacket.MessRead.DeviceState.staOfCharge = Charge_Flag.ChargeStatus;
-//            GPRS_CommPacket.MessRead.DeviceState.PhoneOnLineSta = Charge_Flag.PhoneOnLineStatus;
-//            TxBuf[i++] = PacketHead.AckMeageFlowNum;
-//            TxBuf[i++] = (GPRS_CommPacket.MessRead.DeviceState.state>>8) & 0xff;
-//            TxBuf[i++] = (GPRS_CommPacket.MessRead.DeviceState.state) & 0xff;
-//            TxBuf[i++] = (GPRS_CommPacket.MessRead.CSQ) & 0xff;
-//            TxBuf[i++] = (GPRS_CommPacket.MessRead.hardwareVerLen) & 0xff;
-//            for(j=0;j<GPRS_CommPacket.MessRead.hardwareVerLen;j++)
-//            {
-//                TxBuf[i++] = (GPRS_CommPacket.MessRead.hardwareVer[j]) & 0xff;
-//            }
-//            TxBuf[i++] = (GPRS_CommPacket.MessRead.softwareVerLen) & 0xff;
-//            for(j=0;j<GPRS_CommPacket.MessRead.softwareVerLen;j++)
-//            {
-//                TxBuf[i++] = (GPRS_CommPacket.MessRead.softwareVer[j]) & 0xff;
-//            }
-//       }
-//       break;
-//       case CONTROL_ID:
-//       {
-//           TxBuf[i++] = PacketHead.AckMeageFlowNum;
-//            //返回数据内容为空
-//       }
-//       break;
-//       case WRITE_ADDR_ID:
-//       {
-//          TxBuf[i++] = PacketHead.AckMeageFlowNum;
-//           //返回数据内容为空
-//       }
-//       break;
-//       case READ_ADDR_ID:
-//       {
-//          TxBuf[i++] = PacketHead.AckMeageFlowNum;
-//          for(j=0;j<4;j++)
-//          {
-//               TxBuf[i++] = (PacketHead.addrRegion[j]) & 0xff;
-//          }
-//       }
-//       break;
-//       case READ_STA_MESS_ID:
-//       {
-//          TxBuf[i++] = PacketHead.AckMeageFlowNum;
-//          GPRS_CommPacket.MessRead.DeviceState.staOfCharge = Charge_Flag.ChargeStatus;
-//          GPRS_CommPacket.MessRead.DeviceState.PhoneOnLineSta = Charge_Flag.PhoneOnLineStatus;
-//          APP_GPRS_GetSysStaMessPacket(GPRS_CommPacket.MessRead.DeviceState.staOfCharge,&i,TxBuf);
-//       }
-//       break;
-//       case SYS_PARMTE_SET_ID:
-//       {
-//          TxBuf[i++] = PacketHead.AckMeageFlowNum;
-//           //返回数据内容为空
-//       }
-//       break;
+				case INIT_ID:
+				{
+						TxBuf[i++] = 0x00;
+						TxBuf[i++] = 0x10;
+						TxBuf[i++] = NB_CommPacket.Init_Data.CSQ;
+						TxBuf[i++] = 0x00;
+						TxBuf[i++] = 0x00;
+						TxBuf[i++] = 0x00;
+						TxBuf[i++] = 0x00;
+						for(j=0; j<20; j++)
+						{
+								TxBuf[i++] = NB_CommPacket.Init_Data.iccid[j];
+						}
+						TxBuf[i++] = (uint8_t)(PROTOCOL_APP_VERSION >> 8);
+						TxBuf[i++] = (uint8_t)(PROTOCOL_APP_VERSION);
+						TxBuf[i++] = (uint8_t)(PROTOCOL_APP_SCENARIOS);
+						TxBuf[i++] = (uint8_t)(PROTOCOL_APP_VENDORCODE);
+						for (i = 0; i < 6; i ++)
+						{
+								TxBuf[i++] = NB_CommPacket.Init_Data.mac[j];
+						}
+				}
+						break;
+			
+				case LOG_ID:
+				{
+//						Packet[i++] = 0x00;
+//						Packet[i++] = 0x10;
+//						Packet[i++] = NB_CommPacket.Init_Data.CSQ;
+//						Packet[i++] = 0x00;
+//						Packet[i++] = 0x00;
+//						Packet[i++] = 0x00;
+//						Packet[i++] = 0x00;
+//						for(j=0; j<20; j++)
+//						{
+//								Packet[i++] = NB_CommPacket.Init_Data.iccid[j];
+//						}
+//						Packet[i++] = (uint8_t)(PROTOCOL_APP_VERSION >> 8);
+//						Packet[i++] = (uint8_t)(PROTOCOL_APP_VERSION);
+//						Packet[i++] = (uint8_t)(PROTOCOL_APP_SCENARIOS);
+//						Packet[i++] = (uint8_t)(PROTOCOL_APP_VENDORCODE);
+//						for (i = 0; i < 6; i ++)
+//						{
+//								Packet[i++] = NB_CommPacket.Init_Data.iccid[j];
+//						}
+				}
+						break;
     }
-//    check = Get_Xor(TxBuf,i); //计算校验和
-//    TxBuf[i++] = check&0xff;
-//#if DEBUG_RTY_FUN
-//    rtyTestCnt++;
-//    if(rtyTestCnt <=2)
-//    {
-//        for(j=0;j<3;j++)
-//        {
-//            TxBuf[i++]=j;
-//        }
-//    } 
-//    if((rtyTestCnt <=8) && (rtyTestCnt >=4))
-//    {
-//         for(j=0;j<3;j++)
-//         {
-//              TxBuf[i++]=j;
-//         }
-//    }
-//#endif     
-//    TxBuf[i++] = FRAME_END;
-//    APP_GPRS_Encrypt(TxBuf,i,Packet,&newLen);
-//    return   (U16)newLen;
+    APP_NB_Transition(TxBuf, i, Packet, &newLen);
+    return   (uint16_t)newLen;
 }
 
 static void APP_NB_RetryMessInit(void)
@@ -619,7 +523,7 @@ static uint16_t APP_NB_WriteDataIDPacket(uint8_t DataID, uint8_t* Packet)
 		{   
 				case UPLOAD_ID_INIT:
 				{
-//						usPacketLen = APP_NB_GetPacket(AUTHENTICA_ID, AUTH_CTROL_CODE, AUTH_LEN, Packet);
+						usPacketLen = APP_NB_GetPacket(INIT_ID, Packet);
 //				#if CONFIG_RETRY_COPY            
 //						GPRS_RetryCtrol.rtyLen = usPacketLen;                   //消息长度备份
 //						memcpy(GPRS_RetryCtrol.rtyBuff,Packet,usPacketLen);     //消息备份   
@@ -947,9 +851,9 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 												}
 										}
 										if (i < 16) p[5 + i] = 0x00;
-										memcpy(NB_CommPacket.AuthData.imei, p+5, i);
+										memcpy(NB_CommPacket.Init_Data.imei, p+5, i);
 								#if SEGGER_RTT_DEBUG_MESS
-										SEGGER_RTT_printf(0, "len = %u, imei:%s. \r\n", i, NB_CommPacket.AuthData.imei);
+										SEGGER_RTT_printf(0, "len = %u, imei:%s. \r\n", i, NB_CommPacket.Init_Data.imei);
 								#endif
 										//Ascii_To_Hex(p, NB_CommPacket.AuthData.imei, (uint16_t)asi_len); 
 										Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
@@ -960,7 +864,7 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 						case NB_AT_NCCID:
 						{
 								//save nccid
-								p=strstr((char*)RxBuf, "NCCID:");
+								p = strstr((char*)RxBuf, "NCCID:");
 								#if SEGGER_RTT_DEBUG_MESS
 										SEGGER_RTT_printf(0, "cmd nccid\r\n");
 								#endif
@@ -977,9 +881,9 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 										}
 										if (i < 32) p[6 + i] = 0x00;
 										
-										memcpy(NB_CommPacket.AuthData.iccid, p+6, i);
+										memcpy(NB_CommPacket.Init_Data.iccid, p+6, i);
 								#if SEGGER_RTT_DEBUG_MESS
-										SEGGER_RTT_printf(0, "len = %u, nccid:%s. \r\n", i, NB_CommPacket.AuthData.iccid);
+										SEGGER_RTT_printf(0, "len = %u, nccid:%s. \r\n", i, NB_CommPacket.Init_Data.iccid);
 								#endif
 										Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 								}
@@ -1024,77 +928,97 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 
 static void APP_NB_State_Comm_Proc(uint8_t *RxBuf)
 {
-//    U8 ATCmdIndex;  
-//    static U8 errCnt=0;
-//	if(g_stGPRS_Handler.StepPt >= COMM_STEP_NUM)
-//	{
-//		return;	
-//	} 
-//	ATCmdIndex = s_ATCmdStep_Comm[g_stGPRS_Handler.StepPt];
-///************************AT指令应答正确·**************************/	
-//	if(BACK_TRUE == GPRS_ATCmdCB.ATCmdResult)/*AT指令应答内容正确*/
-//	{
-//		switch(ATCmdIndex)
-//		{
-//			case GPRS_AT_DATA:
-//            {
-//				
-//				if(RESPOND_TYPE == g_stGPRS_Handler.ucSendType)
-//				{
-//				    GPRS_Event_Clr(GPRS_EvtProc.ucRespondEvt,(0x01 << g_stGPRS_Handler.ucDataID));
-//				}
-//				else if(RTY_TYPE == g_stGPRS_Handler.ucSendType)
-//				{
-//				    GPRS_Event_Clr(GPRS_EvtProc.ucRetryEvt,(0x01 << g_stGPRS_Handler.ucDataID));
-//		            APP_GPRS_RefreshRetryMess();
-//				}
-//				else if(UPLOAD_TYPE == g_stGPRS_Handler.ucSendType)
-//				{
-//				    /*本次通讯完成,清除对应的事件*/
-//				    GPRS_Event_Clr(GPRS_EvtProc.ucUploadEvt,(0x01 << g_stGPRS_Handler.ucDataID));
-//				    //如在这里置起事件，则需等到应答才能发送下一条主动上传消息            
-//				    GPRS_Event_Set(GPRS_EvtProc.ucDelayEvt,(0x01 << g_stGPRS_Handler.ucDataID));     
-//                    APP_GPRS_RefreshRetryMess();
-//				}
-//				GPRS_Event_Clr(g_stGPRS_Handler.ucCommEvent,(0x01 << g_stGPRS_Handler.ucDataID));
-//		        errCnt=0;           /*AT指令成功，清除错误计数*/
-//		        GPRS_TimProc.heartbeatCount = 0;      /*心跳计数清零*/
-//			}break;	
-//			
-//			default:
-//				break;	
-//		}
-//		/*next Step*/
-//		g_stGPRS_Handler.StepPt++;
-//		if(g_stGPRS_Handler.StepPt >= COMM_STEP_NUM)
-//		{
-//			/******GPRS模块状态切换***************/
-//			/*数据标签来判断是否还有其它数据需要发送，如果有则再次进入comm，没有则退出通讯状态*/
-//			if(APP_GPRS_EvtTraverse(TRAVERSE) == FALSE)
-//			{
-//                g_stGPRS_Handler.State = GPRS_STATE_IDLE;/*切换到下一个流程*/
-//				g_stGPRS_Handler.ucCommBusy= 0;/*Comm Complete*/
-//			}
-//			else
-//			{
-//				g_stGPRS_Handler.State = GPRS_STATE_COMM;/*继续当前流程*/		
-//			}
-//			
-//			g_stGPRS_Handler.StepPt = 0;/**clr step*/
-//		}
-//		else
-//		{
-//		    g_stGPRS_Handler.State = GPRS_STATE_COMM;/*继续当前流程*/		
-//		}		
-//	}
-///************************AT 指令达到重发次数**************************/	
-//	else if(BACK_PERTIMES_OUT == GPRS_ATCmdCB.ATCmdResult)
-//	{
-//	    if(GPRS_AT_DATA == ATCmdIndex)
-//	    {
-//	        g_stGPRS_Handler.State = GPRS_STATE_COMM;
-//	        errCnt++;
-//	    }
+		uint8_t i;
+    uint8_t ATCmdIndex;  
+    static uint8_t errCnt=0;
+		char *p   = NULL;
+		if(g_stNB_Handler.StepPt >= COMM_STEP_NUM)
+		{
+			return;	
+		} 
+		ATCmdIndex = s_ATCmdStep_Comm[g_stNB_Handler.StepPt];
+		/************************AT指令应答正确·**************************/	
+		if(BACK_TRUE == NB_ATCmdCB.ATCmdResult)/*AT指令应答内容正确*/
+		{
+				switch(ATCmdIndex)
+				{
+						case NB_AT_CSQ:
+						{
+								//save csq
+								p = strstr((char*)RxBuf, "+CSQ:");
+								#if SEGGER_RTT_DEBUG_COMM
+										SEGGER_RTT_printf(0, "cmd csq\r\n");
+								#endif
+								if(p != NULL)
+								{
+										NB_CommPacket.Init_Data.CSQ = 0;
+										for (i = 0; i < 32; i ++)
+										{
+												if ((p[5 + i] < '0') || (p[5 + i] > '9'))
+												{
+														break;
+												}
+										}
+										NB_CommPacket.Init_Data.CSQ = (NB_CommPacket.Init_Data.CSQ * 10) + p[5 + i] - '0';
+										
+								#if SEGGER_RTT_DEBUG_COMM
+										SEGGER_RTT_printf(0, "csq = %u.\r\n", NB_CommPacket.Init_Data.CSQ);
+								#endif
+								}
+						}
+								break;
+					
+						case NB_AT_NMGS:
+						{								
+								if(UPLOAD_TYPE == g_stNB_Handler.ucSendType)
+								{
+										/*本次通讯完成,清除对应的事件*/
+										NB_Event_Clr(NB_EvtProc.ucUploadEvt,(0x01 << g_stNB_Handler.ucDataID));
+//										//如在这里置起事件，则需等到应答才能发送下一条主动上传消息            
+//										GPRS_Event_Set(GPRS_EvtProc.ucDelayEvt,(0x01 << g_stNB_Handler.ucDataID));     
+//										APP_GPRS_RefreshRetryMess();
+								}
+							
+								NB_Event_Clr(g_stNB_Handler.ucCommEvent,(0x01 << g_stNB_Handler.ucDataID));
+								errCnt=0;           /*AT指令成功，清除错误计数*/
+								NB_TimProc.heartbeatCount = 0;      /*心跳计数清零*/
+						}
+								break;	
+						
+						default:
+								break;	
+				}
+			//next Step
+			g_stNB_Handler.StepPt++;
+			if(g_stNB_Handler.StepPt >= COMM_STEP_NUM)
+			{
+					/******GPRS模块状态切换***************/
+					/*数据标签来判断是否还有其它数据需要发送，如果有则再次进入comm，没有则退出通讯状态*/
+					if(APP_NB_EvtTraverse(TRAVERSE) == false)
+					{
+							g_stNB_Handler.State = NB_STATE_IDLE;/*切换到下一个流程*/
+							g_stNB_Handler.ucCommBusy= 0;/*Comm Complete*/
+					}
+					else
+					{
+							g_stNB_Handler.State = NB_STATE_COMM;/*继续当前流程*/		
+					}
+					
+					g_stNB_Handler.StepPt = 0;/**clr step*/
+			}
+			else
+			{
+					g_stNB_Handler.State = NB_STATE_COMM;/*继续当前流程*/		
+			}		
+		}
+/************************AT 指令达到重发次数**************************/	
+		else if(BACK_PERTIMES_OUT == NB_ATCmdCB.ATCmdResult)
+		{
+				if(NB_AT_NMGS == ATCmdIndex)
+				{
+						g_stNB_Handler.State = NB_STATE_COMM;
+						errCnt++;
+				}
 //	    else if((GPRS_AT_MIPSEND_1 == ATCmdIndex) || (errCnt > 3))
 //	    {
 //            #if DEBUG_LOG
@@ -1105,18 +1029,18 @@ static void APP_NB_State_Comm_Proc(uint8_t *RxBuf)
 //	        GPRS_NetPar.NetType = NET_NO_NET;
 //	    }
 //	    
-//		g_stGPRS_Handler.StepPt = 0;/**clr step*/
-//		g_stGPRS_Handler.ucCommBusy= 0;	
+				g_stNB_Handler.StepPt = 0;//clr step
+				g_stNB_Handler.ucCommBusy= 0;	
 
-//	}
-///************************AT指令应答错误或超时*************************/	
-//	else
-//	{
-//		/*没有到AT指令重发次数，所以再次发送AT指令*/
-//		g_stGPRS_Handler.State = GPRS_STATE_WAIT_ACK;/*直接再次发送AT指令，然后等待应答*/
-//        GPRS_ATCmdCB.SendATCmdEn = 1;/*enable send ATCmd*/
-//		GPRS_ATCmdCB.ATCmdPt = s_ATCmdStep_Comm[g_stGPRS_Handler.StepPt];
-//	} 
+		}
+/************************AT指令应答错误或超时*************************/	
+		else
+		{
+				//没有到AT指令重发次数，所以再次发送AT指令
+				g_stNB_Handler.State = NB_STATE_WAIT_ACK;//直接再次发送AT指令，然后等待应答
+        NB_ATCmdCB.SendATCmdEn = 1;//enable send ATCmd
+				NB_ATCmdCB.ATCmdPt = s_ATCmdStep_Comm[g_stNB_Handler.StepPt];
+		} 
 }
 
 /*如果服务器下发数据不加标识头，此函数可放入AT指令解析中*/
