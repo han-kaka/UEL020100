@@ -9,10 +9,14 @@
 APP_TIMER_DEF(m_clock_timer_id);                  /**申请系统定时器 */
 //APP_TIMER_DEF(m_qf_timer_id);                     /**申请系统定时器 */
 
-static uint16_t s_MsCount=0;
+static uint16_t s_MsCount = 0;
+
+uint8_t timestamp[8] = {0};
 
 volatile Tim_1s_Type Tim_1s_Struct;
 volatile Tim_100ms_Type Tim_100ms_Struct;
+
+static uint8_t monthLength( uint8_t lpyr, uint8_t mon );
 
 void m_clock_timeout_handler (void * p_context)
 { 
@@ -137,7 +141,81 @@ void start_systime(void)
 		APP_ERROR_CHECK(err_code); 
 }
 
+/*********************************************************************
+ * @fn      monthLength
+ *
+ * @param   lpyr - 1 for leap year, 0 if not
+ *
+ * @param   mon - 0 - 11 (jan - dec)
+ *
+ * @return  number of days in specified month
+ */
+static uint8_t monthLength( uint8_t lpyr, uint8_t mon )
+{
+  uint8_t days = 31;
 
+  if ( mon == 1 ) // feb
+  {
+    days = ( 28 + lpyr );
+  }
+  else
+  {
+    if ( mon > 6 ) // aug-dec
+    {
+      mon--;
+    }
+
+    if ( mon & 1 )
+    {
+      days = 30;
+    }
+  }
+
+  return ( days );
+}
+
+/*********************************************************************
+ * @fn      osal_ConvertUTCTime
+ *
+ * @brief   Converts UTCTime to UTCTimeStruct
+ *
+ * @param   tm - pointer to breakdown struct
+ *
+ * @param   secTime - number of seconds since 0 hrs, 0 minutes,
+ *          0 seconds, on the 1st of January 2000 UTC
+ *
+ * @return  none
+ */
+void osal_ConvertUTCTime( UTCTimeStruct *tm, UTCTime secTime )
+{
+  // calculate the time less than a day - hours, minutes, seconds
+  {
+    uint32_t day = secTime % DAY; 
+    tm->seconds = day % 60UL;
+    tm->minutes = (day % 3600UL) / 60UL;
+    tm->hour = day / 3600UL;
+  }
+
+  // Fill in the calendar - day, month, year
+  {
+    uint16_t numDays = secTime / DAY;
+    tm->year = BEGYEAR;
+    while ( numDays >= YearLength( tm->year ) )
+    {
+      numDays -= YearLength( tm->year );
+      tm->year++;
+    }
+
+    tm->month = 0;
+    while ( numDays >= monthLength( IsLeapYear( tm->year ), tm->month ) )
+    {
+      numDays -= monthLength( IsLeapYear( tm->year ), tm->month );
+      tm->month++;
+    }
+
+    tm->day = numDays;
+  }
+}
 
 
 

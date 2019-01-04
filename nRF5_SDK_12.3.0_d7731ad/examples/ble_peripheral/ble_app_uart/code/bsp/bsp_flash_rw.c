@@ -85,6 +85,8 @@ bool Store_Solid_Romdata(void)
 		p_solid_data_struct->solid_data_cell_struct.writed1 = 0xaa;
 		p_solid_data_struct->solid_data_cell_struct.writed2 = 0xaa;
 	
+		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_timestamp, timestamp, 8);
+	
 		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_aes128key, useraeskeybuf, AES_KEY_LEN);
 	
 		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_imei, NB_CommPacket.Init_Data.imei, IMEI_LEN);

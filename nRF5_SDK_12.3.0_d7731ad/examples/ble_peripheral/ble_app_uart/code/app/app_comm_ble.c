@@ -279,7 +279,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 ////	static uint8  sFlagAddUser = 0;
 		uint8_t  buf[16];
 ////	static UserInfo_t tempUserInfo;
-////	UTCTimeStruct *pTempTimeStruct = (UTCTimeStruct *)(buf + 6);
+		UTCTimeStruct *pTempTimeStruct = (UTCTimeStruct *)(buf + 6);
 ////	LogInfo_t *pTmpLogInfo = (LogInfo_t *)buf;
 ////	
 		if (sProtocolAppFormat.headData.version != PROTOCOL_APP_VERSION)			// 判断协议头正确性
@@ -313,14 +313,14 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 		switch (command)
 		{
 			
-//				case CMD_GET_HARD_INFO_VERSION:											/* 获取硬件版本信息 */
-//						UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, HARD_VERSION_INFO, sizeof(HARD_VERSION_INFO));
-//						break;
-//				
-//				case CMD_GET_SOFT_INFO_VERSION:											/* 查询软件版本信息 */
-//						UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, SOFT_VERSION_INFO, sizeof(SOFT_VERSION_INFO));
-//						break;
-//				
+				case CMD_GET_HARD_INFO_VERSION:											/* 获取硬件版本信息 */
+						UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, HARD_VERSION_INFO, sizeof(HARD_VERSION_INFO));
+						break;
+				
+				case CMD_GET_SOFT_INFO_VERSION:											/* 查询软件版本信息 */
+						UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, SOFT_VERSION_INFO, sizeof(SOFT_VERSION_INFO));
+						break;
+				
 				case CMD_GET_AESKEY:													/* 初始化 */
 				{
 				#if SEGGER_RTT_DEBUG_GET_AESKEY
@@ -338,10 +338,9 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						pSendbuf[sendLength++] = PROTOCOL_APP_ERR_NONE;
 						nrf_drv_rng_rand(tempkey, 16); 
 						memcpy(pSendbuf + sendLength, tempkey, 16);
-						Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 						sendLength += 16;
-						f_tempkey = 1;
-						memset(buf, 0, 8);
+//						f_tempkey = 1;
+//						memset(buf, 0, 8);
 						Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 				#if SEGGER_RTT_DEBUG_GET_AESKEY
 						SEGGER_RTT_printf(0, "sendLength = %d!\r\n", sendLength);
@@ -461,138 +460,141 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 //				}
 //					break;
 //				
-//				case CMD_SET_KEYBOARD:													/* 设置键盘密码 */
-//				{
-////						if (stateProcessCommand == 0)
-////						{
-////							stateProcessCommand = 1;
-////							ret = 0xFF;
-////							
-////							if (dataLen != 8)
-////							{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
-////							if (UserGetCurrentUser() == 0)
-////							{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
-////						}
-////						else if (stateProcessCommand == 1)
-////						{
-////							for (sTemp = 0; sTemp < MAX_USER_NUM; sTemp ++)
-////							{
-////								while (UserGetUserInfo(sTemp, &tempUserInfo) == 0xFF);
-////								if ((tempUserInfo.flag & 0xC3) != 0xC2) continue;
-////								if (UserMemCmp(tempUserInfo.userId, UserGetCurrentUser(), sizeof(tempUserInfo.userId)) == 0) continue;
-////								if (UserMemCmp(tempUserInfo.password, pData, sizeof(tempUserInfo.password)) == 0)
-////								{
-////									break;
-////								}
-////							}
-////							if (sTemp < MAX_USER_NUM)
-////							{
-////								stateProcessCommand = 3;
-////							}
-////							else
-////							{
-////								stateProcessCommand = 2;
-////							}
-////							ret = 0xFF;
-////						}
-////						else if (stateProcessCommand == 2)
-////						{
-////							ret = UserAddUserInfoToSystem(2, UserGetCurrentUser(), pData);
-////							if (ret == 0)
-////							{
-////								UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
-////							}
-////							else if (ret == 0xFF)
-////							{
-////								
-////							}
-////							else
-////							{
-////								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
-////							}
-////						}
-////						else if (stateProcessCommand == 3)
-////						{
-////							osal_memset(buf, 0, 8);
-////							ret = UserAddUserInfoToSystem(2, tempUserInfo.userId, buf);
-////							if (ret == 0)
-////							{
-////								UserReturnErrCode(command, PROTOCOL_APP_ERR_PASSWORD_SAME);
-////							}
-////							else if (ret == 0xFF)
-////							{
-////								
-////							}
-////							else
-////							{
-////								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
-////							}
-////						}
-//				}
-//						break;
-//				
-//				case CMD_ADD_PERIPHERAL:												/* 添加外设 */
-//				{
-////						if (dataLen != 1)
-////						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
-////						if (UserGetCurrentUser() == 0)
-////						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
-////						tmp = UserSearchUserInfoNumber(UserGetCurrentUser());
-////						if (tmp >= MAX_USER_NUM)
-////						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}
-////						if (*pData == 1)
-////						{
-////							#if (defined USER_FINGERMODE) && (!(defined USER_FINGERMODEVENA))
-////							if (UserFingerModuleAddition(tmp, UserFingerAdditionCallback) == FALSE)
-////							{
-////								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
-////								break;
-////							}
-////							#else
-////							UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
-////							UserSoundFailuer();
-////							break;
-////							#endif
-////						}
-////						else if (*pData == 2)
-////						{
-////							#ifdef USER_ICCARD
-////							if (UserICCardAddition(UserGetCurrentUser()) == FALSE)
-////							{
-////								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
-////								break;
-////							}
-////							#else
-////							UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
-////							UserSoundFailuer();
-////							break;
-////							#endif
-////							
-////						}
-////						else if (*pData == 4)
-////						{
-////							#if (defined USER_FINGERMODE) && (defined USER_FINGERMODEVENA)
-////							if (UserFingerModuleAddition(tmp, UserFingerAdditionCallback) == FALSE)
-////							{
-////								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
-////								break;
-////							}
-////							#else
-////							UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
-////							UserSoundFailuer();
-////							break;
-////							#endif
-////						}
-////						else
-////						{
-////							UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
-////							UserSoundFailuer();
-////							break;
-////						}
-////						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
-//				}
-//						break;
-//					
+				case CMD_SET_KEYBOARD:													/* 设置键盘密码 */
+				{
+						UserReturnErrCode(command, PROTOCOL_APP_ERR_VERSION);
+//						if (stateProcessCommand == 0)
+//						{
+//							stateProcessCommand = 1;
+//							ret = 0xFF;
+//							
+//							if (dataLen != 8)
+//							{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
+//							if (UserGetCurrentUser() == 0)
+//							{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
+//						}
+//						else if (stateProcessCommand == 1)
+//						{
+//							for (sTemp = 0; sTemp < MAX_USER_NUM; sTemp ++)
+//							{
+//								while (UserGetUserInfo(sTemp, &tempUserInfo) == 0xFF);
+//								if ((tempUserInfo.flag & 0xC3) != 0xC2) continue;
+//								if (UserMemCmp(tempUserInfo.userId, UserGetCurrentUser(), sizeof(tempUserInfo.userId)) == 0) continue;
+//								if (UserMemCmp(tempUserInfo.password, pData, sizeof(tempUserInfo.password)) == 0)
+//								{
+//									break;
+//								}
+//							}
+//							if (sTemp < MAX_USER_NUM)
+//							{
+//								stateProcessCommand = 3;
+//							}
+//							else
+//							{
+//								stateProcessCommand = 2;
+//							}
+//							ret = 0xFF;
+//						}
+//						else if (stateProcessCommand == 2)
+//						{
+//							ret = UserAddUserInfoToSystem(2, UserGetCurrentUser(), pData);
+//							if (ret == 0)
+//							{
+//								UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
+//							}
+//							else if (ret == 0xFF)
+//							{
+//								
+//							}
+//							else
+//							{
+//								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
+//							}
+//						}
+//						else if (stateProcessCommand == 3)
+//						{
+//							osal_memset(buf, 0, 8);
+//							ret = UserAddUserInfoToSystem(2, tempUserInfo.userId, buf);
+//							if (ret == 0)
+//							{
+//								UserReturnErrCode(command, PROTOCOL_APP_ERR_PASSWORD_SAME);
+//							}
+//							else if (ret == 0xFF)
+//							{
+//								
+//							}
+//							else
+//							{
+//								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
+//							}
+//						}
+				}
+						break;
+				
+				case CMD_ADD_PERIPHERAL:												/* 添加外设 */
+				{
+						UserReturnErrCode(command, PROTOCOL_APP_ERR_VERSION);
+					
+//						if (dataLen != 1)
+//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
+//						if (UserGetCurrentUser() == 0)
+//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
+//						tmp = UserSearchUserInfoNumber(UserGetCurrentUser());
+//						if (tmp >= MAX_USER_NUM)
+//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}
+//						if (*pData == 1)
+//						{
+//							#if (defined USER_FINGERMODE) && (!(defined USER_FINGERMODEVENA))
+//							if (UserFingerModuleAddition(tmp, UserFingerAdditionCallback) == FALSE)
+//							{
+//								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
+//								break;
+//							}
+//							#else
+//							UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+//							UserSoundFailuer();
+//							break;
+//							#endif
+//						}
+//						else if (*pData == 2)
+//						{
+//							#ifdef USER_ICCARD
+//							if (UserICCardAddition(UserGetCurrentUser()) == FALSE)
+//							{
+//								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
+//								break;
+//							}
+//							#else
+//							UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+//							UserSoundFailuer();
+//							break;
+//							#endif
+//							
+//						}
+//						else if (*pData == 4)
+//						{
+//							#if (defined USER_FINGERMODE) && (defined USER_FINGERMODEVENA)
+//							if (UserFingerModuleAddition(tmp, UserFingerAdditionCallback) == FALSE)
+//							{
+//								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
+//								break;
+//							}
+//							#else
+//							UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+//							UserSoundFailuer();
+//							break;
+//							#endif
+//						}
+//						else
+//						{
+//							UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+//							UserSoundFailuer();
+//							break;
+//						}
+//						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
+				}
+						break;
+					
 				case CMD_SWITCH:														/* 开关指令 */
 				{
 						#if SEGGER_RTT_DEBUG_SWITCH
@@ -604,9 +606,11 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
 								break;
 						}
-//						UserGetAppData(P_EE_ADDR_TIMESTAMP, buf);
-//						if (UserMemCmp(pData, buf, 8) <= 0) break;
-//						UserSaveAppData(P_EE_ADDR_TIMESTAMP, pData);
+						
+						if (UserMemCmp(pData, timestamp, 8) <= 0) 
+								break;
+						memcpy(timestamp, pData, 8);
+						Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 						
 						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
 						pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_NONE;
@@ -664,10 +668,10 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 								break;
 						}			/* 数据长度错误，返回参数错误 */
 						
-						UserGetAppData(P_EE_ADDR_TIMESTAMP, buf);
-						if (UserMemCmp(pData, buf, 8) <= 0) 
+						if (UserMemCmp(pData, timestamp, 8) <= 0) 
 								break;
-						UserSaveAppData(P_EE_ADDR_TIMESTAMP, pData);
+						memcpy(timestamp, pData, 8);
+						Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 						
 						tmp32 = pData[8];
 						tmp32 = (tmp32 << 8) | pData[9];
@@ -683,15 +687,15 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						}
 						tmp32 -= SECONDS2000YEAR;
 //						osal_setClock(tmp32);
-//						osal_ConvertUTCTime( pTempTimeStruct, tmp32 );
-//						buf[0] = pTempTimeStruct->year - 2000;
-//						buf[1] = pTempTimeStruct->month + 1;
-//						buf[2] = pTempTimeStruct->day + 1;
-//						buf[3] = pTempTimeStruct->hour;
-//						buf[4] = pTempTimeStruct->minutes;
-//						buf[5] = pTempTimeStruct->seconds;
+						osal_ConvertUTCTime( pTempTimeStruct, tmp32 );
+						buf[0] = pTempTimeStruct->year - 2000;
+						buf[1] = pTempTimeStruct->month + 1;
+						buf[2] = pTempTimeStruct->day + 1;
+						buf[3] = pTempTimeStruct->hour;
+						buf[4] = pTempTimeStruct->minutes;
+						buf[5] = pTempTimeStruct->seconds;
 //						UserSetPCF8563Hex(buf);
-//						gFlagAdjustTime = 60000; /* 大约一周时间 */
+						gFlagAdjustTime = 60000; /* 大约一周时间 */
 						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
 				}
 						break;
@@ -935,7 +939,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 //				}
 //						break;
 				default:
-//						UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+						UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
 						break;
 		}
 		

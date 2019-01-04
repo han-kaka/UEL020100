@@ -77,7 +77,7 @@ typedef struct
 //		uint8_t                            ee_addr_test;
 //		uint8_t                            ee_addr_power;
 //		uint16_t                           ee_addr_poweroncnt;
-//		uint8_t                            ee_addr_timestamp[8];
+		uint8_t                            ee_addr_timestamp[8];
 //		uint8_t                            ee_addr_openlockdir;
 		uint8_t                            ee_addr_aes128key[AES_KEY_LEN];
 //		uint8_t                            ee_addr_lockname[16];

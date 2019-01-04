@@ -35,6 +35,9 @@ typedef struct
 
 extern SystemRunParam_t gSystemRunParam;
 extern uint16_t gFlagAdjustTime;
+
+int8_t   UserMemCmp( const void *src1, const void *src2, unsigned int len );
+
 #endif
 
 
