@@ -50,21 +50,19 @@ bool Write_Solid_Romdata(const uint32_t pg_num, const p_Rom_Data_Type p_solid_da
 		Rom_Data_Type   rom_data_temp_struct;	
 		p_Rom_Data_Type p_rom_data_temp_struct = &rom_data_temp_struct;
 	
-//		Write_Romdata(pg_num, p_solid_data_struct);
-//		Read_Romdata(pg_num, p_rom_data_temp_struct);
-//	
-//		if((p_rom_data_temp_struct->solid_data_cell_struct.writed1 == 0xaa)
-//			 && (p_rom_data_temp_struct->solid_data_cell_struct.writed2 == 0xaa)
-//			 && (Xor_Check((uint8_t*)(&(p_rom_data_temp_struct->solid_data_cell_struct.solid_register_data_struct)),(sizeof(Solid_Register_Data_Type)+1)) == true) 
-//			 && (Xor_Check((uint8_t*)(&(p_rom_data_temp_struct->solid_data_cell_struct.solid_param_data_struct)),(sizeof(Solid_Parameters_Data_Type)+1)) == true) 
-//			 && (Xor_Check(p_rom_data_temp_struct->solid_data_cell_struct.aes_key,(AES_KEY_LEN+1)) == true)
-//			)
-//		{
-//		#if SEGGER_RTT_DEBUG_FLASH	
-//				SEGGER_RTT_printf(0, "store solid rom data true!\r\n");
-//		#endif
-//				return true;
-//		}
+		Write_Romdata(pg_num, p_solid_data_struct);
+		Read_Romdata(pg_num, p_rom_data_temp_struct);
+	
+		if((p_rom_data_temp_struct->solid_data_cell_struct.writed1 == 0xaa)
+			 && (p_rom_data_temp_struct->solid_data_cell_struct.writed2 == 0xaa)
+			 && (true == Xor_Check((uint8_t*)(&(p_rom_data_temp_struct->solid_data_cell_struct.solid_data_cell_data_struct)),(sizeof(Solid_Data_Cell_Data_Type)+1)))
+			)
+		{
+		#if SEGGER_RTT_DEBUG_FLASH	
+				SEGGER_RTT_printf(0, "store solid rom data true!\r\n");
+		#endif
+				return true;
+		}
 #if SEGGER_RTT_DEBUG_FLASH
 		SEGGER_RTT_printf(0, "store solid rom data false!\r\n");
 #endif
@@ -85,21 +83,55 @@ bool Store_Solid_Romdata(void)
 		p_solid_data_struct->solid_data_cell_struct.writed1 = 0xaa;
 		p_solid_data_struct->solid_data_cell_struct.writed2 = 0xaa;
 	
-		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_timestamp, timestamp, 8);
+		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_timestamp, timestamp, 8);
 	
-		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_aes128key, useraeskeybuf, AES_KEY_LEN);
+		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_aes128key, useraeskeybuf, AES_KEY_LEN);
 	
-		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_imei, NB_CommPacket.Init_Data.imei, IMEI_LEN);
+		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_imei, NB_CommPacket.Init_Data.imei, IMEI_LEN);
 	
-		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_iccid, NB_CommPacket.Init_Data.iccid, ICCID_LEN);
+		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_iccid, NB_CommPacket.Init_Data.iccid, ICCID_LEN);
 		
-		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_ip, NB_NetPar.ServerIp, SERVER_IP_LEN);
+		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_ip, NB_NetPar.ServerIp, SERVER_IP_LEN);
 		
-		memcpy(p_solid_data_struct->solid_data_cell_struct.ee_addr_apn, NB_NetPar.ServerApn, SERVER_APN_LEN);
+		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_apn, NB_NetPar.ServerApn, SERVER_APN_LEN);
 	
-		p_solid_data_struct->solid_data_cell_struct.solid_data_cell_xor = Get_Xor((uint8_t*)(&solid_data_struct), sizeof(Rom_Data_Type));
+		p_solid_data_struct->solid_data_cell_struct.solid_data_cell_xor = Get_Xor((uint8_t*)(&solid_data_struct), sizeof(Solid_Data_Cell_Data_Type));
 		
 		return Write_Solid_Romdata(pg_num, p_solid_data_struct);
+}
+
+/*******************************************************************************
+ * @brief       ??????
+ * @param       num:????;
+ * @return      0-??;1-??;
+ *******************************************************************************
+ */
+uint8_t UserGetLogInfo(LogInfo_t *pBuf)
+{
+		LogInfoIndex_t tmpLogInfoIndex;
+	
+//	UserAT24C64Read(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
+		if (tmpLogInfoIndex.flag != 0xAA)
+		{
+				tmpLogInfoIndex.flag = 0xAA;
+				tmpLogInfoIndex.head = 0;
+				tmpLogInfoIndex.tail = 0;
+//				UserAT24C64Write(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
+		}
+//	if (tmpLogInfoIndex.head == tmpLogInfoIndex.tail) 
+//	{
+//		ChangeAdvData(5, 0); // ???????
+//		return 0;
+//	}
+//	else
+//	{
+//		ChangeAdvData(5, 1); // ???????
+//	}
+//	
+//	if (pBuf != 0)
+//	UserAT24C64Read(EE_ADDR_LOGINFO + sizeof(LogInfo_t) * tmpLogInfoIndex.tail, 
+//							sizeof(LogInfo_t), (uint8 *)pBuf);
+	return 1;
 }
 
 //void init_solid_romdata(void)

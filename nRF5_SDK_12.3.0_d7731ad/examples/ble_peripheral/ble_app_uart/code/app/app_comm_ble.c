@@ -280,7 +280,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 		uint8_t  buf[16];
 ////	static UserInfo_t tempUserInfo;
 		UTCTimeStruct *pTempTimeStruct = (UTCTimeStruct *)(buf + 6);
-////	LogInfo_t *pTmpLogInfo = (LogInfo_t *)buf;
+		LogInfo_t *pTmpLogInfo = (LogInfo_t *)buf;
 ////	
 		if (sProtocolAppFormat.headData.version != PROTOCOL_APP_VERSION)			// 判断协议头正确性
 		{
@@ -616,10 +616,10 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_NONE;
 						pSendbuf[sendLength ++] = gSystemRunParam.batterPercent;
 						tmp = 0;
-//						if (gFlagAdjustTime <= 1) 
-//						{
-//								tmp |= BV(0);
-//						}
+						if (gFlagAdjustTime <= 1) 
+						{
+								tmp |= BV(0);
+						}
 //						if (UserGetLogInfo(0) == 1) 
 //						{
 //								tmp |= BV(1);
@@ -699,32 +699,32 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
 				}
 						break;
-//				
-//				case CMD_READ_LOG:														/* 读取日志 */
-//				{
-////						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
-////						if (UserGetLogInfo(pTmpLogInfo) == 1)
-////						{
-////							pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_NONE;
-////							osal_memcpy(pSendbuf + sendLength, pTmpLogInfo->userId, sizeof(pTmpLogInfo->userId));
-////							sendLength += sizeof(pTmpLogInfo->userId);
-////							pTmpLogInfo->time += SECONDS2000YEAR;
-////							pSendbuf[sendLength ++] = pTmpLogInfo->time >> 24;
-////							pSendbuf[sendLength ++] = pTmpLogInfo->time >> 16;
-////							pSendbuf[sendLength ++] = pTmpLogInfo->time >> 8;
-////							pSendbuf[sendLength ++] = pTmpLogInfo->time >> 0;
-////							pSendbuf[sendLength ++] = pTmpLogInfo->action;
-////						}
-////						else 
-////						{
-////							pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_FINISHED;
-////							osal_memset(pSendbuf + sendLength, 0, 13);
-////							sendLength += 13;
-////						}
-////						Put_Return(command, sendLength);
-//				}
-//						break;
-//			
+				
+				case CMD_READ_LOG:														/* 读取日志 */
+				{
+						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
+						if (UserGetLogInfo(pTmpLogInfo) == 1)
+						{
+//							pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_NONE;
+//							osal_memcpy(pSendbuf + sendLength, pTmpLogInfo->userId, sizeof(pTmpLogInfo->userId));
+//							sendLength += sizeof(pTmpLogInfo->userId);
+//							pTmpLogInfo->time += SECONDS2000YEAR;
+//							pSendbuf[sendLength ++] = pTmpLogInfo->time >> 24;
+//							pSendbuf[sendLength ++] = pTmpLogInfo->time >> 16;
+//							pSendbuf[sendLength ++] = pTmpLogInfo->time >> 8;
+//							pSendbuf[sendLength ++] = pTmpLogInfo->time >> 0;
+//							pSendbuf[sendLength ++] = pTmpLogInfo->action;
+						}
+						else 
+						{
+								pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_FINISHED;
+								memset(pSendbuf + sendLength, 0, 13);
+								sendLength += 13;
+						}
+						Put_Return(command, sendLength);
+				}
+						break;
+			
 //				case CMD_READ_USER_CONFIG:												/* 读取用户信息 */
 //				{
 ////						if ((dataLen != 1) || (*pData != 0xAB))

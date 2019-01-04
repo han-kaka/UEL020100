@@ -71,8 +71,6 @@
 
 typedef struct
 {	
-		uint8_t                            writed1;
-		uint8_t                            writed2;
 //		uint8_t                            ee_addr_init;
 //		uint8_t                            ee_addr_test;
 //		uint8_t                            ee_addr_power;
@@ -86,6 +84,13 @@ typedef struct
 		uint8_t                            ee_addr_iccid[ICCID_LEN];
 		uint8_t                            ee_addr_ip[SERVER_IP_LEN];
 		uint8_t                            ee_addr_apn[SERVER_APN_LEN];
+}Solid_Data_Cell_Data_Type;
+
+typedef struct
+{	
+		uint8_t                            writed1;
+		uint8_t                            writed2;
+		Solid_Data_Cell_Data_Type          solid_data_cell_data_struct;
 		uint8_t                            solid_data_cell_xor;
 }Solid_Data_Cell_Type;
 
@@ -131,8 +136,24 @@ typedef union
 
 }Rom_Data_Type;
 
-typedef Rom_Data_Type*                 p_Rom_Data_Type;
+typedef struct
+{
+	uint8_t  flag; // =0xA5??
+	uint16_t head;
+	uint16_t tail;
+} LogInfoIndex_t;
 
+typedef struct
+{
+	uint8_t  flag; // =0xA5??
+	uint8_t  action; // ?????;0x01-??;0x02-??;0x03-RFID;0x04-????;0x05-????????;0x06-???;0x07-?????;
+	uint8_t  res[2];
+	uint32_t time;
+	uint8_t  userId[8];
+	uint8_t  data[16];
+} LogInfo_t;
+
+typedef Rom_Data_Type*                 p_Rom_Data_Type;
 
 //void Read_Romdata(const uint32_t pg_num, p_Rom_Data_Type p_rom_data_struct);
 //void Write_Romdata(const uint32_t pg_num, const p_Rom_Data_Type p_rom_data_struct);
@@ -159,4 +180,6 @@ bool Write_Solid_Romdata(const uint32_t pg_num, const p_Rom_Data_Type p_rom_data
 ///************************************************************************************************************/
 
 //void init_super_dynamic_romdata(void);
+
+uint8_t UserGetLogInfo(LogInfo_t *pBuf);
 #endif

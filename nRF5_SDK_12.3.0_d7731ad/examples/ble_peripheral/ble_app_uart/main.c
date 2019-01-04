@@ -529,32 +529,32 @@ void uart_event_handle(app_uart_evt_t * p_event)
 /**@snippet [Handling the data received over UART] */
 
 
-/**@brief  Function for initializing the UART module.
- */
-/**@snippet [UART Initialization] */
-static void uart_init(void)
-{
-    uint32_t                     err_code;
-    const app_uart_comm_params_t comm_params =
-    {
-        RX_PIN_NUMBER,
-        TX_PIN_NUMBER,
-        RTS_PIN_NUMBER,
-        CTS_PIN_NUMBER,
-        APP_UART_FLOW_CONTROL_DISABLED,
-        false,
-        UART_BAUDRATE_BAUDRATE_Baud115200
-    };
+///**@brief  Function for initializing the UART module.
+// */
+///**@snippet [UART Initialization] */
+//static void uart_init(void)
+//{
+//    uint32_t                     err_code;
+//    const app_uart_comm_params_t comm_params =
+//    {
+//        RX_PIN_NUMBER,
+//        TX_PIN_NUMBER,
+//        RTS_PIN_NUMBER,
+//        CTS_PIN_NUMBER,
+//        APP_UART_FLOW_CONTROL_DISABLED,
+//        false,
+//        UART_BAUDRATE_BAUDRATE_Baud115200
+//    };
 
-    APP_UART_FIFO_INIT( &comm_params,
-                       UART_RX_BUF_SIZE,
-                       UART_TX_BUF_SIZE,
-                       uart_event_handle,
-                       APP_IRQ_PRIORITY_LOWEST,
-                       err_code);
-    APP_ERROR_CHECK(err_code);
-}
-/**@snippet [UART Initialization] */
+//    APP_UART_FIFO_INIT( &comm_params,
+//                       UART_RX_BUF_SIZE,
+//                       UART_TX_BUF_SIZE,
+//                       uart_event_handle,
+//                       APP_IRQ_PRIORITY_LOWEST,
+//                       err_code);
+//    APP_ERROR_CHECK(err_code);
+//}
+///**@snippet [UART Initialization] */
 
 static void adv_manuf_data_get(uint8_t *src)
 {
@@ -630,24 +630,24 @@ static void advertising_init(void)
 }
 
 
-/**@brief Function for initializing buttons and leds.
- *
- * @param[out] p_erase_bonds  Will be true if the clear bonding button was pressed to wake the application up.
- */
-static void buttons_leds_init(bool * p_erase_bonds)
-{
-    bsp_event_t startup_event;
+///**@brief Function for initializing buttons and leds.
+// *
+// * @param[out] p_erase_bonds  Will be true if the clear bonding button was pressed to wake the application up.
+// */
+//static void buttons_leds_init(bool * p_erase_bonds)
+//{
+//    bsp_event_t startup_event;
 
-    uint32_t err_code = bsp_init(BSP_INIT_LED | BSP_INIT_BUTTONS,
-                                 APP_TIMER_TICKS(100, APP_TIMER_PRESCALER),
-                                 bsp_event_handler);
-    APP_ERROR_CHECK(err_code);
+//    uint32_t err_code = bsp_init(BSP_INIT_LED | BSP_INIT_BUTTONS,
+//                                 APP_TIMER_TICKS(100, APP_TIMER_PRESCALER),
+//                                 bsp_event_handler);
+//    APP_ERROR_CHECK(err_code);
 
-    err_code = bsp_btn_ble_init(NULL, &startup_event);
-    APP_ERROR_CHECK(err_code);
+//    err_code = bsp_btn_ble_init(NULL, &startup_event);
+//    APP_ERROR_CHECK(err_code);
 
-    *p_erase_bonds = (startup_event == BSP_EVENT_CLEAR_BONDING_DATA);
-}
+//    *p_erase_bonds = (startup_event == BSP_EVENT_CLEAR_BONDING_DATA);
+//}
 
 
 /**@brief Function for placing the application in low power state while waiting for events.
