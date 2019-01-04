@@ -19,7 +19,7 @@ void m_clock_timeout_handler (void * p_context)
     s_MsCount++;
     if(Task_Flag_Struct.closeStaProc == DISABLE)
     {
-        APP_NB_TimeProc(10);
+//        APP_NB_TimeProc(10);
     }
 		
 		Bsp_Led_Tim(10);
@@ -29,6 +29,24 @@ void m_clock_timeout_handler (void * p_context)
     if(s_MsCount >= MS_TO_S)     // 1Sʱ�䵽
     {		
 				s_MsCount =0;
+				if(Task_Flag_Struct.motordelay == ENABLE)
+				{
+						Tim_1s_Struct.motor_delay_count++;
+						if(Tim_1s_Struct.motor_delay_count >= 2)
+						{
+								Tim_1s_Struct.motor_delay_count = 0;
+								Task_Flag_Struct.motordelay = DISABLE;
+								if(FOREWARD == Motor_OldStatus)
+								{
+										Motor_Status = INVERSION;
+								}
+								else if(INVERSION == Motor_OldStatus)
+								{
+										Motor_Status = FOREWARD;
+								}
+						}
+				}
+			
 				if(Task_Flag_Struct.writeRom_F != DISABLE || Task_Flag_Struct.writeDynamic_F != DISABLE)
 				{
 						Tim_1s_Struct.rewriteCount++;

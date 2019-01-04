@@ -13,6 +13,7 @@ typedef struct
 {	
     uint8_t  motor_on_timex1s;
     uint8_t  motor_off_timex1s;
+		uint8_t  motor_delay_count;
     uint8_t  oled_timex1s;
 	  uint16_t rtyCount;
     uint16_t rewriteCount;

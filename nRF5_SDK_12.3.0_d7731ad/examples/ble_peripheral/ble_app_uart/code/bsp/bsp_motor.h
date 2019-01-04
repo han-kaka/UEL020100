@@ -18,6 +18,7 @@ typedef struct
 
 
 extern Motor_Status_Tpye      Motor_Status;
+extern Motor_Status_Tpye      Motor_OldStatus;
 
 void Foreward_Motor(void);
 void Inversion_Motor(void);

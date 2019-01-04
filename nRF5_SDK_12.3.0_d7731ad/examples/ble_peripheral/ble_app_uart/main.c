@@ -698,7 +698,7 @@ int main(void)
 		SEGGER_RTT_printf(0, "Adv Start!\r\n");
 #endif
 		
-		Com_Bsp_Init();
+//		Com_Bsp_Init();
 		
     // Enter main loop.
     for (;;)
