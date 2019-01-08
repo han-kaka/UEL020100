@@ -657,7 +657,8 @@ static uint8_t APP_NB_WriteATPacket(uint8_t ATCmdIndex, uint8_t *pFrameDes)
 						strcpy((char*)pFrameDes, AT_CmdTbl[ATCmdIndex].CmdStr);
 						ucSendLen = strlen(AT_CmdTbl[ATCmdIndex].CmdStr);//默认的指令符长度
 					
-				}break;
+				}
+						break;
 		}
 		return ucSendLen;    
 }

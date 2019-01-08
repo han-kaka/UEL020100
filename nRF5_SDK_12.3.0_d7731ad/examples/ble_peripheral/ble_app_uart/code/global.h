@@ -90,5 +90,19 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 #define CMD_PARAM_CONFIG									0xAF			/* 参数配置指令 */
 #define CMD_PARAM_READ										0xB0			/* 参数读取指令 */
 
+
+typedef struct
+{
+		uint8_t  flag; // bit7-用户；bit6-键盘密码；bit5-指纹；bit4-RFID；bit3-蓝牙钥匙；bit2-指静脉；bit1=1；bit0=0；
+		uint16_t fingerId;
+		uint8_t  userId[8];
+		uint8_t  password[8];
+		uint8_t  cardId[8];
+		uint32_t startTime;
+		uint32_t endTime;
+		uint8_t  res[25];
+		uint32_t validity; // 此结构体数据的有效性，0xAAAAAAAA-表示有效；
+} UserInfo_t;
+
 #endif
 

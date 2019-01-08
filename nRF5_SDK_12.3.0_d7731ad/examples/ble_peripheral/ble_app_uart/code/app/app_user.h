@@ -37,6 +37,10 @@ extern SystemRunParam_t gSystemRunParam;
 extern uint16_t gFlagAdjustTime;
 
 int8_t   UserMemCmp( const void *src1, const void *src2, unsigned int len );
+void UserSetCurrentUser(uint8_t *uid);
+uint8_t* UserGetCurrentUser(void);
+void UserClrCurrentUser(void);
+
 
 #endif
 

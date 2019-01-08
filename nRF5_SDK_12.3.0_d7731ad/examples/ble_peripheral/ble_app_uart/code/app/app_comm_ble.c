@@ -274,14 +274,14 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 		uint16 temp16;
 		#endif
 		uint32_t tmp32;
-////	static uint8  sTemp;
-////	static uint8  sReadUserCnt = 0;
-////	static uint8  sFlagAddUser = 0;
+//	static uint8  sTemp;
+//	static uint8  sReadUserCnt = 0;
+//	static uint8  sFlagAddUser = 0;
 		uint8_t  buf[16];
-////	static UserInfo_t tempUserInfo;
+//	static UserInfo_t tempUserInfo;
 		UTCTimeStruct *pTempTimeStruct = (UTCTimeStruct *)(buf + 6);
 		LogInfo_t *pTmpLogInfo = (LogInfo_t *)buf;
-////	
+	
 		if (sProtocolAppFormat.headData.version != PROTOCOL_APP_VERSION)			// 判断协议头正确性
 		{
 				#if SEGGER_RTT_DEBUG_AES_DECODE
@@ -705,15 +705,15 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
 						if (UserGetLogInfo(pTmpLogInfo) == 1)
 						{
-//							pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_NONE;
-//							osal_memcpy(pSendbuf + sendLength, pTmpLogInfo->userId, sizeof(pTmpLogInfo->userId));
-//							sendLength += sizeof(pTmpLogInfo->userId);
-//							pTmpLogInfo->time += SECONDS2000YEAR;
-//							pSendbuf[sendLength ++] = pTmpLogInfo->time >> 24;
-//							pSendbuf[sendLength ++] = pTmpLogInfo->time >> 16;
-//							pSendbuf[sendLength ++] = pTmpLogInfo->time >> 8;
-//							pSendbuf[sendLength ++] = pTmpLogInfo->time >> 0;
-//							pSendbuf[sendLength ++] = pTmpLogInfo->action;
+								pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_NONE;
+								memcpy(pSendbuf + sendLength, pTmpLogInfo->userId, sizeof(pTmpLogInfo->userId));
+								sendLength += sizeof(pTmpLogInfo->userId);
+								pTmpLogInfo->time += SECONDS2000YEAR;
+								pSendbuf[sendLength ++] = pTmpLogInfo->time >> 24;
+								pSendbuf[sendLength ++] = pTmpLogInfo->time >> 16;
+								pSendbuf[sendLength ++] = pTmpLogInfo->time >> 8;
+								pSendbuf[sendLength ++] = pTmpLogInfo->time >> 0;
+								pSendbuf[sendLength ++] = pTmpLogInfo->action;
 						}
 						else 
 						{
@@ -721,48 +721,49 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 								memset(pSendbuf + sendLength, 0, 13);
 								sendLength += 13;
 						}
+						
 						Put_Return(command, sendLength);
 				}
 						break;
 			
-//				case CMD_READ_USER_CONFIG:												/* 读取用户信息 */
-//				{
-////						if ((dataLen != 1) || (*pData != 0xAB))
-////						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
-////						if (UserGetCurrentUser() == 0)
-////						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
-////						
-////						if (UserReadUserInfoConfig(UserGetCurrentUser(), &tmp) == 0)
-////						{
-////							buf[0] = 0; buf[1] = 0;
-////							if (tmp & 0x40) buf[1] |= 0x01;
-////							if (tmp & 0x20) buf[1] |= 0x02;
-////							if (tmp & 0x10) buf[1] |= 0x04;
-////							if (tmp & 0x08) buf[1] |= 0x08;
-////							UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, buf, 2);
-////						}
-////						
-////						while (1)
-////						{
-////							if (sReadUserCnt < MAX_USER_NUM)
-////							{
-////								if (UserReadUserInfoUID(sReadUserCnt, buf) == 0)
-////								{
-////									UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, buf, 8);
-////									sReadUserCnt++;
-////									break;
-////								}
-////								sReadUserCnt++;
-////							}
-////							else
-////							{
-////								UserReturnErrCode(command, PROTOCOL_APP_ERR_FINISHED);
-////								break;
-////							}
-////						}
-//				}
-//						break;
-//				
+				case CMD_READ_USER_CONFIG:												/* 读取用户信息 */
+				{
+						if ((dataLen != 1) || (*pData != 0xAB))
+						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
+						if (UserGetCurrentUser() == 0)
+						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
+						
+						if (UserReadUserInfoConfig(UserGetCurrentUser(), &tmp) == 0)
+						{
+							buf[0] = 0; buf[1] = 0;
+							if (tmp & 0x40) buf[1] |= 0x01;
+							if (tmp & 0x20) buf[1] |= 0x02;
+							if (tmp & 0x10) buf[1] |= 0x04;
+							if (tmp & 0x08) buf[1] |= 0x08;
+							UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, buf, 2);
+						}
+//						
+//						while (1)
+//						{
+//							if (sReadUserCnt < MAX_USER_NUM)
+//							{
+//								if (UserReadUserInfoUID(sReadUserCnt, buf) == 0)
+//								{
+//									UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, buf, 8);
+//									sReadUserCnt++;
+//									break;
+//								}
+//								sReadUserCnt++;
+//							}
+//							else
+//							{
+//								UserReturnErrCode(command, PROTOCOL_APP_ERR_FINISHED);
+//								break;
+//							}
+//						}
+				}
+						break;
+				
 //				case CMD_DEL_LOG:														/* 删除日志 */
 //				{
 ////						//	if (dataLen != 16)

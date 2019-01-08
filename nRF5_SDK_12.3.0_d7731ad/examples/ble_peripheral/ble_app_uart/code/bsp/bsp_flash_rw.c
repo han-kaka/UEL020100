@@ -134,6 +134,24 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
 	return 1;
 }
 
+uint8_t UserGetUserInfo(uint8_t num, UserInfo_t *pBuf)
+{
+	uint8_t  ret;
+	
+//	if (num >= MAX_USER_NUM) return 1;
+//	ret = UserFlashRead(USER_FLASH_PAGE_USERINFO_START + (num / (USER_FLASH_PAGE_SIZE / sizeof(UserInfo_t))), 
+//						(uint16_t)(num % (USER_FLASH_PAGE_SIZE / sizeof(UserInfo_t))) * sizeof(UserInfo_t), 
+//						(uint8_t*)pBuf, sizeof(UserInfo_t));
+//	if (ret != 0xFF)
+//	{
+//		if (pBuf->validity != 0xAAAAAAAA)
+//		{
+//			memset(pBuf, 0, sizeof(UserInfo_t));
+//		}
+//	}
+	return ret;
+}
+
 //void init_solid_romdata(void)
 //{ 
 //		uint32_t        pg_num;
