@@ -40,7 +40,7 @@ int8_t   UserMemCmp( const void *src1, const void *src2, unsigned int len );
 void UserSetCurrentUser(uint8_t *uid);
 uint8_t* UserGetCurrentUser(void);
 void UserClrCurrentUser(void);
-
+uint8_t UserReadUserInfoConfig(uint8_t *uid, uint8_t *dat);
 
 #endif
 

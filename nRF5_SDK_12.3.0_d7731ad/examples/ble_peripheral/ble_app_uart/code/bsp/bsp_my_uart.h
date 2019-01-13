@@ -2,8 +2,7 @@
 #define __LPD_BSP_MY_UART_H
 
 #include "nrf_drv_uart.h"
-
-#include "bsp_common.h"
+#include "global.h"
 
 typedef union 
 { uint32_t Whole;

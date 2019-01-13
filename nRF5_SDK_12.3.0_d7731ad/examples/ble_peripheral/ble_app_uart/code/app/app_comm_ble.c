@@ -275,7 +275,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 		#endif
 		uint32_t tmp32;
 //	static uint8  sTemp;
-//	static uint8  sReadUserCnt = 0;
+		static uint8_t  sReadUserCnt = 0;
 //	static uint8  sFlagAddUser = 0;
 		uint8_t  buf[16];
 //	static UserInfo_t tempUserInfo;
@@ -742,25 +742,25 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 							if (tmp & 0x08) buf[1] |= 0x08;
 							UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, buf, 2);
 						}
-//						
-//						while (1)
-//						{
-//							if (sReadUserCnt < MAX_USER_NUM)
-//							{
-//								if (UserReadUserInfoUID(sReadUserCnt, buf) == 0)
-//								{
-//									UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, buf, 8);
-//									sReadUserCnt++;
-//									break;
-//								}
-//								sReadUserCnt++;
-//							}
-//							else
-//							{
-//								UserReturnErrCode(command, PROTOCOL_APP_ERR_FINISHED);
-//								break;
-//							}
-//						}
+						
+						while (1)
+						{
+								if (sReadUserCnt < MAX_USER_NUM)
+								{
+//										if (UserReadUserInfoUID(sReadUserCnt, buf) == 0)
+//										{
+//											UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, buf, 8);
+//											sReadUserCnt++;
+//											break;
+//										}
+//										sReadUserCnt++;
+								}
+								else
+								{
+//										UserReturnErrCode(command, PROTOCOL_APP_ERR_FINISHED);
+//										break;
+								}
+						}
 				}
 						break;
 				

@@ -100,10 +100,42 @@ bool Store_Solid_Romdata(void)
 		return Write_Solid_Romdata(pg_num, p_solid_data_struct);
 }
 
+///*******************************************************************************
+// * @brief       保存日志信息
+// * @param       num：用户编号；
+// * @return      0-错误；1-正确；
+// *******************************************************************************
+// */
+//uint8 UserSaveLogInfo(LogInfo_t *pBuf)
+//{
+//	LogInfoIndex_t tmpLogInfoIndex;
+//	
+//	UserAT24C64Read(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
+//	if (tmpLogInfoIndex.flag != 0xAA)
+//	{
+//		tmpLogInfoIndex.flag = 0xAA;
+//		tmpLogInfoIndex.head = 0;
+//		tmpLogInfoIndex.tail = 0;
+//	}
+//	
+//	UserAT24C64Write(EE_ADDR_LOGINFO + sizeof(LogInfo_t) * tmpLogInfoIndex.head, 
+//							sizeof(LogInfo_t), (uint8 *)pBuf);
+//	if (++tmpLogInfoIndex.head >= MAX_LOG_NUM) tmpLogInfoIndex.head = 0;
+//	if (tmpLogInfoIndex.head == tmpLogInfoIndex.tail) tmpLogInfoIndex.tail++;
+//	if (tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
+//	
+//	ChangeAdvData(5, 1); // 更新广播标志位
+//	#ifdef NBMODULE
+//	UserNBModuleSetTodoFlag(0x01);
+//	#endif
+//	
+//	return UserAT24C64Write(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
+//}
+
 /*******************************************************************************
- * @brief       ??????
- * @param       num:????;
- * @return      0-??;1-??;
+ * @brief       读取日志信息
+ * @param       num：用户编号；
+ * @return      0-错误；1-正确；
  *******************************************************************************
  */
 uint8_t UserGetLogInfo(LogInfo_t *pBuf)
@@ -134,23 +166,210 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
 	return 1;
 }
 
+///*******************************************************************************
+// * @brief       删除日志信息
+// * @param       pBuf - 日志信息，若地址为0怎删除最老的一条日志信息
+// * @return      0-错误；1-正确；
+// *******************************************************************************
+// */
+//uint8 UserDelLogInfo(LogInfo_t *pBuf)
+//{
+//	LogInfoIndex_t tmpLogInfoIndex;
+//	LogInfo_t tmpLogInfo;
+//	
+//	UserAT24C64Read(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
+//	if (tmpLogInfoIndex.flag != 0xAA)
+//	{
+//		tmpLogInfoIndex.flag = 0xAA;
+//		tmpLogInfoIndex.head = 0;
+//		tmpLogInfoIndex.tail = 0;
+//		UserAT24C64Write(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
+//	}
+//	if (tmpLogInfoIndex.head == tmpLogInfoIndex.tail) 
+//	{
+//		ChangeAdvData(5, 0); // 更新广播标志位
+//		return 0;
+//	}
+//	else
+//	{
+//		ChangeAdvData(5, 1); // 更新广播标志位
+//	}
+//	
+//	if (pBuf > 0)
+//	{
+//		UserAT24C64Read(EE_ADDR_LOGINFO + sizeof(LogInfo_t) * tmpLogInfoIndex.tail, 
+//								sizeof(LogInfo_t), (uint8 *)(&tmpLogInfo));
+//		if ((osal_memcmp(tmpLogInfo.userId , pBuf->userId, sizeof(tmpLogInfo.userId)) != 0) && 
+//			(tmpLogInfo.time == pBuf->time))
+//		{
+//			if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
+//			UserAT24C64Write(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
+//		}
+//	}
+//	else
+//	{
+//		if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
+//		UserAT24C64Write(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
+//	}
+//	return 1;
+//}
+
+///*******************************************************************************
+// * @brief       保存用户信息
+// * @param       num：用户编号；
+// * @return      0-成功；0xFF-未完成；other-失败；
+// *******************************************************************************
+// */
+//#ifdef FLASHUSERINFO
+//uint8 UserSaveUserInfo(uint8 num, UserInfo_t *pBuf)
+//{
+//	if (num >= MAX_USER_NUM) return 1;
+//	pBuf->validity = 0xAAAAAAAA;
+//	return UserFlashWrite(USER_FLASH_PAGE_USERINFO_START + (num / (USER_FLASH_PAGE_SIZE / sizeof(UserInfo_t))), 
+//						  (uint16)(num % (USER_FLASH_PAGE_SIZE / sizeof(UserInfo_t))) * sizeof(UserInfo_t), 
+//						  (uint8*)pBuf, sizeof(UserInfo_t));
+//}
+//#else
+//uint8 UserSaveUserInfo(uint8 num, UserInfo_t *pBuf)
+//{
+//	uint8  ret = 1;
+//	
+//	if (num >= MAX_USER_NUM) return 1;
+//	if (UserAT24C64Write(EE_ADDR_USERINFO + sizeof(UserInfo_t) * num, 
+//							sizeof(UserInfo_t), (uint8 *)pBuf) == 1)
+//		ret = 0;
+//	return ret;
+//}
+//#endif
+///*******************************************************************************
+// * @brief       删除用户信息
+// * @param       num：用户编号；
+// * @return      0-成功；0xFF-未完成；other-失败；
+// *******************************************************************************
+// */
+//#ifdef FLASHUSERINFO
+//uint8 UserDelUserInfo(uint8 num)
+//{
+//	uint8  buf[4] = {0, 0, 0, 0};
+//	uint16 addr = (((uint16)(num % (USER_FLASH_PAGE_SIZE / sizeof(UserInfo_t))) * sizeof(UserInfo_t) + sizeof(UserInfo_t) - sizeof(uint32)) >> 2) + 
+//		(((uint16)USER_FLASH_PAGE_USERINFO_START + ((uint16)num / (USER_FLASH_PAGE_SIZE / sizeof(UserInfo_t)))) << 9);
+//	
+//	if (num >= MAX_USER_NUM) return 1;
+//	HalFlashWrite(addr,  buf, 1);
+//	return 0;
+//}
+//#endif
+
+/*******************************************************************************
+ * @brief       读取用户信息
+ * @param       num：用户编号；
+ * @return      0-成功；0xFF-未完成；other-失败；
+ *******************************************************************************
+ */
+#ifdef FLASHUSERINFO
 uint8_t UserGetUserInfo(uint8_t num, UserInfo_t *pBuf)
 {
-	uint8_t  ret;
+	uint8  ret;
 	
 //	if (num >= MAX_USER_NUM) return 1;
 //	ret = UserFlashRead(USER_FLASH_PAGE_USERINFO_START + (num / (USER_FLASH_PAGE_SIZE / sizeof(UserInfo_t))), 
-//						(uint16_t)(num % (USER_FLASH_PAGE_SIZE / sizeof(UserInfo_t))) * sizeof(UserInfo_t), 
-//						(uint8_t*)pBuf, sizeof(UserInfo_t));
+//						(uint16)(num % (USER_FLASH_PAGE_SIZE / sizeof(UserInfo_t))) * sizeof(UserInfo_t), 
+//						(uint8*)pBuf, sizeof(UserInfo_t));
 //	if (ret != 0xFF)
 //	{
 //		if (pBuf->validity != 0xAAAAAAAA)
 //		{
-//			memset(pBuf, 0, sizeof(UserInfo_t));
+//			osal_memset(pBuf, 0, sizeof(UserInfo_t));
 //		}
 //	}
 	return ret;
 }
+#else
+uint8_t UserGetUserInfo(uint8_t num, UserInfo_t *pBuf)
+{
+	uint8_t  ret = 1;
+	
+//	if (num >= MAX_USER_NUM) return 1;
+//	if (UserAT24C64Read(EE_ADDR_USERINFO + sizeof(UserInfo_t) * num, 
+//						   sizeof(UserInfo_t), (uint8 *)pBuf) == 1)
+//		ret = 0;
+	return ret;
+}
+#endif
+
+///*******************************************************************************
+// * @brief       保存用户蓝牙钥匙
+// * @param       num：用户编号；
+// * @return      0-错误；1-正确；
+// *******************************************************************************
+// */
+//uint8 UserSaveUserBluetoothKeyInfo(uint8 num, UserBluetoothKeyInfo_t *pBuf)
+//{
+//	if (num >= MAX_USER_NUM) return 0;
+//	return UserAT24C64Write(EE_ADDR_BLUETOOTH_KEY + sizeof(UserBluetoothKeyInfo_t) * num, 
+//							sizeof(UserBluetoothKeyInfo_t), (uint8 *)pBuf);
+//}
+
+///*******************************************************************************
+// * @brief       读取用户蓝牙钥匙
+// * @param       num：用户编号；
+// * @return      0-错误；1-正确；
+// *******************************************************************************
+// */
+//uint8 UserGetUserBluetoothKeyInfo(uint8 num, UserBluetoothKeyInfo_t *pBuf)
+//{
+//	if (num >= MAX_USER_NUM) return 0;
+//	return UserAT24C64Read(EE_ADDR_BLUETOOTH_KEY + sizeof(UserBluetoothKeyInfo_t) * num, 
+//						   sizeof(UserBluetoothKeyInfo_t), (uint8 *)pBuf);
+//}
+
+////==============================================================================
+////                           * 锁的设置参数 *
+////==============================================================================
+//uint8 SaveSetup(void)															// 保存设置到 EEPROM
+//{
+//	uint8  tmp;
+//	
+//	tmp = UserSaveAppData(P_EE_ADDR_INIT, &gSystemRunParam.flagInit);			// 配置改变时需要与 EEPROM 同步
+//	if (gSystemRunParam.flagInit != 0xA5)
+//	{
+//		osal_memcpy(useraeskeybuf, defualtaes128key, 16);
+//	}
+//	if (gSystemRunParam.flagInit == 0xA5)
+//	{
+//		Save_SysRunState(2);
+//	}
+//	ChangeAdvData(2, gSystemRunParam.flagInit);									// 更新广播数据
+//	
+//	return tmp;
+//}
+
+//uint8 GetSetup(void)															// 从 EEPROM 获取配置
+//{
+//    uint8 tmp;
+//	
+//	tmp	= UserGetAppData(P_EE_ADDR_INIT, &gSystemRunParam.flagInit);
+//    if ((gSystemRunParam.flagInit != 0xA5) && (gSystemRunParam.flagInit != 0x55))
+//	{ gSystemRunParam.flagInit = 0; SaveSetup(); }								// 判断设置信息无效时，然后将其清零重新同步到 EEPROM 
+//    else 
+//	{ ChangeAdvData(2, gSystemRunParam.flagInit); }								// 否则改变广播状态
+//	
+//	return tmp;
+//}
+
+////==============================================================================
+////                           * 锁的设置参数 *
+////==============================================================================
+//uint8 UserEepromInit(void)
+//{
+////	LogInfoIndex_t tmpLogInfoIndex;
+////	
+////	tmpLogInfoIndex.flag = 0xA0;
+////	tmpLogInfoIndex.head = 0;
+////	tmpLogInfoIndex.tail = 0;
+////	return UserAT24C64Write(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
+//	return 1;
+//}
 
 //void init_solid_romdata(void)
 //{ 

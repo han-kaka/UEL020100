@@ -2,9 +2,7 @@
 #define __BSP_BLE_TRANS_H
 
 #include "ble_nus.h"
-
 #include "global.h"
-
 
 
 typedef struct

@@ -86,7 +86,6 @@ uint8_t UserReadUserInfoConfig(uint8_t *uid, uint8_t *dat)
 	uint8_t  tmp, ret = 1;
 	UserInfo_t tempUserInfo;
 	
-	
 	tmp = UserSearchUserInfoNumber(uid);
 	if (tmp < MAX_USER_NUM)
 	{
@@ -98,3 +97,50 @@ uint8_t UserReadUserInfoConfig(uint8_t *uid, uint8_t *dat)
 	return ret;
 }
 
+////==============================================================================
+////                           * 锁的设置参数 *
+////==============================================================================
+//uint8 SaveSetup(void)															// 保存设置到 EEPROM
+//{
+//	uint8  tmp;
+//	
+//	tmp = UserSaveAppData(P_EE_ADDR_INIT, &gSystemRunParam.flagInit);			// 配置改变时需要与 EEPROM 同步
+//	if (gSystemRunParam.flagInit != 0xA5)
+//	{
+//		osal_memcpy(useraeskeybuf, defualtaes128key, 16);
+//	}
+//	if (gSystemRunParam.flagInit == 0xA5)
+//	{
+//		Save_SysRunState(2);
+//	}
+//	ChangeAdvData(2, gSystemRunParam.flagInit);									// 更新广播数据
+//	
+//	return tmp;
+//}
+
+//uint8 GetSetup(void)															// 从 EEPROM 获取配置
+//{
+//    uint8 tmp;
+//	
+//	tmp	= UserGetAppData(P_EE_ADDR_INIT, &gSystemRunParam.flagInit);
+//    if ((gSystemRunParam.flagInit != 0xA5) && (gSystemRunParam.flagInit != 0x55))
+//	{ gSystemRunParam.flagInit = 0; SaveSetup(); }								// 判断设置信息无效时，然后将其清零重新同步到 EEPROM 
+//    else 
+//	{ ChangeAdvData(2, gSystemRunParam.flagInit); }								// 否则改变广播状态
+//	
+//	return tmp;
+//}
+
+////==============================================================================
+////                           * 锁的设置参数 *
+////==============================================================================
+//uint8 UserEepromInit(void)
+//{
+////	LogInfoIndex_t tmpLogInfoIndex;
+////	
+////	tmpLogInfoIndex.flag = 0xA0;
+////	tmpLogInfoIndex.head = 0;
+////	tmpLogInfoIndex.tail = 0;
+////	return UserAT24C64Write(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
+//	return 1;
+//}

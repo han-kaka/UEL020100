@@ -1,9 +1,7 @@
 #ifndef  __BSP_FLASH_RW_H
 #define  __BSP_FLASH_RW_H
 
-#include "bsp_common.h"
-
-
+#include "global.h"
 
 ///****************************************** Register data ***************************************************/
 //#define ZHEJIANG                       0x0000
@@ -138,15 +136,28 @@ typedef union
 
 typedef struct
 {
-	uint8_t  flag; // =0xA5??
+	uint8_t  flag; // bit7-用户；bit6-键盘密码；bit5-指纹；bit4-RFID；bit3-蓝牙钥匙；bit2-指静脉；bit1=1；bit0=0；
+	uint16_t fingerId;
+	uint8_t  userId[8];
+	uint8_t  password[8];
+	uint8_t  cardId[8];
+	uint32_t startTime;
+	uint32_t endTime;
+	uint8_t  res[25];
+	uint32_t validity; // 此结构体数据的有效性，0xAAAAAAAA-表示有效；
+} UserInfo_t;
+
+typedef struct
+{
+	uint8_t  flag; //=0xA5有效
 	uint16_t head;
 	uint16_t tail;
 } LogInfoIndex_t;
 
 typedef struct
 {
-	uint8_t  flag; // =0xA5??
-	uint8_t  action; // ?????;0x01-??;0x02-??;0x03-RFID;0x04-????;0x05-????????;0x06-???;0x07-?????;
+	uint8_t  flag; //=0xA5有效
+	uint8_t  action; //执行的动作；0x01-密码；0x02-指纹；0x03-RFID；0x04-蓝牙钥匙；0x05-三次密码输入错误；0x06-指静脉；0x07-居民身份证；
 	uint8_t  res[2];
 	uint32_t time;
 	uint8_t  userId[8];
@@ -182,4 +193,21 @@ bool Write_Solid_Romdata(const uint32_t pg_num, const p_Rom_Data_Type p_rom_data
 //void init_super_dynamic_romdata(void);
 
 uint8_t UserGetLogInfo(LogInfo_t *pBuf);
+
+//uint8 UserSaveLogInfo(LogInfo_t *pBuf);
+uint8_t UserGetLogInfo(LogInfo_t *pBuf);
+//uint8 UserDelLogInfo(LogInfo_t *pBuf);
+//uint8 UserSaveUserInfo(uint8 num, UserInfo_t *pBuf);
+//#ifdef FLASHUSERINFO
+//	uint8 UserDelUserInfo(uint8 num);
+//#endif
+uint8_t UserGetUserInfo(uint8_t num, UserInfo_t *pBuf);
+//uint8 UserSaveUserBluetoothKeyInfo(uint8 num, UserBluetoothKeyInfo_t *pBuf);
+//uint8 UserGetUserBluetoothKeyInfo(uint8 num, UserBluetoothKeyInfo_t *pBuf);
+//uint8 UserSaveAppData(EepromAddr_t parameter, uint8 *pbuf);
+//uint8 UserGetAppData(EepromAddr_t parameter, uint8 *pbuf);
+//uint8 SaveSetup(void);
+//uint8 GetSetup(void);
+//uint8 UserEepromInit(void);
+
 #endif
