@@ -255,13 +255,13 @@ static void UserReturnErrCode(uint8_t command, uint8_t errCode)
  */
 static void UserReturnErrCodeAndData(uint8_t command, uint8_t errCode, char *pData, uint8_t len)
 {
-	uint8_t  postion = 0;
-	uint8_t  *pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
-	
-	pSendbuf[postion++] = errCode;
-	memcpy(pSendbuf + postion, pData, len);
-	postion += len;
-	Put_Return(command, postion++);
+		uint8_t  postion = 0;
+		uint8_t  *pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
+		
+		pSendbuf[postion++] = errCode;
+		memcpy(pSendbuf + postion, pData, len);
+		postion += len;
+		Put_Return(command, postion++);
 }
 
 uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
@@ -740,25 +740,25 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 							if (tmp & 0x20) buf[1] |= 0x02;
 							if (tmp & 0x10) buf[1] |= 0x04;
 							if (tmp & 0x08) buf[1] |= 0x08;
-							UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, buf, 2);
+							UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, (char *)buf, 2);
 						}
 						
 						while (1)
 						{
 								if (sReadUserCnt < MAX_USER_NUM)
 								{
-//										if (UserReadUserInfoUID(sReadUserCnt, buf) == 0)
-//										{
-//											UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, buf, 8);
-//											sReadUserCnt++;
-//											break;
-//										}
-//										sReadUserCnt++;
+										if (UserReadUserInfoUID(sReadUserCnt, buf) == 0)
+										{
+												UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, (char *)buf, 8);
+												sReadUserCnt++;
+												break;
+										}
+										sReadUserCnt++;
 								}
 								else
 								{
-//										UserReturnErrCode(command, PROTOCOL_APP_ERR_FINISHED);
-//										break;
+										UserReturnErrCode(command, PROTOCOL_APP_ERR_FINISHED);
+										break;
 								}
 						}
 				}

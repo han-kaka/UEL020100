@@ -36,11 +36,36 @@ typedef struct
 extern SystemRunParam_t gSystemRunParam;
 extern uint16_t gFlagAdjustTime;
 
+
+//==============================================================================
+//定义在 SmartLock_User.c 中的函数
+//==============================================================================
+//uint32 SC_GenStrToInt(uint8 *pdat);
+//uint16 SC_Strlen(uint8 *ch);
+//uint16 SC_StrPrintlen(uint8 *ch);
+//uint8* SC_Strstr(uint8 *ch1, uint8 *ch2, uint16 len1, uint16 len2);
 int8_t   UserMemCmp( const void *src1, const void *src2, unsigned int len );
-void UserSetCurrentUser(uint8_t *uid);
-uint8_t* UserGetCurrentUser(void);
-void UserClrCurrentUser(void);
+//uint8  UserSearchUserInfoNumber(uint8 *id);
+//uint8  UserSearchUserInfoUID(uint16 num, uint8 *id);
+uint8_t UserReadUserInfoUID(uint8_t num, uint8_t *uid);
 uint8_t UserReadUserInfoConfig(uint8_t *uid, uint8_t *dat);
+//uint8  UserAddUserInfoToSystem(uint8 type, uint8 *id, uint8 *pData);
+//uint8  UserDelUserInfoFromSystem(uint8 *uid);
+//void   UserClearUserInfoFromSystem(void);
+void   UserSetCurrentUser(uint8_t *uid);
+uint8_t* UserGetCurrentUser(void);
+void   UserClrCurrentUser(void);
+//void   FeetDog(void);
+//void   UserHalInit(void);
+//void   UserSoftInit(void);
+//void   Save_SysRunState(uint8 sta);
+//uint8  Get_SysRunState(void);
+//void   WaitSystemExit(uint8 type, uint32 ms);
+//void   NowSystemExit(void);
+//void   UserHardDelayNop(uint16 us);
+//void   UserHardDelayMs(uint16 ms);
+//void   UserHardWDGDelayMs(uint16 ms);
+//void   TestBug(uint8 bugcont);
 
 #endif
 
