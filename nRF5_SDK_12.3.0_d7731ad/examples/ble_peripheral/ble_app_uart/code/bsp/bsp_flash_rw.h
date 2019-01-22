@@ -196,7 +196,7 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf);
 
 //uint8 UserSaveLogInfo(LogInfo_t *pBuf);
 uint8_t UserGetLogInfo(LogInfo_t *pBuf);
-//uint8 UserDelLogInfo(LogInfo_t *pBuf);
+uint8_t UserDelLogInfo(LogInfo_t *pBuf);
 //uint8 UserSaveUserInfo(uint8 num, UserInfo_t *pBuf);
 //#ifdef FLASHUSERINFO
 //	uint8 UserDelUserInfo(uint8 num);

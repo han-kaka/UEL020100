@@ -166,25 +166,25 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
 	return 1;
 }
 
-///*******************************************************************************
-// * @brief       删除日志信息
-// * @param       pBuf - 日志信息，若地址为0怎删除最老的一条日志信息
-// * @return      0-错误；1-正确；
-// *******************************************************************************
-// */
-//uint8 UserDelLogInfo(LogInfo_t *pBuf)
-//{
-//	LogInfoIndex_t tmpLogInfoIndex;
-//	LogInfo_t tmpLogInfo;
-//	
+/*******************************************************************************
+ * @brief       删除日志信息
+ * @param       pBuf - 日志信息，若地址为0怎删除最老的一条日志信息
+ * @return      0-错误；1-正确；
+ *******************************************************************************
+ */
+uint8_t UserDelLogInfo(LogInfo_t *pBuf)
+{
+	LogInfoIndex_t tmpLogInfoIndex;
+	LogInfo_t tmpLogInfo;
+	
 //	UserAT24C64Read(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
-//	if (tmpLogInfoIndex.flag != 0xAA)
-//	{
-//		tmpLogInfoIndex.flag = 0xAA;
-//		tmpLogInfoIndex.head = 0;
-//		tmpLogInfoIndex.tail = 0;
+	if (tmpLogInfoIndex.flag != 0xAA)
+	{
+		tmpLogInfoIndex.flag = 0xAA;
+		tmpLogInfoIndex.head = 0;
+		tmpLogInfoIndex.tail = 0;
 //		UserAT24C64Write(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
-//	}
+	}
 //	if (tmpLogInfoIndex.head == tmpLogInfoIndex.tail) 
 //	{
 //		ChangeAdvData(5, 0); // 更新广播标志位
@@ -194,25 +194,25 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
 //	{
 //		ChangeAdvData(5, 1); // 更新广播标志位
 //	}
-//	
-//	if (pBuf > 0)
-//	{
+	
+	if (pBuf > 0)
+	{
 //		UserAT24C64Read(EE_ADDR_LOGINFO + sizeof(LogInfo_t) * tmpLogInfoIndex.tail, 
 //								sizeof(LogInfo_t), (uint8 *)(&tmpLogInfo));
-//		if ((osal_memcmp(tmpLogInfo.userId , pBuf->userId, sizeof(tmpLogInfo.userId)) != 0) && 
-//			(tmpLogInfo.time == pBuf->time))
-//		{
-//			if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
+		if ((memcmp(tmpLogInfo.userId , pBuf->userId, sizeof(tmpLogInfo.userId)) != 0) && 
+			(tmpLogInfo.time == pBuf->time))
+		{
+			if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
 //			UserAT24C64Write(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
-//		}
-//	}
-//	else
-//	{
-//		if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
+		}
+	}
+	else
+	{
+		if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
 //		UserAT24C64Write(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
-//	}
-//	return 1;
-//}
+	}
+	return 1;
+}
 
 ///*******************************************************************************
 // * @brief       保存用户信息
