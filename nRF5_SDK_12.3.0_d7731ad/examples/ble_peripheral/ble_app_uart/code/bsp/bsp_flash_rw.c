@@ -5,7 +5,7 @@
 #include "bsp_flash_rw.h"
 
 /************************************** flash wr re *********************************************************/
-static void Read_Romdata(const uint32_t pg_num, p_Rom_Data_Type p_rom_data_struct)
+static void read_flash_data(const uint32_t pg_num, p_Rom_Data_Type p_rom_data_struct)
 {  
 		uint32_t i;
 		uint32_t *addr;   
@@ -23,7 +23,7 @@ static void Read_Romdata(const uint32_t pg_num, p_Rom_Data_Type p_rom_data_struc
     }
 }
 
-static void Write_Romdata(const uint32_t pg_num, const p_Rom_Data_Type p_rom_data_struct)
+static void write_flash_data(const uint32_t pg_num, const p_Rom_Data_Type p_rom_data_struct)
 {  
 		uint32_t        err_code;	
 		uint32_t        *p_dst;
@@ -45,17 +45,17 @@ static void Write_Romdata(const uint32_t pg_num, const p_Rom_Data_Type p_rom_dat
 
 
 /************************************** solid romdata *******************************************************/
-bool Write_Solid_Romdata(const uint32_t pg_num, const p_Rom_Data_Type p_solid_data_struct)
+bool write_solid_flash_data(const uint32_t pg_num, const p_Rom_Data_Type p_solid_data_struct)
 {
 		Rom_Data_Type   rom_data_temp_struct;	
 		p_Rom_Data_Type p_rom_data_temp_struct = &rom_data_temp_struct;
 	
-		Write_Romdata(pg_num, p_solid_data_struct);
-		Read_Romdata(pg_num, p_rom_data_temp_struct);
+		write_flash_data(pg_num, p_solid_data_struct);
+		read_flash_data(pg_num, p_rom_data_temp_struct);
 	
 		if((p_rom_data_temp_struct->solid_data_cell_struct.writed1 == 0xaa)
 			 && (p_rom_data_temp_struct->solid_data_cell_struct.writed2 == 0xaa)
-			 && (true == Xor_Check((uint8_t*)(&(p_rom_data_temp_struct->solid_data_cell_struct.solid_data_cell_data_struct)),(sizeof(Solid_Data_Cell_Data_Type)+1)))
+			 && (true == xor_check((uint8_t*)(&(p_rom_data_temp_struct->solid_data_cell_struct.solid_data_cell_data_struct)),(sizeof(Solid_Data_Cell_Data_Type)+1)))
 			)
 		{
 		#if SEGGER_RTT_DEBUG_FLASH	
@@ -69,7 +69,8 @@ bool Write_Solid_Romdata(const uint32_t pg_num, const p_Rom_Data_Type p_solid_da
 		return false;
 }
 
-bool Store_Solid_Romdata(void)
+//保存固态数据
+bool store_solid_flsh_data(void)
 {
 		uint32_t        pg_num;
 		Rom_Data_Type   solid_data_struct;
@@ -78,7 +79,7 @@ bool Store_Solid_Romdata(void)
 	#if SEGGER_RTT_DEBUG_FLASH
 		SEGGER_RTT_printf(0, "store solid rom data!\r\n");
 	#endif
-		pg_num = NRF_FICR->CODESIZE - SOLID_ROM_DATA_PAGE;  // Use last 5 page in flash 页数量
+		pg_num = NRF_FICR->CODESIZE - SOLID_FLASH_DATA_PAGE;  // Use last 5 page in flash 页数量
 	
 		p_solid_data_struct->solid_data_cell_struct.writed1 = 0xaa;
 		p_solid_data_struct->solid_data_cell_struct.writed2 = 0xaa;
@@ -95,9 +96,9 @@ bool Store_Solid_Romdata(void)
 		
 		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_apn, NB_NetPar.ServerApn, SERVER_APN_LEN);
 	
-		p_solid_data_struct->solid_data_cell_struct.solid_data_cell_xor = Get_Xor((uint8_t*)(&solid_data_struct), sizeof(Solid_Data_Cell_Data_Type));
+		p_solid_data_struct->solid_data_cell_struct.solid_data_cell_xor = get_xor((uint8_t*)(&solid_data_struct), sizeof(Solid_Data_Cell_Data_Type));
 		
-		return Write_Solid_Romdata(pg_num, p_solid_data_struct);
+		return write_solid_flash_data(pg_num, p_solid_data_struct);
 }
 
 ///*******************************************************************************
@@ -371,66 +372,60 @@ uint8_t UserGetUserInfo(uint8_t num, UserInfo_t *pBuf)
 //	return 1;
 //}
 
-//void init_solid_romdata(void)
-//{ 
-//		uint32_t        pg_num;
-//		Rom_Data_Type   solid_data_struct;
-//		p_Rom_Data_Type p_solid_data_struct = &solid_data_struct;
+//初始化固态数据
+void init_solid_flash_data(void)
+{
+		uint32_t        pg_num;
+		Rom_Data_Type   solid_data_struct;
+		p_Rom_Data_Type p_solid_data_struct = &solid_data_struct;
 
-//		pg_num = NRF_FICR->CODESIZE - SOLID_ROM_DATA_PAGE;  // Use last 5 page in flash 页数量
+		pg_num = NRF_FICR->CODESIZE - SOLID_FLASH_DATA_PAGE;  // Use last 2 page in flash 页数量
 
-//		Read_Romdata(pg_num, p_solid_data_struct);
-//	
-//		if((p_solid_data_struct->solid_data_cell_struct.writed1 == 0xaa) || (p_solid_data_struct->solid_data_cell_struct.writed2 == 0xaa))
-//		{
-//				//register data
-//				if(Xor_Check((uint8_t*)(&(p_solid_data_struct->solid_data_cell_struct.solid_register_data_struct)),(sizeof(Solid_Register_Data_Type)+1)) == true)
-//				{
-//						memcpy(&Register_Package_Struct,(uint8_t*)(&(p_solid_data_struct->solid_data_cell_struct.solid_register_data_struct)),sizeof(Register_Package_Type));
-//						NRF_LOG_DIRECT("get register data!\r\n");
-//				}
-//				else
-//				{
-//						NRF_LOG_DIRECT("init register data!\r\n");
-//						init_register_data();
-//						Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
-//				}
-//				
-//				//param data
-//				if(Xor_Check((uint8_t*)(&(p_solid_data_struct->solid_data_cell_struct.solid_param_data_struct)),(sizeof(Solid_Parameters_Data_Type)+1)) == true)
-//				{
-//						memcpy(&Net_Parameters_Struct,(uint8_t*)(&(p_solid_data_struct->solid_data_cell_struct.solid_param_data_struct)),sizeof(Net_Parameters_Type));
-//						NRF_LOG_DIRECT("get param data!\r\n");
-//				}
-//				else
-//				{
-//						NRF_LOG_DIRECT("init param data!\r\n");
-//						init_param_data();
-//						Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
-//				}
-
-//				//aes key data
-//				if(Xor_Check(p_solid_data_struct->solid_data_cell_struct.aes_key,(AES_KEY_LEN+1)) == true)
-//				{
-//						memcpy(AES_KEY, p_solid_data_struct->solid_data_cell_struct.aes_key, AES_KEY_LEN);
-//						NRF_LOG_DIRECT("get aes key data!\r\n");
-//				}					
-//				else
-//				{
-//						NRF_LOG_DIRECT("init aes key data!\r\n");
-//						init_aes_key_data();
-//						Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
-//				}	
-//		}
-//		else
-//		{
+		read_flash_data(pg_num, p_solid_data_struct);
+	
+		if((p_solid_data_struct->solid_data_cell_struct.writed1 == 0xaa) &&
+				(p_solid_data_struct->solid_data_cell_struct.writed2 == 0xaa) &&
+				(true == xor_check((uint8_t*)(&(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct)),(sizeof(Solid_Data_Cell_Data_Type)+1))))
+		{
+		#if SEGGER_RTT_DEBUG_FLASH
+				SEGGER_RTT_printf(0, "mencpy solid flash data!\r\n");
+		#endif
+				memcpy(timestamp, 
+								p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_timestamp,
+								8);
+			
+				memcpy(useraeskeybuf, 
+								p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_aes128key, 
+								AES_KEY_LEN);
+			
+				memcpy(NB_CommPacket.Init_Data.imei, 
+								p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_imei, 
+								IMEI_LEN);
+			
+				memcpy(NB_CommPacket.Init_Data.iccid, 
+								p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_iccid, 
+								ICCID_LEN);
+				
+				memcpy(NB_NetPar.ServerIp, 
+								p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_ip, 
+								SERVER_IP_LEN);
+				
+				memcpy(NB_NetPar.ServerApn, 
+								p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_apn, 
+								SERVER_APN_LEN);
+		}
+		else
+		{
+		#if SEGGER_RTT_DEBUG_FLASH
+				SEGGER_RTT_printf(0, "init solid flash data!\r\n");
+		#endif
 //				NRF_LOG_DIRECT("init solid rom data!\r\n");
 //				init_register_data();
 //				init_param_data();
 //				init_aes_key_data();
 //				Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
-//		}
-//}
+		}
+}
 
 //void init_register_data(void)
 //{

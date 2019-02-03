@@ -21,7 +21,7 @@
 ///************************************************************************************************************/
 //	
 //	
-#define SOLID_ROM_DATA_PAGE                 6
+#define SOLID_FLASH_DATA_PAGE                 2
 //#define DYNAMIC_ROM_DATA_A_PAGE             5
 //#define DYNAMIC_ROM_DATA_B_PAGE             4 
 //#define SUPER_DYNAMIC_ROM_DATA_A_PAGE       3
@@ -170,8 +170,8 @@ typedef Rom_Data_Type*                 p_Rom_Data_Type;
 //void Write_Romdata(const uint32_t pg_num, const p_Rom_Data_Type p_rom_data_struct);
 
 /************************************** solid romdata *******************************************************/
-//void init_solid_romdata(void);
-bool Store_Solid_Romdata(void);
+void init_solid_flash_data(void);
+bool store_solid_flsh_data(void);
 bool Write_Solid_Romdata(const uint32_t pg_num, const p_Rom_Data_Type p_rom_data_struct);
 //void init_register_data(void);
 //void init_param_data(void);

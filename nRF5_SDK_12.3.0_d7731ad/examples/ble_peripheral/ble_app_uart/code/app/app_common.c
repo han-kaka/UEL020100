@@ -317,7 +317,7 @@ uint8_t Get_Uint_Data(const char *buf)
 		return byte;
 }
 
-uint8_t Get_Xor(uint8_t *hex_data_buf, uint16_t len_hex)
+uint8_t get_xor(uint8_t *hex_data_buf, uint16_t len_hex)
 {
     uint8_t result = hex_data_buf[0];
     for(uint8_t i=1; i<len_hex; i++)
@@ -327,7 +327,7 @@ uint8_t Get_Xor(uint8_t *hex_data_buf, uint16_t len_hex)
     return result;
 }
 
-bool Xor_Check(uint8_t *hex_data_buf,uint16_t len_hex)
+bool xor_check(uint8_t *hex_data_buf, uint16_t len_hex)
 {
     uint8_t i;
     uint8_t temp = hex_data_buf[0];

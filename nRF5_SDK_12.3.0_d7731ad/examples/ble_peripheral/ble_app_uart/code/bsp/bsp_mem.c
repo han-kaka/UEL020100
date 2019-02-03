@@ -3,6 +3,7 @@
 
 void solid_data_init(void)
 {
+		init_solid_flash_data();
 }
 
 

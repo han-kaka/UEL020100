@@ -36,8 +36,8 @@ uint8_t CntLeadZeros(uint8_t ucData);
 uint8_t Get_Symbol(uint8_t num_symbol, uint8_t *buf, char symbol);
 uint8_t Get_Comma(uint8_t num_comma, uint8_t *buf);
 //u8* DecimalToASCII(u16 port,u8*data);
-uint8_t Get_Xor(uint8_t *hex_data_buf, uint16_t len_hex);
-bool Xor_Check(uint8_t *hex_data_buf,uint16_t len_hex);
+uint8_t get_xor(uint8_t *hex_data_buf, uint16_t len_hex);
+bool xor_check(uint8_t *hex_data_buf, uint16_t len_hex);
 uint8_t Get_Uint_Data(const char *buf);
 uint16_t Ascii_To_Hex(char *ascs,uint8_t *hexs,uint16_t length);
 #endif
