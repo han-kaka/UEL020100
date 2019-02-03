@@ -2,7 +2,8 @@
 #include "bsp_system.h"
 
 
-void initial_board(void)
+//初始化IO
+void init_board(void)
 { 
     //初始化IO
     nrf_drv_gpiote_init();
@@ -40,10 +41,9 @@ void initial_board(void)
 //    nrf_gpio_pin_set(NB_PWRONKEY);	                          //拉低NB——PWRKEY	
 }
 
-
-void start_initial_task(void)
+//初始化芯片外设
+void init_peripheral(void)
 {  
-
     //------开启慢速系统计时-------------------	
     init_systime();
     start_systime();
@@ -57,12 +57,6 @@ void start_initial_task(void)
     //init_dsr_detection();
     //setWDI();	
 	
-//    //------初始化spi模块--------------------	
-//		spi_init();
-//		Initial();
-//		//------初始化iic模块--------------------	
-//		twi_master_init();
-//	
 //		saadc_init();
 	
 }

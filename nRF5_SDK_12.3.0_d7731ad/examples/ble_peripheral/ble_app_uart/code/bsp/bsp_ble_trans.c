@@ -59,7 +59,7 @@ void bsp_ble_command_rx(ble_nus_t * p_nus, uint8_t * p_data, uint16_t length)
 		#if SEGGER_RTT_DEBUG_ORIGINAL_DATA	
 				ble_command_rx_log(char2_all_receive_len, char2_all_receive, ORIGINAL_DATA);
 		#endif	
-				Set_Task(BLUETOOTH, BLUETOOTH_PARSE_PROTOCOL);
+				set_task(BLUETOOTH, BLUETOOTH_PARSE_PROTOCOL);
 		}
 }
 

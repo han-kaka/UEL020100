@@ -3,9 +3,9 @@
 
 #include "global.h"
 
-void Dynamic_Data_Init(void);
-void Solid_Romdata_Init(void);
 
+void solid_data_init(void);
+void dynamic_data_init(void);
 
 #endif
 

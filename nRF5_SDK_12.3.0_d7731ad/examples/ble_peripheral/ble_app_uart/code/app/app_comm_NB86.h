@@ -159,10 +159,10 @@
 //#define GPRS_Retry_Event_Clr(Event)                 MY_CLEAR_BIT(g_stGPRS_Handler.RetryCtrol.rtyEvent, Event)
 //#endif
 
-#define NB_Event_IsEmpty(Event)                   !MY_READ_REG(Event)
-#define NB_Event_Get(Event,Bit)                   MY_READ_BIT(Event, Bit)
-#define NB_Event_Set(Event,Bit)                   MY_SET_BIT(Event, Bit)
-#define NB_Event_Clr(Event,Bit)                   MY_CLEAR_BIT(Event, Bit)
+#define NB_EVENT_IS_EMPTY(Event)                  !MY_READ_REG(Event)
+#define NB_EVENT_GET(Event,Bit)                   MY_READ_BIT(Event, Bit)
+#define NB_EVENT_SET(Event,Bit)                   MY_SET_BIT(Event, Bit)
+#define NB_EVENT_CLR(Event,Bit)                   MY_CLEAR_BIT(Event, Bit)
 
 #define Get_CommEvent(Event)                        CntLeadZeros(Event)
 #define Get_NextState(Event)                        CntLeadZeros(Event)
@@ -542,7 +542,7 @@ extern uint8_t                          g_Tx_Buffer[BUFFSIZE];
 
 void APP_NB_TimeProc(uint16_t usPeriod);
 //void APP_GPRS_NetParConfig(void);
-void APP_COMM_Init(void);
+void app_comm_init(void);
 
 
 void APP_SubTask_CmdProc(void);

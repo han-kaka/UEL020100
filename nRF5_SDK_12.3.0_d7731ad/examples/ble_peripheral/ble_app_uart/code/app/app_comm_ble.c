@@ -341,7 +341,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						sendLength += 16;
 //						f_tempkey = 1;
 //						memset(buf, 0, 8);
-						Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 				#if SEGGER_RTT_DEBUG_GET_AESKEY
 						SEGGER_RTT_printf(0, "sendLength = %d!\r\n", sendLength);
 				#endif
@@ -610,7 +610,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						if (UserMemCmp(pData, timestamp, 8) <= 0) 
 								break;
 						memcpy(timestamp, pData, 8);
-						Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 						
 						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
 						pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_NONE;
@@ -791,9 +791,9 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}
 						if (pData[8] != 0xAA)
 						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}
-						UserGetAppData(P_EE_ADDR_TIMESTAMP, buf);
+//						UserGetAppData(P_EE_ADDR_TIMESTAMP, buf);
 						if (UserMemCmp(pData, buf, 8) <= 0) break;
-						UserSaveAppData(P_EE_ADDR_TIMESTAMP, pData);
+//						UserSaveAppData(P_EE_ADDR_TIMESTAMP, pData);
 //						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
 //						UserClearUserInfoFromSystem();
 //						gSystemRunParam.flagInit = 0x00;									// 清除管理员及密码

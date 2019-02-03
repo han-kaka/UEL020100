@@ -1,7 +1,7 @@
 #include "bsp_var.h"
 
-static void SYS_Mess_Ver_Init(void)
-{
+//static void SYS_Mess_Ver_Init(void)
+//{
 //    uint8_t i=0;
 //    uint8_t software_var[4] = TERMINAL_SOFTWARE_VER;
 //    uint8_t hardware_var[4] = TERMINAL_HARDWARE_VER;
@@ -15,7 +15,7 @@ static void SYS_Mess_Ver_Init(void)
 //    }
 //    SYS_HardVerMessLen = 4;
 //    SYS_SoftVerMessLen = 4;
-}
+//}
 
 
 static void Net_Par_Config(void)
@@ -28,15 +28,16 @@ static void Net_Par_Config(void)
     NB_NetPar.NetType        = NET_NO_NET;
 }
 
-static void NB86_Var_Init(void)
+//nb86模块信息初始化
+static void NB86_var_init(void)
 {
     Var_Fill(g_stNB_Handler,0);
     Var_Fill(PacketHead,0);
     Net_Par_Config();
 }
 
-static void Charge_Var_Init(void)
-{
+//static void Charge_Var_Init(void)
+//{
 //    Var_Fill(g_stCharge_Handler,0);
 //    Charge_ThresValue.ChargeTime  = 0;  //如在充电状态,发送异常断电后，下次上电则需重新打开充电功能
 //    Charge_ThresValue.PulloutTime = 3600;//拔出阈值初始值为3600S
@@ -45,14 +46,15 @@ static void Charge_Var_Init(void)
 //    g_stCharge_Handler.ChargeStatusExePeriod = EXE_PERIOD_MAX;
 //    g_stCharge_Handler.StateOld = STATE_IDLE;
 //    g_stCharge_Handler.State = STATE_IDLE;      //初始为IDLE态
-}
+//}
 
-void Bsp_Var_Init(void)
+//设备版本信息初始化
+void bsp_var_init(void)
 {
-    NB86_Var_Init();
-    Charge_Var_Init();
-    SYS_Mess_Ver_Init();
-    for(uint8_t i=0;i<8;i++)
+    NB86_var_init();
+//    Charge_Var_Init();
+//    SYS_Mess_Ver_Init();
+    for(uint8_t i=0; i<8; i++)
     {
        ga_Subtask[i] = 0;  //清系统子任务分支   SYS_SubTask[0]对应最高优先权        
     }  

@@ -93,8 +93,8 @@
 ////当前通道
 //extern use_channel_by_t use_channel_by;
 
-void start_initial_task(void);
-void initial_board(void);
+void init_peripheral(void);
+void init_board(void);
 //void exit_sleep_proc(void);
 
 //void setWDI(void);

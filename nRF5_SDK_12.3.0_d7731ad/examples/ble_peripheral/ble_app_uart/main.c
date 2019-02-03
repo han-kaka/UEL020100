@@ -675,14 +675,8 @@ int main(void)
 #endif
 
 //    uart_init();
-
 //    buttons_leds_init(&erase_bonds);
     ble_stack_init();
-	
-    //初始化IO,ram,flag
-    initial_board();
-		//开启一些初始任务
-    start_initial_task();
 		
     gap_params_init();
     services_init();
@@ -698,7 +692,7 @@ int main(void)
 		SEGGER_RTT_printf(0, "Adv Start!\r\n");
 #endif
 		
-//		Com_Bsp_Init();
+		com_bsp_init();
 		
     // Enter main loop.
     for (;;)

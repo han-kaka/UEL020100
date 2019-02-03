@@ -18,7 +18,7 @@ uint8_t BlueTooth_Task(uint8_t prio)
 								#if SEGGER_RTT_DEBUG_PARSE_PROTOCOL	
 										ble_command_rx_log(char2_all_receive_len, char2_all_receive, PARSE_PROTOCOL);
 								#endif	
-										Set_Task(BLUETOOTH, BLUETOOTH_CRC_CHECK);
+										set_task(BLUETOOTH, BLUETOOTH_CRC_CHECK);
 								}
 								char2_all_receive_len = 0;
 						}
@@ -31,7 +31,7 @@ uint8_t BlueTooth_Task(uint8_t prio)
 								#if SEGGER_RTT_DEBUG_CRC_CHECK	
 										ble_command_rx_log(sProtocolAppFormat.headData.dataLen + sizeof(ProtocolAppHeadFormat_t) + 3, pRecvBuffer, CRC_CHECK);
 								#endif	
-										Set_Task(BLUETOOTH, BLUETOOTH_AES_DECODE);
+										set_task(BLUETOOTH, BLUETOOTH_AES_DECODE);
 										
 								}
 //								else 
@@ -59,7 +59,7 @@ uint8_t BlueTooth_Task(uint8_t prio)
 								#if SEGGER_RTT_DEBUG_AES_DECODE	
 										ble_command_rx_log(sProtocolAppFormat.headData.dataLen, sProtocolAppFormat.pData, AES_DECODE);
 								#endif	
-								Set_Task(BLUETOOTH, BLUETOOTH_PROCESS_CMD);
+								set_task(BLUETOOTH, BLUETOOTH_PROCESS_CMD);
 						}	
 								break;
 						

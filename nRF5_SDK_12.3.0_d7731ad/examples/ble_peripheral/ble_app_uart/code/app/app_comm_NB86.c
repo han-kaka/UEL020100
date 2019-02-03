@@ -857,7 +857,7 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 										SEGGER_RTT_printf(0, "len = %u, imei:%s. \r\n", i, NB_CommPacket.Init_Data.imei);
 								#endif
 										//Ascii_To_Hex(p, NB_CommPacket.AuthData.imei, (uint16_t)asi_len); 
-										Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+										set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 								}
 						}
 								break;	
@@ -886,7 +886,7 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 								#if SEGGER_RTT_DEBUG_MESS
 										SEGGER_RTT_printf(0, "len = %u, nccid:%s. \r\n", i, NB_CommPacket.Init_Data.iccid);
 								#endif
-										Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+										set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 								}
 						}
 								break;	
@@ -974,13 +974,13 @@ static void APP_NB_State_Comm_Proc(uint8_t *RxBuf)
 								if(UPLOAD_TYPE == g_stNB_Handler.ucSendType)
 								{
 										/*±¾´ÎÍ¨Ñ¶Íê³É,Çå³ý¶ÔÓ¦µÄÊÂ¼þ*/
-										NB_Event_Clr(NB_EvtProc.ucUploadEvt,(0x01 << g_stNB_Handler.ucDataID));
+										NB_EVENT_CLR(NB_EvtProc.ucUploadEvt,(0x01 << g_stNB_Handler.ucDataID));
 //										//ÈçÔÚÕâÀïÖÃÆðÊÂ¼þ£¬ÔòÐèµÈµ½Ó¦´ð²ÅÄÜ·¢ËÍÏÂÒ»ÌõÖ÷¶¯ÉÏ´«ÏûÏ¢            
 //										GPRS_Event_Set(GPRS_EvtProc.ucDelayEvt,(0x01 << g_stNB_Handler.ucDataID));     
 //										APP_GPRS_RefreshRetryMess();
 								}
 							
-								NB_Event_Clr(g_stNB_Handler.ucCommEvent,(0x01 << g_stNB_Handler.ucDataID));
+								NB_EVENT_CLR(g_stNB_Handler.ucCommEvent,(0x01 << g_stNB_Handler.ucDataID));
 								errCnt=0;           /*ATÖ¸Áî³É¹¦£¬Çå³ý´íÎó¼ÆÊý*/
 								NB_TimProc.heartbeatCount = 0;      /*ÐÄÌø¼ÆÊýÇåÁã*/
 						}
@@ -1220,10 +1220,10 @@ static void APP_NB_State_Comm_Proc(uint8_t *RxBuf)
 static void APP_NB_EventProc(uint8_t surEvt, uint8_t* objEvt)
 {
     uint8_t ucID=0;
-    if(false == NB_Event_IsEmpty(surEvt)) 
+    if(false == NB_EVENT_IS_EMPTY(surEvt)) 
     {
 				ucID = Get_CommEvent(surEvt);
-				NB_Event_Set(*objEvt, (1<<ucID));
+				NB_EVENT_SET(*objEvt, (1<<ucID));
     }
 }
 
@@ -1249,12 +1249,12 @@ static uint8_t APP_NB_EvtTraverse(uint8_t mode)
 //        return UPLOAD_TYPE;
 //    }
 	
-    if(false == NB_Event_IsEmpty(NB_EvtProc.ucUploadEvt))
+    if(false == NB_EVENT_IS_EMPTY(NB_EvtProc.ucUploadEvt))
     {
         if(mode == TRAVERSE_AND_ADDEVT)  APP_NB_EventProc(NB_EvtProc.ucUploadEvt, &g_stNB_Handler.ucCommEvent);
         return UPLOAD_TYPE;
     }
-    else if(false == NB_Event_IsEmpty(g_stNB_Handler.ucCommEvent))
+    else if(false == NB_EVENT_IS_EMPTY(g_stNB_Handler.ucCommEvent))
     {
         //ÀíÂÛÉÏ³ÌÐòÎÞ·¨ÔËÐÐµ½ÕâÀï
         g_stNB_Handler.ucCommEvent = 0;
@@ -1276,7 +1276,7 @@ static void APP_NB_Reset_Init(void)
     //Ðè°ÑÑÓÊ±ÊÂ¼þÈ«²¿Ìí¼ÓÖÁÖ÷¶¯ÉÏ´«ÊÂ¼þÖÐ
 //    APP_NB_EventProc(NB_EvtProc.ucDelayEvt, &NB_EvtProc.ucUploadEvt);  
     g_stNB_Handler.AuthStatus = NOT_AUTH;
-    NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_INIT);
+    NB_EVENT_SET(NB_EvtProc.ucUploadEvt, COMM_Event_INIT);
 //    NB_EvtProc.ucRespondEvt =0;
 //    NB_EvtProc.ucRetryEvt =0;
 //    NB_EvtProc.ucDelayEvt =0;
@@ -1286,7 +1286,8 @@ static void APP_NB_Reset_Init(void)
     APP_NB_RetryMessInit();                   //ÖØ´«Ïà¹Ø±äÁ¿³õÊ¼»¯
 }
 
-void APP_COMM_Init(void)
+//Ä£¿éÍ¨Ñ¶Ïà¹Ø±äÁ¿³õÊ¼»¯
+void app_comm_init(void)
 {    
 #if DEBUG_TROPE_FUN
     PacketHead.TerminalMeageFlowNum = 0x19;
@@ -1300,8 +1301,8 @@ void APP_COMM_Init(void)
 //		BSP_NB_RESET_SET
 //		while(1)
 //		{}
-		NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_INIT);//ÉÏµçÐè·¢ËÍÒ»¸öµÇÂ¼°ü
-		Set_Task(COMM, COMM_STATE_PROC);     //Æô¶¯GPRS×´Ì¬´¦ÀíÈÎÎñ
+		NB_EVENT_SET(NB_EvtProc.ucUploadEvt, COMM_Event_INIT);//ÉÏµçÐè·¢ËÍÒ»¸öµÇÂ¼°ü
+		set_task(COMM, COMM_STATE_PROC);     //Æô¶¯GPRS×´Ì¬´¦ÀíÈÎÎñ
 }
 
 void APP_NB_TimeProc(uint16_t usPeriod)
@@ -1325,7 +1326,7 @@ void APP_NB_TimeProc(uint16_t usPeriod)
 				if(NB_ATCmdCB.ucByteTimeOut < usPeriod)
 				{
 						NB_ATCmdCB.RxFrameOk = 1;
-						Set_Task(COMM, COMM_CMD_PROC);
+						set_task(COMM, COMM_CMD_PROC);
 				}
 		}
 		/***************** NB Ä£¿éÑÓÊ±¼ÆÊ ý*************************/
@@ -1342,7 +1343,7 @@ void APP_NB_TimeProc(uint16_t usPeriod)
 		if(g_stNB_Handler.ulProcCtrTaskPer >= SUB_TASK_PROCCTR_PER)
 		{
 				g_stNB_Handler.ulProcCtrTaskPer -= SUB_TASK_PROCCTR_PER;
-				Set_Task(COMM, COMM_STATE_PROC);
+				set_task(COMM, COMM_STATE_PROC);
 		}	
 		if(NB_msCount >= NB_MS_TO_S)   //ms to S
 		{
@@ -1402,7 +1403,7 @@ void APP_SubTask_CmdProc(void)
     /////////// ¶Ô·þÎñÆ÷µÄÏÂÐÐÊý¾Ý½øÐÐÐ­Òé½âÎöºÍÏàÓ¦´¦Àí ////////////////
     if(RSP_TYPE_DATA == NB_ATCmdCB.RspType)
     {
-        Set_Task(COMM,COMM_DECODE);
+        set_task(COMM,COMM_DECODE);
         #if SEGGER_RTT_DEBUG_NB86
 						SEGGER_RTT_printf(0, "START DECODE\r\n");
         #endif
@@ -1611,7 +1612,7 @@ void APP_SubTask_StateProc(void)
         case NB_STATE_COMM:
         {
             g_stNB_Handler.ucSendType = APP_NB_EvtTraverse(TRAVERSE_AND_ADDEVT);
-            if((false == g_stNB_Handler.ucSendType) || (NB_Event_IsEmpty(g_stNB_Handler.ucCommEvent)))
+            if((false == g_stNB_Handler.ucSendType) || (NB_EVENT_IS_EMPTY(g_stNB_Handler.ucCommEvent)))
             {
                 break;
             }

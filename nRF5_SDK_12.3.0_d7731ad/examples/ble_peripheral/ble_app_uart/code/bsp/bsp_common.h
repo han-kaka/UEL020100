@@ -36,7 +36,7 @@ typedef struct
 
 extern Task_Flag_Type Task_Flag_Struct;
 
-uint8_t Com_Bsp_Init(void);
+uint8_t com_bsp_init(void);
 
 #endif
 

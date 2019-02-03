@@ -1,12 +1,12 @@
 #include "bsp_mem.h"
 
 
-void Solid_Romdata_Init(void)
+void solid_data_init(void)
 {
 }
 
 
-void Dynamic_Data_Init(void)
+void dynamic_data_init(void)
 {
 }
 

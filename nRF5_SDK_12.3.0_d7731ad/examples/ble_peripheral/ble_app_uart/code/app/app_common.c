@@ -5,8 +5,8 @@ Sys_Flag_Type                           Sys_Flag_Struct = {.reserved = 0,};
 
 																													 
 
-
-void Set_Task(uint8_t main_task,uint8_t sub_task)
+//ÖÃÆğÈÎÎñ
+void set_task(uint8_t main_task,uint8_t sub_task)
 {
 		uint16_t mm,ss;
 		mm = 1<<main_task;

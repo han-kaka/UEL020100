@@ -23,8 +23,8 @@ typedef struct
 
 
 
-void Set_Task(uint8_t main_task,uint8_t sub_task);
-void Clr_Task(uint8_t main_task,uint8_t sub_task);
+void set_task(uint8_t main_task, uint8_t sub_task);
+void Clr_Task(uint8_t main_task, uint8_t sub_task);
 uint8_t clear_task(uint8_t prio, uint8_t m_SYS_SubTask_prio);
 //u8 BCD_2_Data8(u8 data);
 //u8 Data8_2_BCD(u8 data);

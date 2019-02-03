@@ -3,7 +3,7 @@
 
 #include "global.h"
 
-void Bsp_Var_Init(void);
+void bsp_var_init(void);
 
 #endif
 

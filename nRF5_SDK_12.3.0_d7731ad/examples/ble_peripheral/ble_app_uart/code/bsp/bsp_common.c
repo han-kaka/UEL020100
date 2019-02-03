@@ -2,8 +2,13 @@
 
 Task_Flag_Type Task_Flag_Struct;
 
-static void Bsp_Peripheral_Init(void)
+//初始化硬件外设
+static void bsp_peri_init(void)
 {
+    init_board();
+	
+    init_peripheral();
+	
 //    Bsp_Rcc_Init();
 //    Bsp_GPIO_Init();
 //    Bsp_Tim2_Init();
@@ -15,18 +20,20 @@ static void Bsp_Peripheral_Init(void)
 }
 
 
-static void Data_Recover(void)
+static void data_recover(void)
 {
-    Solid_Romdata_Init();       
-    Dynamic_Data_Init(); 
+    solid_data_init();       
+    dynamic_data_init();
 }
 
-uint8_t Com_Bsp_Init(void)
+//应用层初始化
+uint8_t com_bsp_init(void)
 {
-    Bsp_Peripheral_Init();      // peripheral init
-    Bsp_Var_Init();             //ver init
-    Data_Recover();             //data recover
-    APP_COMM_Init();            //COMM state and event init
+    bsp_peri_init();      // peripheral init
+	
+    bsp_var_init();             //ver init
+    data_recover();             //data recover
+    app_comm_init();            //COMM state and event init
 	
     return true;
 }

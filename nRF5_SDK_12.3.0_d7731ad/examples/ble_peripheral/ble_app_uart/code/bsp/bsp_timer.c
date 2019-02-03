@@ -59,11 +59,11 @@ void m_clock_timeout_handler (void * p_context)
 								 Tim_1s_Struct.rewriteCount = 0; 
 								 if(Task_Flag_Struct.writeRom_F != DISABLE)
 								 {
-											Set_Task(MEM_WRITE,MEM_STORE_SOLID_ROMDATA);
+											set_task(MEM_WRITE,MEM_STORE_SOLID_ROMDATA);
 								 }
 								 if(Task_Flag_Struct.writeDynamic_F != DISABLE)
 								 {
-											Set_Task(MEM_WRITE,MEM_STORE_DYNAMIC_ROMDATA);
+											set_task(MEM_WRITE,MEM_STORE_DYNAMIC_ROMDATA);
 								 }
 						}
 				}		
