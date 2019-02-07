@@ -45,8 +45,8 @@ void init_board(void)
 void init_peripheral(void)
 {  
     //------开启慢速系统计时-------------------	
-    init_systime();
-    start_systime();
+    init_system_time();
+    start_system_time();
 	
     //------初始化各功能块---------------------	
     //------初始化uart模块---------------------

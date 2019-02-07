@@ -1276,7 +1276,7 @@ static void APP_NB_Reset_Init(void)
     //需把延时事件全部添加至主动上传事件中
 //    APP_NB_EventProc(NB_EvtProc.ucDelayEvt, &NB_EvtProc.ucUploadEvt);  
     g_stNB_Handler.AuthStatus = NOT_AUTH;
-    NB_EVENT_SET(NB_EvtProc.ucUploadEvt, COMM_Event_INIT);
+    NB_EVENT_SET(NB_EvtProc.ucUploadEvt, COMM_EVENT_INIT);
 //    NB_EvtProc.ucRespondEvt =0;
 //    NB_EvtProc.ucRetryEvt =0;
 //    NB_EvtProc.ucDelayEvt =0;
@@ -1288,10 +1288,10 @@ static void APP_NB_Reset_Init(void)
 
 //模块通讯相关变量初始化
 void app_comm_init(void)
-{    
-#if DEBUG_TROPE_FUN
-    PacketHead.TerminalMeageFlowNum = 0x19;
-#endif
+{
+//#if DEBUG_TROPE_FUN
+//    PacketHead.TerminalMeageFlowNum = 0x19;
+//#endif
 		g_stNB_Handler.State = NB_STATE_POWER_ON; 
 		g_stNB_Handler.StateOld = NB_STATE_POWER_ON; 
 		g_stNB_Handler.StepPt = 0;
@@ -1301,7 +1301,7 @@ void app_comm_init(void)
 //		BSP_NB_RESET_SET
 //		while(1)
 //		{}
-		NB_EVENT_SET(NB_EvtProc.ucUploadEvt, COMM_Event_INIT);//上电需发送一个登录包
+		NB_EVENT_SET(NB_EvtProc.ucUploadEvt, COMM_EVENT_INIT);//上电需发送一个登录包
 		set_task(COMM, COMM_STATE_PROC);     //启动GPRS状态处理任务
 }
 

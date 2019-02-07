@@ -92,9 +92,9 @@ bool store_solid_flsh_data(void)
 	
 		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_iccid, NB_CommPacket.Init_Data.iccid, ICCID_LEN);
 		
-		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_ip, NB_NetPar.ServerIp, SERVER_IP_LEN);
+		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_ip, NB_NetPar.ServerIP, SERVER_IP_LEN);
 		
-		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_apn, NB_NetPar.ServerApn, SERVER_APN_LEN);
+		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_apn, NB_NetPar.ServerAPN, SERVER_APN_LEN);
 	
 		p_solid_data_struct->solid_data_cell_struct.solid_data_cell_xor = get_xor((uint8_t*)(&solid_data_struct), sizeof(Solid_Data_Cell_Data_Type));
 		
@@ -406,11 +406,11 @@ void init_solid_flash_data(void)
 								p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_iccid, 
 								ICCID_LEN);
 				
-				memcpy(NB_NetPar.ServerIp, 
+				memcpy(NB_NetPar.ServerIP, 
 								p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_ip, 
 								SERVER_IP_LEN);
 				
-				memcpy(NB_NetPar.ServerApn, 
+				memcpy(NB_NetPar.ServerAPN, 
 								p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_apn, 
 								SERVER_APN_LEN);
 		}

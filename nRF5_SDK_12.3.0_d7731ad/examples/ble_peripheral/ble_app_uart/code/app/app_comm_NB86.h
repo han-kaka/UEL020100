@@ -219,8 +219,8 @@ typedef enum
 //		COMM_Event_STA_MESS         = (0x01 << UPLOAD_ID_STA_MESS),              //发送状态信息包
 //		COMM_Event_HEARTBEAT        = (0x01 << UPLOAD_ID_HEARTBEAT),             //发送心跳包
 	
-		COMM_Event_INIT             = (0x01 << UPLOAD_ID_INIT),                  //发送登录包
-		COMM_Event_LOG              = (0x01 << UPLOAD_ID_LOG),                   //发送心跳包
+		COMM_EVENT_INIT             = (0x01 << UPLOAD_ID_INIT),                  //发送登录包
+		COMM_EVENT_LOG              = (0x01 << UPLOAD_ID_LOG),                   //发送心跳包
 	
 //    COMM_Event_SET_PARMTE       = (0x01 << RETURN_ID_SET_PARMTE),            
 //    COMM_Event_QUERY_PARMTE     = (0x01 << RETURN_ID_QUERY_PARMTE),
@@ -361,8 +361,8 @@ typedef struct
 		NET_TYPE NetType;
 		NET_PROTOCOL NetProtocol;
 		uint8_t NetConnSta;
-		uint8_t ServerApn[SERVER_APN_LEN];
-		uint8_t ServerIp[SERVER_IP_LEN];
+		uint8_t ServerAPN[SERVER_APN_LEN];
+		uint8_t ServerIP[SERVER_IP_LEN];
     uint16_t ServerPort;
     uint16_t ulReportPeriod; 
 }Net_Parameters;

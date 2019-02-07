@@ -29,12 +29,12 @@ static void data_recover(void)
 //应用层初始化
 uint8_t com_bsp_init(void)
 {
-    bsp_peri_init();      // peripheral init
+    bsp_peri_init();            // peripheral init
 	
     bsp_var_init();             //ver init
     data_recover();             //data recover
     app_comm_init();            //COMM state and event init
-	
+
     return true;
 }
 

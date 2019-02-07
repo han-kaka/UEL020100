@@ -6,8 +6,8 @@
 #define MS_100_REPEAT_INTERVAL             APP_TIMER_TICKS(100, APP_RTC_TIMER_PRESCALER)   /**< 1s time interval (ticks). */
 //#define MS_50_REPEAT_INTERVAL              APP_TIMER_TICKS(50, APP_RTC_TIMER_PRESCALER)    /**< 1s time interval (ticks). */
 
-APP_TIMER_DEF(m_clock_timer_id);                  /**申请系统定时器 */
-//APP_TIMER_DEF(m_qf_timer_id);                     /**申请系统定时器 */
+APP_TIMER_DEF(m_system_timer_id);                  /**申请系统定时器 */
+APP_TIMER_DEF(m_motor_timer_id);                   /**申请系统定时器 */
 
 static uint16_t s_MsCount = 0;
 
@@ -18,7 +18,7 @@ volatile Tim_100ms_Type Tim_100ms_Struct;
 
 static uint8_t monthLength( uint8_t lpyr, uint8_t mon );
 
-void m_clock_timeout_handler (void * p_context)
+void m_system_timeout_handler (void *p_context)
 { 
     s_MsCount++;
     if(Task_Flag_Struct.closeStaProc == DISABLE)
@@ -80,8 +80,6 @@ void m_clock_timeout_handler (void * p_context)
 		
 		
 		
-		
-		
 //		if(Sys_Flag_Struct.air_pressure_flag == ENABLE)
 //		{
 //				//Set_Task(MEASURE, MEASURE_CMP);
@@ -116,28 +114,125 @@ void m_clock_timeout_handler (void * p_context)
 ////		}
 }	
 
-void init_systime(void)
+void m_motor_timeout_handler(void *p_context)
+{
+//    setWDI();//在系统慢速定时器内清零	
+//    switch(event_type)
+//    {
+//        case NRF_TIMER_EVENT_COMPARE0:
+//        {
+//            switch (use_channel_by)
+//            {  
+//                case LOCKMOTOR_PWM_CHANNEL:
+//                {
+//                    if(++driveMotorx64us>LOCK_PWM_DRIVE_TIME)
+//                    {
+//                            stop_lockmotor_pwm();	
+//                    }	
+//                }                    
+//                    break;
+//                
+//                case UNLOCKMOTOR_FULL_CHANNEL:
+//                {
+//                    //超时
+//                    if(++driveMotorx64us>UNLOCK_FULL_DRIVE_TIME)
+//                    {
+//                            app_mevent.b.stop_motor_st = 1;
+//                    }
+//                    //检测中间和开锁位置
+//                    if((!nrf_gpio_pin_read(AtMiddle_PIN))||(!nrf_gpio_pin_read(OPENKEY_PIN)))
+//                    {
+//                            if(++testKeyx64us>TESTMIDDLEKEY_TIME)
+//                            {
+//                                    app_mevent.b.stop_motor_st = 1;									 
+//                            }	
+//                    }
+//                }
+//                    break;	
+//                
+//                case LOCKMOTOR_FULL_CHANNEL:
+//                {
+//                    if(++driveMotorx64us>LOCK_FULL_DRIVE_TIME)
+//                    {
+//                            app_mevent.b.stop_motor_st = 1;      //stop_lockmotor_pwm();		stop_lockmotor_pwm();
+//                    }			
+//                    if((!nrf_gpio_pin_read(AtMiddle_PIN))||(!nrf_gpio_pin_read(LOCKKEY_PIN)))	                         
+//                    {
+//                            if(++testKeyx64us>TESTMIDDLEKEY_TIME)
+//                            {
+//                                    app_mevent.b.stop_motor_st = 1;											 
+//                            }	
+//                    } 
+//                }                    
+//                    break; 	
+//                
+//                case UNLOCKMOTOR_PWM_CHANNEL:
+//                {
+//                    //超时处理
+//                    if(++driveMotorx64us>UNLOCK_PWM_DRIVE_TIME)
+//                    {
+//                            stop_unlockmotor_pwm();		//2.5s	
+//                    }											
+//                    if(!nrf_gpio_pin_read(OPENKEY_PIN))
+//                    {													
+//                            if(++testKeyx64us>TESTUNLOCKKEY_TIME)
+//                            {
+//                                    stop_unlockmotor_pwm();													 
+//                            }	
+//                    }	
+//                }                    
+//                    break;
+//                
+//                default:
+//                    break;									 
+//            } 
+//        }
+//            break;
+//        default:
+//            //Do nothing.
+//            __NOP();
+//            break;
+//    }
+}
+
+//初始化马达的定时器
+void init_motor_timer(void)
+{
+    uint32_t err_code;	
+	
+    err_code = app_timer_create(&m_motor_timer_id, APP_TIMER_MODE_REPEATED, m_motor_timeout_handler); //定时器号，定时器配置内定16MHZ(已处理预分频）16位宽,低优先权	
+    APP_ERROR_CHECK(err_code); 
+}
+
+//开启马达定时器
+void start_motor_time(void)
+{ 
+		uint32_t err_code; 
+	  err_code = app_timer_stop(m_motor_timer_id);
+	  APP_ERROR_CHECK(err_code);	
+	
+		err_code = app_timer_start(m_motor_timer_id, MS_100_REPEAT_INTERVAL, NULL);
+		APP_ERROR_CHECK(err_code); 
+}
+
+//初始化系统定时器
+void init_system_time(void)
 {   
 		uint32_t err_code;
 	
-		err_code = app_timer_create(&m_clock_timer_id, APP_TIMER_MODE_REPEATED, m_clock_timeout_handler);
+		err_code = app_timer_create(&m_system_timer_id, APP_TIMER_MODE_REPEATED, m_system_timeout_handler);
 		APP_ERROR_CHECK(err_code);
-//		err_code = app_timer_create(&m_qf_timer_id, APP_TIMER_MODE_SINGLE_SHOT, m_qf_timeout_handler);
-//		APP_ERROR_CHECK(err_code);
 }
 
-void start_systime(void)
+//开启系统定时器
+void start_system_time(void)
 { 
 		uint32_t err_code; 
 	
-	  err_code = app_timer_stop(m_clock_timer_id);
-	  APP_ERROR_CHECK(err_code);
+	  err_code = app_timer_stop(m_system_timer_id);
+	  APP_ERROR_CHECK(err_code);	
 	
-//		m_clkx100ms = 0;
-//	
-//		Tim_100ms_Struct.m_clkx100ms = 0;		
-	
-		err_code = app_timer_start(m_clock_timer_id, MS_10_REPEAT_INTERVAL, NULL);
+		err_code = app_timer_start(m_system_timer_id, MS_10_REPEAT_INTERVAL, NULL);
 		APP_ERROR_CHECK(err_code); 
 }
 

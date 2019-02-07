@@ -69,8 +69,14 @@ extern volatile Tim_1s_Type Tim_1s_Struct;
 extern volatile Tim_100ms_Type Tim_100ms_Struct;
 extern uint8_t timestamp[8];
 
-//系统慢速定时器
-void start_systime(void);
-void init_systime(void);
+
+void start_system_time(void);
+
+void init_system_time(void);
+
+void start_motor_time(void);
+
+void init_motor_timer(void);
+
 void osal_ConvertUTCTime( UTCTimeStruct *tm, UTCTime secTime );
 #endif

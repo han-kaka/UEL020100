@@ -2249,6 +2249,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\code\bsp\bsp_flash_rw.c</FilePath>
             </File>
+            <File>
+              <FileName>bsp_lock_drive.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\code\bsp\bsp_lock_drive.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4560,6 +4565,11 @@
               <FileName>bsp_flash_rw.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\code\bsp\bsp_flash_rw.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_lock_drive.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\code\bsp\bsp_lock_drive.c</FilePath>
             </File>
           </Files>
         </Group>
