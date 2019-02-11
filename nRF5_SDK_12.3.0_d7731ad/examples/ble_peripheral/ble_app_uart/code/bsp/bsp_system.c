@@ -57,6 +57,7 @@ void init_peripheral(void)
     //init_dsr_detection();
     //setWDI();	
 	
+		drive_open();
 //		saadc_init();
 	
 }

@@ -8,21 +8,23 @@ typedef enum
 		STOP = 0,
 		FOREWARD,
 		INVERSION,
-}Motor_Status_Tpye;
+}Motor_State_Tpye;
 
 typedef struct
 {
    uint16_t usCount;
    uint8_t  ucRollbackCnt;
+	 uint16_t motor_times;
 }Motor_Tpye;
 
 
-extern Motor_Status_Tpye      Motor_Status;
-extern Motor_Status_Tpye      Motor_OldStatus;
+extern Motor_State_Tpye      Motor_State_Struct;
+extern Motor_State_Tpye      Motor_OldStatus;
+extern Motor_Tpye            Motor_Struct;
 
-void Foreward_Motor(void);
-void Inversion_Motor(void);
-void Stop_Motor(void);
+void foreward_motor(void);
+void inversion_motor(void);
+void stop_motor(void);
 void Bsp_Motor_Tim(uint16_t usPeriod);
 #endif
 

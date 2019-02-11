@@ -60,10 +60,10 @@
 #include "bsp_var.h"
 #include "bsp_led.h"
 #include "bsp_ble_trans.h"
-#include "bsp_timer.h"
 #include "bsp_system.h"
 #include "bsp_my_uart.h"
 #include "bsp_lock_drive.h"
+#include "bsp_timer.h"
 #include "bsp_common.h"
 
 #endif

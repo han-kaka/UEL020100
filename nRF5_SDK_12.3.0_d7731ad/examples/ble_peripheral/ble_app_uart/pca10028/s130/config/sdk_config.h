@@ -220,7 +220,7 @@
 // <e> ADC_ENABLED - nrf_drv_adc - Driver for ADC peripheral (nRF51)
 //==========================================================
 #ifndef ADC_ENABLED
-#define ADC_ENABLED 0
+#define ADC_ENABLED 1
 #endif
 #if  ADC_ENABLED
 // <o> ADC_CONFIG_IRQ_PRIORITY  - Interrupt priority
@@ -3860,13 +3860,23 @@
 #ifndef SEGGER_RTT_DEBUG_UART_DATA
 #define SEGGER_RTT_DEBUG_UART_DATA 0
 #endif
+#endif
+// </e> 
 
 // <q> debug flash
 #ifndef SEGGER_RTT_DEBUG_FLASH
 #define SEGGER_RTT_DEBUG_FLASH 1
 #endif
+
+// <q> debug motor
+#ifndef SEGGER_RTT_DEBUG_MOTOR
+#define SEGGER_RTT_DEBUG_MOTOR 1
 #endif
-// </e> 
+
+// <q> debug adc
+#ifndef SEGGER_RTT_DEBUG_ADC
+#define SEGGER_RTT_DEBUG_ADC 1
+#endif
 
 #endif //RTT_LOG_ENABLE
 

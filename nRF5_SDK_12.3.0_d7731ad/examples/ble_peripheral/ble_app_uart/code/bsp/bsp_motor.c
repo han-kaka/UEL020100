@@ -1,23 +1,23 @@
 #include "bsp_motor.h"
 #include "nrf_drv_gpiote.h"
 
-Motor_Status_Tpye     Motor_Status = STOP;
-Motor_Status_Tpye     Motor_OldStatus = STOP;
-Motor_Tpye            Motor_Struct={0};
+Motor_State_Tpye     Motor_State_Struct = STOP;
+Motor_State_Tpye     Motor_OldStatus = STOP;
+Motor_Tpye           Motor_Struct = {0};
 
-void Foreward_Motor(void)
+void foreward_motor(void)
 {
     nrf_gpio_pin_set(INA);	
     nrf_gpio_pin_clear(INB);	
 }
 
-void Inversion_Motor(void)
+void inversion_motor(void)
 {
     nrf_gpio_pin_clear(INA);	
 	  nrf_gpio_pin_set(INB);	
 }
 
-void Stop_Motor(void)
+void stop_motor(void)
 {
     nrf_gpio_pin_clear(INA);	
 	  nrf_gpio_pin_clear(INB);	
@@ -29,8 +29,8 @@ static void Motor_Flicker(uint16_t usPeriod, uint16_t halfPeriod, uint8_t times)
     Motor_Struct.usCount +=usPeriod;
     if(Motor_Struct.usCount >= halfPeriod)
     {
-        Stop_Motor();
-				Motor_Status = STOP;
+        stop_motor();
+				Motor_State_Struct = STOP;
         Motor_Struct.usCount = 0;     
 //        if(times > 0)
 //        {
@@ -54,17 +54,17 @@ static void Motor_Flicker(uint16_t usPeriod, uint16_t halfPeriod, uint8_t times)
 static void Motor_Indicate(uint16_t usPeriod)
 {
     static uint8_t sucFlag=0; 
-    switch(Motor_Status)
+    switch(Motor_State_Struct)
     {
         case STOP:
         {
-						Stop_Motor();   
+						stop_motor();   
         }
 						break;
 				
         case FOREWARD:
         {
-						Foreward_Motor();
+						foreward_motor();
             Motor_Flicker(usPeriod, 2000, 0);   //第三项参数为0，表示闪烁次数不限
 						Motor_OldStatus = FOREWARD;
         }
@@ -72,7 +72,7 @@ static void Motor_Indicate(uint16_t usPeriod)
 				
         case INVERSION:
         {
-						Inversion_Motor();
+						inversion_motor();
 						Motor_Flicker(usPeriod, 1800, 0);   //第三项参数为0，表示闪烁次数不限
 						Motor_OldStatus = INVERSION; 
         }

@@ -1144,6 +1144,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\components\drivers_nrf\rng\nrf_drv_rng.c</FilePath>
             </File>
+            <File>
+              <FileName>nrf_drv_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\components\drivers_nrf\adc\nrf_drv_adc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -2253,6 +2258,11 @@
               <FileName>bsp_lock_drive.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\code\bsp\bsp_lock_drive.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_battery_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\code\bsp\bsp_battery_adc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -3461,6 +3471,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\..\components\drivers_nrf\rng\nrf_drv_rng.c</FilePath>
             </File>
+            <File>
+              <FileName>nrf_drv_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\..\components\drivers_nrf\adc\nrf_drv_adc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4570,6 +4585,11 @@
               <FileName>bsp_lock_drive.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\code\bsp\bsp_lock_drive.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_battery_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\code\bsp\bsp_battery_adc.c</FilePath>
             </File>
           </Files>
         </Group>
