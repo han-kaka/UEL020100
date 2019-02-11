@@ -8,6 +8,12 @@ uint8_t Measure_Task(uint8_t prio)
         m_SYS_SubTask_prio = ga_TaskMapTable[ga_Subtask[prio]];
         switch(m_SYS_SubTask_prio)
         {
+						case MEASURE_VOLTAGE:
+						{
+								measure_voltage();
+						}
+								break;
+					
             default:
                 break;
         }

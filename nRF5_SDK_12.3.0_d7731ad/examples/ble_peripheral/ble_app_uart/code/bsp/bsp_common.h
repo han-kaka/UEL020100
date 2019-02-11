@@ -24,17 +24,20 @@
 
 typedef struct
 {
-  uint8_t  writeRom_F        :1;    //如EEPROM写失败，则置起该标志
-  uint8_t  writeDynamic_F    :1;
-  uint8_t  atReday_F         :1;    //如GPRS 模块AT已准备OK,那么置起该标志
-  uint8_t  closeStaProc      :1;    //如模块复位次数到达上限，那么暂时关闭GPRS状态处理，间隔一定时间再去执行
-	uint8_t  motordelay        :1; 
-  uint8_t  reserve           :3;
+		uint8_t  writeRom_F        :1;    //如EEPROM写失败，则置起该标志
+		uint8_t  writeDynamic_F    :1;
+		uint8_t  atReday_F         :1;    //如GPRS 模块AT已准备OK,那么置起该标志
+		uint8_t  closeStaProc      :1;    //如模块复位次数到达上限，那么暂时关闭GPRS状态处理，间隔一定时间再去执行
+		uint8_t  motordelay        :1; 
+	
+		uint8_t  stop_adc_st       :1;    //ADC采集完成
+		uint8_t  stop_motor_st     :1;    //motor停止
+		uint8_t  reserve           :1;
   
 }Task_Flag_Type;
 
 
-extern Task_Flag_Type Task_Flag_Struct;
+extern Task_Flag_Type task_flag_struct;
 
 uint8_t com_bsp_init(void);
 

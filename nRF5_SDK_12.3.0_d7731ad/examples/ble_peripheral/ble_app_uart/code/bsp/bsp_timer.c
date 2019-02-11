@@ -21,7 +21,7 @@ void m_system_timeout_handler (void *p_context)
     Tim_Ms_Struct.sys_ms_count++;
 		Tim_Ms_Struct.m_dly_ms++;
 	
-    if(Task_Flag_Struct.closeStaProc == DISABLE)
+    if(task_flag_struct.closeStaProc == DISABLE)
     {
 //        APP_NB_TimeProc(10);
     }
@@ -33,13 +33,13 @@ void m_system_timeout_handler (void *p_context)
     if(Tim_Ms_Struct.sys_ms_count >= MS_TO_S)     // 1S时间到
     {		
 				Tim_Ms_Struct.sys_ms_count -= MS_TO_S;
-				if(Task_Flag_Struct.motordelay == ENABLE)
+				if(task_flag_struct.motordelay == ENABLE)
 				{
 						Tim_1s_Struct.motor_delay_count++;
 						if(Tim_1s_Struct.motor_delay_count >= 2)
 						{
 								Tim_1s_Struct.motor_delay_count = 0;
-								Task_Flag_Struct.motordelay = DISABLE;
+								task_flag_struct.motordelay = DISABLE;
 								if(FOREWARD == Motor_OldStatus)
 								{
 										Motor_State_Struct = INVERSION;
@@ -51,29 +51,29 @@ void m_system_timeout_handler (void *p_context)
 						}
 				}
 			
-				if(Task_Flag_Struct.writeRom_F != DISABLE || Task_Flag_Struct.writeDynamic_F != DISABLE)
+				if(task_flag_struct.writeRom_F != DISABLE || task_flag_struct.writeDynamic_F != DISABLE)
 				{
 						Tim_1s_Struct.rewriteCount++;
 						if(Tim_1s_Struct.rewriteCount >= 180)   //如写未成功，那么间隔3MIN，重写
 						{
 								 Tim_1s_Struct.rewriteCount = 0; 
-								 if(Task_Flag_Struct.writeRom_F != DISABLE)
+								 if(task_flag_struct.writeRom_F != DISABLE)
 								 {
 											set_task(MEM_WRITE,MEM_STORE_SOLID_ROMDATA);
 								 }
-								 if(Task_Flag_Struct.writeDynamic_F != DISABLE)
+								 if(task_flag_struct.writeDynamic_F != DISABLE)
 								 {
 											set_task(MEM_WRITE,MEM_STORE_DYNAMIC_ROMDATA);
 								 }
 						}
 				}		
-				if(Task_Flag_Struct.closeStaProc != DISABLE) //重新打开NB状态处理计数
+				if(task_flag_struct.closeStaProc != DISABLE) //重新打开NB状态处理计数
 				{
 						Tim_1s_Struct.reOpenStaProcCount++;
 						if(Tim_1s_Struct.reOpenStaProcCount >= RE_OPEN_STA_PROC_TIME)
 						{
 								 Tim_1s_Struct.reOpenStaProcCount = 0;
-								 Task_Flag_Struct.closeStaProc = DISABLE;
+								 task_flag_struct.closeStaProc = DISABLE;
 						}
 				}
 		}
@@ -133,7 +133,7 @@ void m_motor_timeout_handler(void *p_context)
 							//超时
 							if(++Motor_Struct.motor_times > UNLOCK_FULL_DRIVE_TIME)
 							{
-									motor_state_struct.stop_motor_st = 1; 
+									task_flag_struct.stop_motor_st = 1; 
 							}
 					}
 							break;	
@@ -143,7 +143,7 @@ void m_motor_timeout_handler(void *p_context)
 							//超时
 							if(++Motor_Struct.motor_times > LOCK_FULL_DRIVE_TIME)
 							{
-									motor_state_struct.stop_motor_st = 1; 
+									task_flag_struct.stop_motor_st = 1; 
 							}
 					}                    
 							break; 	

@@ -150,7 +150,7 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 //    }
     if(Check_Strstr((char*)RxBuf, "Lierda", NB_ATCmdCB.ucRxLen) == true) //GPRS模块准备就绪推送
     {
-        Task_Flag_Struct.atReday_F = ENABLE;
+        task_flag_struct.atReday_F = ENABLE;
         NB_ATCmdCB.RspType = RSP_TYPE_CMD;
 		#if SEGGER_RTT_DEBUG_CMDPROC
 				SEGGER_RTT_printf(0, "gprs model ready\r\n");
@@ -1531,7 +1531,7 @@ void APP_SubTask_StateProc(void)
 								if(ResetTimesCount >=3)
 								{
 										ResetTimesCount = 0;
-										Task_Flag_Struct.closeStaProc = ENABLE;
+										task_flag_struct.closeStaProc = ENABLE;
 								#if SEGGER_RTT_DEBUG_RESET
 										SEGGER_RTT_printf(0, "Close State Proc\r\n");
 								#endif
@@ -1544,7 +1544,7 @@ void APP_SubTask_StateProc(void)
 				 
 				case NB_STATE_INIT:
         {
-						if((g_stNB_Handler.ulDelayCnt > 0) && (Task_Flag_Struct.atReday_F == DISABLE))
+						if((g_stNB_Handler.ulDelayCnt > 0) && (task_flag_struct.atReday_F == DISABLE))
             {
 								return;
             }
@@ -1562,7 +1562,7 @@ void APP_SubTask_StateProc(void)
 								SEGGER_RTT_printf(0, "init nb has start !\r\n");
 						#endif
 								g_stNB_Handler.ulDelayCnt = 0;  //计数清0
-								Task_Flag_Struct.atReday_F = DISABLE; //AT就绪失能
+								task_flag_struct.atReday_F = DISABLE; //AT就绪失能
 								g_stNB_Handler.StateOld = g_stNB_Handler.State;
 								g_stNB_Handler.State = NB_STATE_WAIT_ACK;
 								NB_ATCmdCB.SendATCmdEn = 1; //enable send ATCmd
@@ -1582,7 +1582,7 @@ void APP_SubTask_StateProc(void)
 				 
         case NB_STATE_READ_MESS:
         {
-						if((g_stNB_Handler.ulDelayCnt > 0) && (Task_Flag_Struct.atReday_F == DISABLE))
+						if((g_stNB_Handler.ulDelayCnt > 0) && (task_flag_struct.atReday_F == DISABLE))
             {
 								return;
             }
@@ -1600,7 +1600,7 @@ void APP_SubTask_StateProc(void)
 								SEGGER_RTT_printf(0, "mess nb has start !\r\n");
 						#endif
 								g_stNB_Handler.ulDelayCnt = 0;  //计数清0
-								Task_Flag_Struct.atReday_F = DISABLE; //AT就绪失能
+								task_flag_struct.atReday_F = DISABLE; //AT就绪失能
 								g_stNB_Handler.StateOld = g_stNB_Handler.State; 
 								g_stNB_Handler.State = NB_STATE_WAIT_ACK;
 								NB_ATCmdCB.SendATCmdEn = 1;//enable send ATCmd

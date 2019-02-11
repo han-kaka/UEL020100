@@ -1,6 +1,6 @@
 #include "bsp_common.h"
 
-Task_Flag_Type Task_Flag_Struct;
+Task_Flag_Type task_flag_struct;
 
 //初始化硬件外设
 static void bsp_peri_init(void)

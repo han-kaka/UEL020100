@@ -38,8 +38,7 @@
 #define CONTROL_POWER_CLOSE           5
 
 #define MEASURE                       2                             //测量任务2
-#define MEASURE_CMP                   0                             //气压检查任务任务0
-#define MEASURE_VOLTAGE               1                             //电压检查任务1
+#define MEASURE_VOLTAGE               0                             //电压检查任务任务0
 
 #define MEM_READ                      3                             //
 #define MEM_READ_SOLID_ROMDATA        0
