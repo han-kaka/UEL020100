@@ -209,7 +209,7 @@ void myuart_send(const uint8_t *p_data, uint8_t length)
 //    nrf_gpio_pin_clear(WAKEUP_DTR);	//»½ÐÑNBÄ£¿é
 //    if(Sys_Lock_State_Struct.c1100_mode_flag == C1100_MODE_DRX_SLEEP)
 //    {
-//        Set_Task(COMM, COMM_READDATA);				
+//        set_task(COMM, COMM_READDATA);				
 //    }	
 //}
 
@@ -531,7 +531,7 @@ void uart_rx_complete_callback(uint8_t *p_buf,uint16_t len)
 //    {
 //        NRF_LOG_DIRECT("receive data succeed\r\n");
 //        Lipaidang_Sever_Package_Struct.rev_data_num++;
-////				Set_Task(COMM,COMM_DECODE);
+////				set_task(COMM,COMM_DECODE);
 //    }
 //    if(DISABLE == Sys_Flag_Struct.check_net_flag)
 //    {
@@ -541,14 +541,14 @@ void uart_rx_complete_callback(uint8_t *p_buf,uint16_t len)
 //            {
 //                Sys_Flag_Struct.trs_auth_flag = DISABLE;
 //                Sys_Net_State_Struct.net_state = CONN_OFF;
-//                Set_Task(COMM, COMM_NETWORK_CONN);
+//                set_task(COMM, COMM_NETWORK_CONN);
 //                NRF_LOG_DIRECT("connet off\r\n");
 //            }
 //            else if(Check_Strstr((char *)p_buf,"+LSIPCLOSE",len)==true)             
 //            {
 //                Sys_Flag_Struct.trs_auth_flag = DISABLE;
 //                Sys_Net_State_Struct.socket_state = CONN_OFF;
-//                Set_Task(COMM, COMM_SOCKET_CONN);
+//                set_task(COMM, COMM_SOCKET_CONN);
 //                NRF_LOG_DIRECT("socket off\r\n");
 //            } 
 //        }

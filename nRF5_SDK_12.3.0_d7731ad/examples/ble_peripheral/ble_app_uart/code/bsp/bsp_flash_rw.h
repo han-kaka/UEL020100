@@ -22,7 +22,7 @@
 //	
 //	
 #define SOLID_FLASH_DATA_PAGE                 2
-//#define DYNAMIC_ROM_DATA_A_PAGE             5
+#define LOG_INFO_DATA_PAGE                    3
 //#define DYNAMIC_ROM_DATA_B_PAGE             4 
 //#define SUPER_DYNAMIC_ROM_DATA_A_PAGE       3
 //#define SUPER_DYNAMIC_ROM_DATA_B_PAGE       2 
@@ -82,6 +82,7 @@ typedef struct
 		uint8_t                            ee_addr_iccid[ICCID_LEN];
 		uint8_t                            ee_addr_ip[SERVER_IP_LEN];
 		uint8_t                            ee_addr_apn[SERVER_APN_LEN];
+		uint8_t                            ee_addr_logindex[LOG_INDEX_LEN];
 }Solid_Data_Cell_Data_Type;
 
 typedef struct
@@ -123,6 +124,16 @@ typedef struct
 //		Dynamic_Lock_Data_Type             dynamic_lock_data_struct;
 //		uint8_t                            dynamic_lock_data_xor;
 //}Dynamic_Data_Cell_Type;
+
+typedef struct
+{
+		uint8_t  flag; // =0xA5有效
+		uint8_t  action; // 执行的动作；0x01-密码；0x02-指纹；0x03-RFID；0x04-蓝牙钥匙；0x05-三次密码输入错误；0x06-指静脉；0x07-居民身份证；
+		uint8_t  res[2];
+		uint32_t time;
+		uint8_t  userId[8];
+		uint8_t  data[16];
+} LogInfo_Type;
 
 /************************************************************************************************************/
 typedef union 
@@ -192,9 +203,8 @@ bool Write_Solid_Romdata(const uint32_t pg_num, const p_Rom_Data_Type p_rom_data
 
 //void init_super_dynamic_romdata(void);
 
-uint8_t UserGetLogInfo(LogInfo_t *pBuf);
-
 //uint8 UserSaveLogInfo(LogInfo_t *pBuf);
+void read_log_data(Rom_Data_Type *p_log_data_struct);
 uint8_t UserGetLogInfo(LogInfo_t *pBuf);
 uint8_t UserDelLogInfo(LogInfo_t *pBuf);
 //uint8 UserSaveUserInfo(uint8 num, UserInfo_t *pBuf);

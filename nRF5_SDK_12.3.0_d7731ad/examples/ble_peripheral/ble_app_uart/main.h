@@ -21,6 +21,7 @@
 
 #define SERVER_APN_LEN                      (16)
 #define SERVER_IP_LEN                       (32)
+#define LOG_INDEX_LEN                       (5)
 
 #include <stdint.h>
 #include <stdbool.h>

@@ -10,7 +10,9 @@ uint8_t              char4_all_send[256];//用于数据发送
 static uint8_t f_tempkey = 0; /* 更新秘钥标志位 */
 
 uint8_t *pRecvBuffer;
-uint8_t  stateProcessCommand = 0;
+uint8_t stateProcessCommand = 0;
+
+uint8_t log_index[LOG_INDEX_LEN];
 
 uint8_t const CRC_TABLE[256] =
 {
@@ -223,6 +225,7 @@ void Put_Return(uint8_t command, uint8_t length)
 		{
 				f_tempkey = 0;
 				memcpy(useraeskeybuf, tempkey, 16);
+				set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 				//UserSaveAppData(P_EE_ADDR_AES128KEY, useraeskeybuf);
 		}
 }
@@ -339,15 +342,13 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						nrf_drv_rng_rand(tempkey, 16); 
 						memcpy(pSendbuf + sendLength, tempkey, 16);
 						sendLength += 16;
-//						f_tempkey = 1;
-//						memset(buf, 0, 8);
+						f_tempkey = 1;
 						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 				#if SEGGER_RTT_DEBUG_GET_AESKEY
 						SEGGER_RTT_printf(0, "sendLength = %d!\r\n", sendLength);
 				#endif
 						Put_Return(command, sendLength);
 						gSystemRunParam.flagInit = 0xA5;
-//						SaveSetup();
 				}
 						break;
 				
@@ -630,15 +631,11 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						{
 								Motor_State_Struct = INVERSION;
 								task_flag_struct.motordelay = ENABLE;
-//								Foreward_Motor();
-//							UserMotorON(motorOpenTyp_mobile);
 						}
 						else if (pData[8] == 0xA2)
 						{
 								Motor_State_Struct = FOREWARD;
 								task_flag_struct.motordelay = ENABLE;
-//								Inversion_Motor();
-//							UserMotorOFF();
 						}
 				}
 						break;
@@ -671,7 +668,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						if (UserMemCmp(pData, timestamp, 8) <= 0) 
 								break;
 						memcpy(timestamp, pData, 8);
-						Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 						
 						tmp32 = pData[8];
 						tmp32 = (tmp32 << 8) | pData[9];
@@ -686,14 +683,15 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 								break;
 						}
 						tmp32 -= SECONDS2000YEAR;
-//						osal_setClock(tmp32);
-						osal_ConvertUTCTime( pTempTimeStruct, tmp32 );
-						buf[0] = pTempTimeStruct->year - 2000;
-						buf[1] = pTempTimeStruct->month + 1;
-						buf[2] = pTempTimeStruct->day + 1;
-						buf[3] = pTempTimeStruct->hour;
-						buf[4] = pTempTimeStruct->minutes;
-						buf[5] = pTempTimeStruct->seconds;
+						seconds_times = tmp32;
+//						set_clock(tmp32);
+//						osal_ConvertUTCTime( pTempTimeStruct, tmp32 );
+//						buf[0] = pTempTimeStruct->year - 2000;
+//						buf[1] = pTempTimeStruct->month + 1;
+//						buf[2] = pTempTimeStruct->day + 1;
+//						buf[3] = pTempTimeStruct->hour;
+//						buf[4] = pTempTimeStruct->minutes;
+//						buf[5] = pTempTimeStruct->seconds;
 //						UserSetPCF8563Hex(buf);
 						gFlagAdjustTime = 60000; /* 大约一周时间 */
 						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
@@ -855,8 +853,8 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 				
 				case CMD_PARAM_CONFIG:													/* 参数配置指令 */
 				{
-//						if (dataLen < 9)
-//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}
+						if (dataLen < 9)
+						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}
 //						UserGetAppData(P_EE_ADDR_TIMESTAMP, buf);
 //						if (UserMemCmp(pData, buf, 8) <= 0) break;
 //						UserSaveAppData(P_EE_ADDR_TIMESTAMP, pData);

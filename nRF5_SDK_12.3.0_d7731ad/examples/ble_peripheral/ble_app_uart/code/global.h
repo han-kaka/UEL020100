@@ -42,7 +42,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 #define LO_UINT16(a) ((a) & 0xFF)
 
 #define PROTOCOL_APP_HEAD									0xF0A5		/* 协议头 */
-#define PROTOCOL_APP_VERSION							0x0100		/* 协议版本 */
+#define PROTOCOL_APP_VERSION							0x0101		/* 协议版本 */
 #define PROTOCOL_APP_SCENARIOS						0x01			/* 应用场景 */
 #if defined ANGUMEN
 	#define PROTOCOL_APP_VENDORCODE					0x08			/* 厂商代码 */

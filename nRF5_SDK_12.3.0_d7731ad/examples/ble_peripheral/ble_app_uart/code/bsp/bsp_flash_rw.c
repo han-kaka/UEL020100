@@ -95,7 +95,9 @@ bool store_solid_flsh_data(void)
 		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_ip, NB_NetPar.ServerIP, SERVER_IP_LEN);
 		
 		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_apn, NB_NetPar.ServerAPN, SERVER_APN_LEN);
-	
+		
+		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_logindex, log_index, LOG_INDEX_LEN);
+
 		p_solid_data_struct->solid_data_cell_struct.solid_data_cell_xor = get_xor((uint8_t*)(&solid_data_struct), sizeof(Solid_Data_Cell_Data_Type));
 		
 		return write_solid_flash_data(pg_num, p_solid_data_struct);
@@ -143,27 +145,34 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
 {
 		LogInfoIndex_t tmpLogInfoIndex;
 	
-//	UserAT24C64Read(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
+		Rom_Data_Type log_data_struct;
+		Rom_Data_Type *p_log_data_struct = &log_data_struct;
+	
+		memcpy(&tmpLogInfoIndex, log_index,LOG_INDEX_LEN);
+	
 		if (tmpLogInfoIndex.flag != 0xAA)
 		{
 				tmpLogInfoIndex.flag = 0xAA;
 				tmpLogInfoIndex.head = 0;
 				tmpLogInfoIndex.tail = 0;
-//				UserAT24C64Write(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
+				memcpy(log_index, &tmpLogInfoIndex,LOG_INDEX_LEN);
+				set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 		}
-//	if (tmpLogInfoIndex.head == tmpLogInfoIndex.tail) 
-//	{
-//		ChangeAdvData(5, 0); // ???????
-//		return 0;
-//	}
-//	else
-//	{
-//		ChangeAdvData(5, 1); // ???????
-//	}
-//	
-//	if (pBuf != 0)
-//	UserAT24C64Read(EE_ADDR_LOGINFO + sizeof(LogInfo_t) * tmpLogInfoIndex.tail, 
-//							sizeof(LogInfo_t), (uint8 *)pBuf);
+		if (tmpLogInfoIndex.head == tmpLogInfoIndex.tail) 
+		{
+//				ChangeAdvData(5, 0); // 更新广播标志位
+				return 0;
+		}
+		else
+		{
+//				ChangeAdvData(5, 1); // 更新广播标志位
+		}
+	
+		if (pBuf != 0)
+		
+		read_log_data(p_log_data_struct);
+		
+		memcpy((uint8_t *)pBuf, p_log_data_struct + sizeof(LogInfo_t) * tmpLogInfoIndex.tail, sizeof(LogInfo_t));
 	return 1;
 }
 
@@ -175,44 +184,54 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
  */
 uint8_t UserDelLogInfo(LogInfo_t *pBuf)
 {
-	LogInfoIndex_t tmpLogInfoIndex;
-	LogInfo_t tmpLogInfo;
+		LogInfoIndex_t tmpLogInfoIndex;
+		LogInfo_t tmpLogInfo;
 	
-//	UserAT24C64Read(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
-	if (tmpLogInfoIndex.flag != 0xAA)
-	{
-		tmpLogInfoIndex.flag = 0xAA;
-		tmpLogInfoIndex.head = 0;
-		tmpLogInfoIndex.tail = 0;
-//		UserAT24C64Write(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
-	}
-//	if (tmpLogInfoIndex.head == tmpLogInfoIndex.tail) 
-//	{
-//		ChangeAdvData(5, 0); // 更新广播标志位
-//		return 0;
-//	}
-//	else
-//	{
-//		ChangeAdvData(5, 1); // 更新广播标志位
-//	}
+		Rom_Data_Type log_data_struct;
+		Rom_Data_Type *p_log_data_struct = &log_data_struct;
 	
-	if (pBuf > 0)
-	{
-//		UserAT24C64Read(EE_ADDR_LOGINFO + sizeof(LogInfo_t) * tmpLogInfoIndex.tail, 
-//								sizeof(LogInfo_t), (uint8 *)(&tmpLogInfo));
-		if ((memcmp(tmpLogInfo.userId , pBuf->userId, sizeof(tmpLogInfo.userId)) != 0) && 
-			(tmpLogInfo.time == pBuf->time))
+		memcpy(&tmpLogInfoIndex, log_index,LOG_INDEX_LEN);
+
+		if (tmpLogInfoIndex.flag != 0xAA)
 		{
-			if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
-//			UserAT24C64Write(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
+			tmpLogInfoIndex.flag = 0xAA;
+			tmpLogInfoIndex.head = 0;
+			tmpLogInfoIndex.tail = 0;
+			memcpy(log_index, &tmpLogInfoIndex,LOG_INDEX_LEN);
+			set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 		}
-	}
-	else
-	{
-		if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
-//		UserAT24C64Write(EE_ADDR_LOGINDEX, sizeof(LogInfoIndex_t), (uint8 *)&tmpLogInfoIndex);
-	}
-	return 1;
+		if (tmpLogInfoIndex.head == tmpLogInfoIndex.tail) 
+		{
+//				ChangeAdvData(5, 0); // 更新广播标志位
+				return 0;
+		}
+		else
+		{
+//				ChangeAdvData(5, 1); // 更新广播标志位
+		}
+		
+		if (pBuf > 0)
+		{
+				read_log_data(p_log_data_struct);
+				memcpy((uint8_t *)pBuf, p_log_data_struct + sizeof(LogInfo_t) * tmpLogInfoIndex.tail, sizeof(LogInfo_t));
+			
+				if ((memcmp(tmpLogInfo.userId , pBuf->userId, sizeof(tmpLogInfo.userId)) != 0) && 
+					(tmpLogInfo.time == pBuf->time))
+				{
+						if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
+						
+						memcpy(log_index, &tmpLogInfoIndex, LOG_INDEX_LEN);
+						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+				}
+		}
+		else
+		{
+				if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
+			
+				memcpy(log_index, &tmpLogInfoIndex, LOG_INDEX_LEN);
+				set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+		}
+		return 1;
 }
 
 ///*******************************************************************************
@@ -413,6 +432,10 @@ void init_solid_flash_data(void)
 				memcpy(NB_NetPar.ServerAPN, 
 								p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_apn, 
 								SERVER_APN_LEN);
+								
+				memcpy(log_index,
+								p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_logindex, 
+								LOG_INDEX_LEN);
 		}
 		else
 		{
@@ -423,7 +446,7 @@ void init_solid_flash_data(void)
 //				init_register_data();
 //				init_param_data();
 //				init_aes_key_data();
-//				Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+//				set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 		}
 }
 
@@ -602,6 +625,18 @@ void init_solid_flash_data(void)
 //		}
 //}
 
+
+//读取log数据
+void read_log_data(Rom_Data_Type *p_log_data_struct)
+{
+		uint32_t        pg_num;
+
+		pg_num = NRF_FICR->CODESIZE - LOG_INFO_DATA_PAGE;  // Use last 3 page in flash 页数量
+
+		read_flash_data(pg_num, p_log_data_struct);
+}
+
+
 //bool store_dynamic_flash(const uint32_t pg_num, const p_Rom_Data_Type p_dynamic_data_struct)
 //{
 //		Rom_Data_Type   rom_data_temp_struct;	
@@ -693,7 +728,7 @@ void init_solid_flash_data(void)
 //				NRF_LOG_DIRECT("init dynamic rom data!\r\n");
 //				init_lock_state_data();
 //				init_lock_data_data();
-//				Set_Task(MEM_WRITE, MEM_STORE_DYNAMIC_ROMDATA);
+//				set_task(MEM_WRITE, MEM_STORE_DYNAMIC_ROMDATA);
 //		}
 //}
 
@@ -741,7 +776,7 @@ void init_solid_flash_data(void)
 //		{
 //                NRF_LOG_DIRECT("init lock state data!\r\n");
 //				init_lock_state_data();
-//				Set_Task(MEM_WRITE, MEM_STORE_DYNAMIC_ROMDATA);
+//				set_task(MEM_WRITE, MEM_STORE_DYNAMIC_ROMDATA);
 //		}
 //		
 //		//lock data
@@ -749,7 +784,7 @@ void init_solid_flash_data(void)
 //		{
 //                NRF_LOG_DIRECT("init lock data!\r\n");
 //				init_lock_data_data();
-//				Set_Task(MEM_WRITE, MEM_STORE_DYNAMIC_ROMDATA);
+//				set_task(MEM_WRITE, MEM_STORE_DYNAMIC_ROMDATA);
 //		}
 //}
 
@@ -762,7 +797,7 @@ void init_solid_flash_data(void)
 //				{
 //                        NRF_LOG_DIRECT("init lock state data!\r\n");
 //						init_lock_state_data();
-//						Set_Task(MEM_WRITE, MEM_STORE_DYNAMIC_ROMDATA);
+//						set_task(MEM_WRITE, MEM_STORE_DYNAMIC_ROMDATA);
 //				}
 //		}
 //		
@@ -773,7 +808,7 @@ void init_solid_flash_data(void)
 //				{
 //                        NRF_LOG_DIRECT("init lock data!\r\n");
 //						init_lock_data_data();
-//						Set_Task(MEM_WRITE, MEM_STORE_DYNAMIC_ROMDATA);
+//						set_task(MEM_WRITE, MEM_STORE_DYNAMIC_ROMDATA);
 //				}
 //		}
 //}

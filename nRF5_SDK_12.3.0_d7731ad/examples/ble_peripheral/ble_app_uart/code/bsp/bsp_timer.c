@@ -11,6 +11,8 @@ APP_TIMER_DEF(m_motor_timer_id);                   /**申请系统定时器 */
 
 uint8_t timestamp[8] = {0};
 
+uint32_t seconds_times = SECONDS2000YEAR;
+
 volatile Tim_1s_Type Tim_1s_Struct;
 volatile Tim_Ms_Type Tim_Ms_Struct;
 
@@ -32,6 +34,7 @@ void m_system_timeout_handler (void *p_context)
 //    APP_Charge_TimeProc(10);
     if(Tim_Ms_Struct.sys_ms_count >= MS_TO_S)     // 1S时间到
     {		
+				seconds_times++;
 				Tim_Ms_Struct.sys_ms_count -= MS_TO_S;
 				if(task_flag_struct.motordelay == ENABLE)
 				{
@@ -82,22 +85,22 @@ void m_system_timeout_handler (void *p_context)
 		
 //		if(Sys_Flag_Struct.air_pressure_flag == ENABLE)
 //		{
-//				//Set_Task(MEASURE, MEASURE_CMP);
+//				//set_task(MEASURE, MEASURE_CMP);
 //		}
 //    if((++Tim_100ms_Struct.sys_timex100ms) > 9)
 //    {
 //				//1s timer
 //				Tim_100ms_Struct.sys_timex100ms = 0;
-//				Set_Task(TIMER, TIMER_1S);
+//				set_task(TIMER, TIMER_1S);
 ////			
-////				Set_Task(MEASURE, MEASURE_VOLTAGE);
+////				set_task(MEASURE, MEASURE_VOLTAGE);
 ////				motor_inflate_timer();
 ////				//Mpu6050_test_data();
 ////				hp303_id_cheak();
 ////				//ReadCalCoef();
 ////				//ReadHP303B();
 //		}
-//		Set_Task(TIMER, TIMER_100MS);
+//		set_task(TIMER, TIMER_100MS);
 ////		add_air_pressure_timer();
 ////		oled_display_timer();
 ////		//switch_botton_timer();
@@ -259,33 +262,33 @@ static uint8_t monthLength( uint8_t lpyr, uint8_t mon )
  */
 void osal_ConvertUTCTime( UTCTimeStruct *tm, UTCTime secTime )
 {
-  // calculate the time less than a day - hours, minutes, seconds
-  {
-    uint32_t day = secTime % DAY; 
-    tm->seconds = day % 60UL;
-    tm->minutes = (day % 3600UL) / 60UL;
-    tm->hour = day / 3600UL;
-  }
+		// calculate the time less than a day - hours, minutes, seconds
+		{
+				uint32_t day = secTime % DAY; 
+				tm->seconds = day % 60UL;
+				tm->minutes = (day % 3600UL) / 60UL;
+				tm->hour = day / 3600UL;
+		}
 
-  // Fill in the calendar - day, month, year
-  {
-    uint16_t numDays = secTime / DAY;
-    tm->year = BEGYEAR;
-    while ( numDays >= YearLength( tm->year ) )
-    {
-      numDays -= YearLength( tm->year );
-      tm->year++;
-    }
+		// Fill in the calendar - day, month, year
+		{
+				uint16_t numDays = secTime / DAY;
+				tm->year = BEGYEAR;
+				while ( numDays >= YearLength( tm->year ) )
+				{
+						numDays -= YearLength( tm->year );
+						tm->year++;
+				}
 
-    tm->month = 0;
-    while ( numDays >= monthLength( IsLeapYear( tm->year ), tm->month ) )
-    {
-      numDays -= monthLength( IsLeapYear( tm->year ), tm->month );
-      tm->month++;
-    }
+				tm->month = 0;
+				while ( numDays >= monthLength( IsLeapYear( tm->year ), tm->month ) )
+				{
+						numDays -= monthLength( IsLeapYear( tm->year ), tm->month );
+						tm->month++;
+				}
 
-    tm->day = numDays;
-  }
+				tm->day = numDays;
+		}
 }
 
 //延迟函数

@@ -1094,7 +1094,7 @@ static void APP_NB_State_Comm_Proc(uint8_t *RxBuf)
 //                           GPRS_NetPar.ServerApn[i] = p_buf[SERVER_IP_LEN+2+i];
 //                      }
 //                      GPRS_Event_Set(GPRS_EvtProc.ucRespondEvt,COMM_Event_SET_PARMTE);
-//                      Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);//置起存储任务
+//                      set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);//置起存储任务
 //                 }
 //                 break;
 //                 case WRITE_ADDR_ID:      //写地址
@@ -1104,7 +1104,7 @@ static void APP_NB_State_Comm_Proc(uint8_t *RxBuf)
 //                            PacketHead.addrRegion[i] = p_buf[i];
 //                      }
 //                      GPRS_Event_Set(GPRS_EvtProc.ucRespondEvt,COMM_Event_WRITE_ADDR);
-//                      Set_Task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);//置起存储任务
+//                      set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);//置起存储任务
 //                 }
 //                 break;
 //                 case SYS_PARMTE_SET_ID:  //系统参数设置
@@ -1112,7 +1112,7 @@ static void APP_NB_State_Comm_Proc(uint8_t *RxBuf)
 //                      Charge_ThresValue.PulloutTime     = (U16)((p_buf[0]<<8)+p_buf[1]);
 //                      Charge_ThresValue.DeviationValue  = (U16)((p_buf[2]<<8)+p_buf[3]);
 //                      GPRS_Event_Set(GPRS_EvtProc.ucRespondEvt,COMM_Event_SYS_PARMTE_SET);
-//                      Set_Task(MEM_WRITE, MEM_STORE_DYNAMIC_DATA);//置起存储任务
+//                      set_task(MEM_WRITE, MEM_STORE_DYNAMIC_DATA);//置起存储任务
 //                 }
 //                 break;
 //                 default:
@@ -1175,7 +1175,7 @@ static void APP_NB_State_Comm_Proc(uint8_t *RxBuf)
 //                    Charge_Flag.ChargeStatus = CHARGE_DISABLE;
 //                    g_stCharge_Handler.CloseType = CLOSE_CMD;
 //                 }
-//                 Set_Task(MEM_WRITE,MEM_STORE_DYNAMIC_DATA);
+//                 set_task(MEM_WRITE,MEM_STORE_DYNAMIC_DATA);
 //                 GPRS_Event_Set(GPRS_EvtProc.ucRespondEvt,COMM_Event_CTROL);
 //             }
 //         }

@@ -76,7 +76,7 @@ typedef struct
 extern volatile Tim_1s_Type Tim_1s_Struct;
 extern volatile Tim_Ms_Type Tim_Ms_Struct;
 extern uint8_t timestamp[8];
-
+extern uint32_t seconds_times;
 
 void start_system_time(void);
 
