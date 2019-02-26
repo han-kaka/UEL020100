@@ -83,6 +83,8 @@ typedef struct
 		uint8_t                            ee_addr_ip[SERVER_IP_LEN];
 		uint8_t                            ee_addr_apn[SERVER_APN_LEN];
 		uint8_t                            ee_addr_logindex[LOG_INDEX_LEN];
+		uint8_t                            ee_addr_open_lock_dir;
+	
 }Solid_Data_Cell_Data_Type;
 
 typedef struct

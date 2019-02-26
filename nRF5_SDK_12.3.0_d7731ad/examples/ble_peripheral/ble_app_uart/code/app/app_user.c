@@ -55,24 +55,24 @@ static uint8_t  sLoginFlag = 0, sCurrentUserUID[8];
 //	return i;
 //}
 
-///**
-//* @function SC_StrPrintlen
-//* @brief    返回ch字符串的长度
-//* @param    ch 字符串
-//* @retval   返回ch字符串的长度
-//*/
-//uint16 SC_StrPrintlen(uint8 *ch)
-//{
-//	uint16  i = 0;
-//	
-//	while ((*ch >= 0x20) && (*ch <= 0x7F))
-//	{
-//		ch ++;
-//		if (++i >= 0xFFFF) break;
-//	}
-//	
-//	return i;
-//}
+/**
+* @function SC_StrPrintlen
+* @brief    返回ch字符串的长度
+* @param    ch 字符串
+* @retval   返回ch字符串的长度
+*/
+uint16_t SC_StrPrintlen(uint8_t *ch)
+{
+	uint16_t  i = 0;
+	
+	while ((*ch >= 0x20) && (*ch <= 0x7F))
+	{
+		ch ++;
+		if (++i >= 0xFFFF) break;
+	}
+	
+	return i;
+}
 
 ///**
 //* @function SC_Strstr

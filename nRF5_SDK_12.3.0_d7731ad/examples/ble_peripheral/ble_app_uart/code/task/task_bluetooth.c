@@ -4,10 +4,10 @@
 uint8_t BlueTooth_Task(uint8_t prio)
 {
 		uint8_t m_SYS_SubTask_prio=0;
+//		uint8_t  temp;
+		uint8_t i;
 		while(ga_Subtask[prio])
 		{
-				uint8_t  temp;
-				uint8_t i;
 				m_SYS_SubTask_prio = ga_TaskMapTable[ga_Subtask[prio]];
 				switch(m_SYS_SubTask_prio)
 				{
@@ -32,7 +32,6 @@ uint8_t BlueTooth_Task(uint8_t prio)
 										ble_command_rx_log(sProtocolAppFormat.headData.dataLen + sizeof(ProtocolAppHeadFormat_t) + 3, pRecvBuffer, CRC_CHECK);
 								#endif	
 										set_task(BLUETOOTH, BLUETOOTH_AES_DECODE);
-										
 								}
 //								else 
 //								{
@@ -65,7 +64,8 @@ uint8_t BlueTooth_Task(uint8_t prio)
 						
 						case BLUETOOTH_PROCESS_CMD:
 						{
-								temp = ProcessCommand(sProtocolAppFormat.pData, sProtocolAppFormat.headData.command, sProtocolAppFormat.headData.dataLen);
+								//temp = ProcessCommand(sProtocolAppFormat.pData, sProtocolAppFormat.headData.command, sProtocolAppFormat.headData.dataLen);
+								ProcessCommand(sProtocolAppFormat.pData, sProtocolAppFormat.headData.command, sProtocolAppFormat.headData.dataLen);
 						}	
 								break;			
 						

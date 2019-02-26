@@ -33,6 +33,7 @@ typedef enum
 
 extern Motor_State_Type motor_state_struct;
 extern Use_Channel_Type use_channel_enum;
+extern uint8_t open_lock_dir;
 
 //void turnToFreeChannel(void);
 //void release_drive_channel(void);

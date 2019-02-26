@@ -13,6 +13,7 @@
 
 Motor_State_Type motor_state_struct;
 Use_Channel_Type use_channel_enum;//这是共用一个通道切换
+uint8_t open_lock_dir;
 
 
 ////**********************设置接收震动处理*****驱动马达，震动和报警三个共用两个GPIOTE通道和定时器2*****************	

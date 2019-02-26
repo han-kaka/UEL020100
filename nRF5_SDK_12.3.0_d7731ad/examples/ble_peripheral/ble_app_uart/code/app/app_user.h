@@ -42,7 +42,7 @@ extern uint16_t gFlagAdjustTime;
 //==============================================================================
 //uint32 SC_GenStrToInt(uint8 *pdat);
 //uint16 SC_Strlen(uint8 *ch);
-//uint16 SC_StrPrintlen(uint8 *ch);
+uint16_t SC_StrPrintlen(uint8_t *ch);
 //uint8* SC_Strstr(uint8 *ch1, uint8 *ch2, uint16 len1, uint16 len2);
 int8_t   UserMemCmp( const void *src1, const void *src2, unsigned int len );
 //uint8  UserSearchUserInfoNumber(uint8 *id);

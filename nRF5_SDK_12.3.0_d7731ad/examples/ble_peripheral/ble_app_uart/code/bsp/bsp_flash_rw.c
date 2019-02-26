@@ -97,7 +97,9 @@ bool store_solid_flsh_data(void)
 		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_apn, NB_NetPar.ServerAPN, SERVER_APN_LEN);
 		
 		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_logindex, log_index, LOG_INDEX_LEN);
-
+		
+		memcpy(&(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_open_lock_dir), &open_lock_dir, 1);
+	
 		p_solid_data_struct->solid_data_cell_struct.solid_data_cell_xor = get_xor((uint8_t*)(&solid_data_struct), sizeof(Solid_Data_Cell_Data_Type));
 		
 		return write_solid_flash_data(pg_num, p_solid_data_struct);
@@ -436,6 +438,10 @@ void init_solid_flash_data(void)
 				memcpy(log_index,
 								p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_logindex, 
 								LOG_INDEX_LEN);
+								
+				memcpy(&open_lock_dir,
+								&(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_open_lock_dir),
+								1);
 		}
 		else
 		{
