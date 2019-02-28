@@ -440,27 +440,33 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 //				}	
 //					break;
 //				
-//				case CMD_USER_LOGIN:													/* 用户登录 */
-//				{
-////						if (dataLen != 16)
-////						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}
-////						UserGetAppData(P_EE_ADDR_TIMESTAMP, buf);
-////						if (UserMemCmp(pData + 8, buf, 8) <= 0) break;
-////						UserSaveAppData(P_EE_ADDR_TIMESTAMP, pData + 8);
-////						tmp = UserSearchUserInfoNumber(pData);
-////						if (tmp < MAX_USER_NUM)
-////						{
-////							sReadUserCnt = 0;
-////							UserSetCurrentUser(pData);
-////							UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
-////						}
-////						else
-////						{
-////							UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
-////						}
-//				}
-//					break;
-//				
+				case CMD_USER_LOGIN:													/* 用户登录 */
+				{
+						if (dataLen != 16)
+						{
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+								break;
+						}
+						
+						if (UserMemCmp(pData, timestamp, 8) <= 0) 
+								break;
+						memcpy(timestamp, pData+8, 8);
+						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+						
+						tmp = UserSearchUserInfoNumber(pData);
+						if (tmp < MAX_USER_NUM)
+						{
+								sReadUserCnt = 0;
+								UserSetCurrentUser(pData);
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
+						}
+						else
+						{
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
+						}
+				}
+					break;
+				
 				case CMD_SET_KEYBOARD:													/* 设置键盘密码 */
 				{
 						UserReturnErrCode(command, PROTOCOL_APP_ERR_VERSION);
@@ -536,10 +542,10 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 				{
 						UserReturnErrCode(command, PROTOCOL_APP_ERR_VERSION);
 					
-						if (dataLen != 1)
-						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
-						if (UserGetCurrentUser() == 0)
-						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
+//						if (dataLen != 1)
+//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
+//						if (UserGetCurrentUser() == 0)
+//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
 //						tmp = UserSearchUserInfoNumber(UserGetCurrentUser());
 //						if (tmp >= MAX_USER_NUM)
 //						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}

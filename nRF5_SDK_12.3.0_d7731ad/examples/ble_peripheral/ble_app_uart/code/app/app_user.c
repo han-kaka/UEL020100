@@ -149,16 +149,16 @@ int8_t UserMemCmp( const void *src1, const void *src2, unsigned int len )
 
 void UserSetCurrentUser(uint8_t *uid)
 {
-	sLoginFlag = 1;
-	memcpy(sCurrentUserUID, uid, 8);
+		sLoginFlag = 1;
+		memcpy(sCurrentUserUID, uid, 8);
 }
 
 uint8_t* UserGetCurrentUser(void)
 {
-	if (sLoginFlag)
-		return sCurrentUserUID;
-	else
-		return 0;
+		if (sLoginFlag)
+				return sCurrentUserUID;
+		else
+				return 0;
 }
 
 void UserClrCurrentUser(void)
@@ -175,18 +175,18 @@ void UserClrCurrentUser(void)
  */
 uint8_t UserSearchUserInfoNumber(uint8_t *id)
 {
-	uint8_t  i;
-	UserInfo_t tempUserInfo;
-	
-	for (i = 0; i < MAX_USER_NUM; i ++)
-	{
-		while (UserGetUserInfo(i, &tempUserInfo) == 0xFF);
-		if (((tempUserInfo.flag & 0x83) == 0x82) && (UserMemCmp(tempUserInfo.userId, id, 8) == 0))
+		uint8_t  i;
+		UserInfo_t tempUserInfo;
+		
+		for (i = 0; i < MAX_USER_NUM; i ++)
 		{
-			break;
+				while (UserGetUserInfo(i, &tempUserInfo) == 0xFF);
+				if (((tempUserInfo.flag & 0x83) == 0x82) && (UserMemCmp(tempUserInfo.userId, id, 8) == 0))
+				{
+						break;
+				}
 		}
-	}
-	return i;
+		return i;
 }
 
 ///**************************************************************************************************

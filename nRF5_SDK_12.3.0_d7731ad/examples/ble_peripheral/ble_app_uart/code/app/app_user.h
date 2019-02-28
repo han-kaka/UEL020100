@@ -45,7 +45,7 @@ extern uint16_t gFlagAdjustTime;
 uint16_t SC_StrPrintlen(uint8_t *ch);
 //uint8* SC_Strstr(uint8 *ch1, uint8 *ch2, uint16 len1, uint16 len2);
 int8_t   UserMemCmp( const void *src1, const void *src2, unsigned int len );
-//uint8  UserSearchUserInfoNumber(uint8 *id);
+uint8_t  UserSearchUserInfoNumber(uint8_t *id);
 //uint8  UserSearchUserInfoUID(uint16 num, uint8 *id);
 uint8_t UserReadUserInfoUID(uint8_t num, uint8_t *uid);
 uint8_t UserReadUserInfoConfig(uint8_t *uid, uint8_t *dat);

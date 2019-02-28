@@ -311,10 +311,12 @@ uint8_t UserGetUserInfo(uint8_t num, UserInfo_t *pBuf)
 {
 	uint8_t  ret = 1;
 	
-//	if (num >= MAX_USER_NUM) return 1;
+	if (num >= MAX_USER_NUM) return 1;
+	
 //	if (UserAT24C64Read(EE_ADDR_USERINFO + sizeof(UserInfo_t) * num, 
 //						   sizeof(UserInfo_t), (uint8 *)pBuf) == 1)
 //		ret = 0;
+							 
 	return ret;
 }
 #endif
