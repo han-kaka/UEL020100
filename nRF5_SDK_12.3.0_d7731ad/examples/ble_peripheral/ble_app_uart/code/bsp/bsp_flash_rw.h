@@ -23,7 +23,7 @@
 //	
 #define SOLID_FLASH_DATA_PAGE                 2
 #define LOG_INFO_DATA_PAGE                    3
-//#define DYNAMIC_ROM_DATA_B_PAGE             4 
+#define USER_INFO_DATA_PAGE                   4 
 //#define SUPER_DYNAMIC_ROM_DATA_A_PAGE       3
 //#define SUPER_DYNAMIC_ROM_DATA_B_PAGE       2 
 
@@ -206,14 +206,17 @@ bool Write_Solid_Romdata(const uint32_t pg_num, const p_Rom_Data_Type p_rom_data
 //void init_super_dynamic_romdata(void);
 
 //uint8 UserSaveLogInfo(LogInfo_t *pBuf);
-void read_log_data(Rom_Data_Type *p_log_data_struct);
+void read_log_data(p_Rom_Data_Type p_log_data_struct);
+void read_user_info_data(p_Rom_Data_Type p_user_info_data_struct);
+uint8_t UserSearchUserInfoNumber(uint8_t *id, p_Rom_Data_Type p_user_info_data_struct);
+uint8_t UserReadUserInfoUID(uint8_t num, uint8_t *uid, p_Rom_Data_Type p_user_info_data_struct);\
+uint8_t UserSaveUserInfo(uint8_t num, UserInfo_t *pBuf, p_Rom_Data_Type p_user_info_data_struct);
 uint8_t UserGetLogInfo(LogInfo_t *pBuf);
 uint8_t UserDelLogInfo(LogInfo_t *pBuf);
-//uint8 UserSaveUserInfo(uint8 num, UserInfo_t *pBuf);
 //#ifdef FLASHUSERINFO
 //	uint8 UserDelUserInfo(uint8 num);
 //#endif
-uint8_t UserGetUserInfo(uint8_t num, UserInfo_t *pBuf);
+uint8_t UserGetUserInfo(uint8_t num, UserInfo_t *pBuf, p_Rom_Data_Type p_user_info_data_struct);
 //uint8 UserSaveUserBluetoothKeyInfo(uint8 num, UserBluetoothKeyInfo_t *pBuf);
 //uint8 UserGetUserBluetoothKeyInfo(uint8 num, UserBluetoothKeyInfo_t *pBuf);
 //uint8 UserSaveAppData(EepromAddr_t parameter, uint8 *pbuf);

@@ -35,21 +35,6 @@
 #include "SEGGER_RTT.h"
 #include "nrf_log.h"
 
-#include "task_safeguard.h"
-#include "task_control.h"
-#include "task_measure.h"
-#include "task_mem_read.h"
-#include "task_mem_write.h"
-#include "task_bluetooth.h"
-#include "task_communicate.h"
-#include "task_other.h"
-#include "task_common.h"
-
-#include "app_user.h"
-#include "app_comm_ble.h"
-#include "app_comm_NB86.h"
-#include "app_common.h"
-
 #if SEGGER_RTT_DEBUG_BLUETOOTH
 #include "bsp_rtt_debug.h"
 #endif
@@ -67,6 +52,21 @@
 #include "bsp_timer.h"
 #include "bsp_battery_adc.h"
 #include "bsp_common.h"
+
+#include "app_user.h"
+#include "app_comm_ble.h"
+#include "app_comm_NB86.h"
+#include "app_common.h"
+
+#include "task_safeguard.h"
+#include "task_control.h"
+#include "task_measure.h"
+#include "task_mem_read.h"
+#include "task_mem_write.h"
+#include "task_bluetooth.h"
+#include "task_communicate.h"
+#include "task_other.h"
+#include "task_common.h"
 
 #endif
 

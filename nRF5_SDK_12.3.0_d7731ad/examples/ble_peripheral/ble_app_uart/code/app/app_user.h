@@ -1,7 +1,9 @@
 #ifndef __APP_USER_H
 #define __APP_USER_H
 
+#include "bsp_flash_rw.h"
 #include "global.h"
+
 
 #define SECONDS2000YEAR				946656000	/* 时间(2000/01/01 00:00:00)相对于Linux时间(1970/01/01 08:00:00)开始的秒数 */
 
@@ -45,16 +47,14 @@ extern uint16_t gFlagAdjustTime;
 uint16_t SC_StrPrintlen(uint8_t *ch);
 //uint8* SC_Strstr(uint8 *ch1, uint8 *ch2, uint16 len1, uint16 len2);
 int8_t   UserMemCmp( const void *src1, const void *src2, unsigned int len );
-uint8_t  UserSearchUserInfoNumber(uint8_t *id);
 //uint8  UserSearchUserInfoUID(uint16 num, uint8 *id);
-uint8_t UserReadUserInfoUID(uint8_t num, uint8_t *uid);
-uint8_t UserReadUserInfoConfig(uint8_t *uid, uint8_t *dat);
-//uint8  UserAddUserInfoToSystem(uint8 type, uint8 *id, uint8 *pData);
+uint8_t  UserReadUserInfoConfig(uint8_t *uid, uint8_t *dat);
+uint8_t  UserAddUserInfoToSystem(uint8_t type, uint8_t *id, uint8_t *pData);
 //uint8  UserDelUserInfoFromSystem(uint8 *uid);
 //void   UserClearUserInfoFromSystem(void);
-void   UserSetCurrentUser(uint8_t *uid);
+void     UserSetCurrentUser(uint8_t *uid);
 uint8_t* UserGetCurrentUser(void);
-void   UserClrCurrentUser(void);
+void     UserClrCurrentUser(void);
 //void   FeetDog(void);
 //void   UserHalInit(void);
 //void   UserSoftInit(void);

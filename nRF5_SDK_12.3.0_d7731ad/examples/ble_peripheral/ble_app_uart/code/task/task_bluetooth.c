@@ -4,7 +4,7 @@
 uint8_t BlueTooth_Task(uint8_t prio)
 {
 		uint8_t m_SYS_SubTask_prio=0;
-//		uint8_t  temp;
+		uint8_t  temp;
 		uint8_t i;
 		while(ga_Subtask[prio])
 		{
@@ -64,8 +64,11 @@ uint8_t BlueTooth_Task(uint8_t prio)
 						
 						case BLUETOOTH_PROCESS_CMD:
 						{
-								//temp = ProcessCommand(sProtocolAppFormat.pData, sProtocolAppFormat.headData.command, sProtocolAppFormat.headData.dataLen);
-								ProcessCommand(sProtocolAppFormat.pData, sProtocolAppFormat.headData.command, sProtocolAppFormat.headData.dataLen);
+								temp = ProcessCommand(sProtocolAppFormat.pData, sProtocolAppFormat.headData.command, sProtocolAppFormat.headData.dataLen);
+								if(temp == 0xFF)
+								{
+										return false;
+								}
 						}	
 								break;			
 						

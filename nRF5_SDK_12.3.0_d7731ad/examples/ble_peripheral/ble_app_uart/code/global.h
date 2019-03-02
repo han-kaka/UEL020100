@@ -9,7 +9,6 @@
 
 //#define ESWAP(word) ((word)>>8 & 0xff | (word)<<8 & 0xff00)
 
-
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;											 				
 
 #define Var_Fill(var,data)      for(uint16_t ii = 0; ii < sizeof(var); ++ii)\

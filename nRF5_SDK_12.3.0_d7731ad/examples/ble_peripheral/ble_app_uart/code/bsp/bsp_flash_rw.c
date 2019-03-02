@@ -4,6 +4,9 @@
 //用户头文件
 #include "bsp_flash_rw.h"
 
+static void read_flash_data(const uint32_t pg_num, p_Rom_Data_Type p_rom_data_struct);
+static void write_flash_data(const uint32_t pg_num, const p_Rom_Data_Type p_rom_data_struct);
+
 /************************************** flash wr re *********************************************************/
 static void read_flash_data(const uint32_t pg_num, p_Rom_Data_Type p_rom_data_struct)
 {  
@@ -148,16 +151,16 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
 		LogInfoIndex_t tmpLogInfoIndex;
 	
 		Rom_Data_Type log_data_struct;
-		Rom_Data_Type *p_log_data_struct = &log_data_struct;
+		p_Rom_Data_Type p_log_data_struct = &log_data_struct;
 	
-		memcpy(&tmpLogInfoIndex, log_index,LOG_INDEX_LEN);
+		memcpy(&tmpLogInfoIndex, log_index, LOG_INDEX_LEN);
 	
 		if (tmpLogInfoIndex.flag != 0xAA)
 		{
 				tmpLogInfoIndex.flag = 0xAA;
 				tmpLogInfoIndex.head = 0;
 				tmpLogInfoIndex.tail = 0;
-				memcpy(log_index, &tmpLogInfoIndex,LOG_INDEX_LEN);
+				memcpy(log_index, &tmpLogInfoIndex, LOG_INDEX_LEN);
 				set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 		}
 		if (tmpLogInfoIndex.head == tmpLogInfoIndex.tail) 
@@ -175,7 +178,7 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
 		read_log_data(p_log_data_struct);
 		
 		memcpy((uint8_t *)pBuf, p_log_data_struct + sizeof(LogInfo_t) * tmpLogInfoIndex.tail, sizeof(LogInfo_t));
-	return 1;
+		return 1;
 }
 
 /*******************************************************************************
@@ -190,17 +193,17 @@ uint8_t UserDelLogInfo(LogInfo_t *pBuf)
 		LogInfo_t tmpLogInfo;
 	
 		Rom_Data_Type log_data_struct;
-		Rom_Data_Type *p_log_data_struct = &log_data_struct;
+		p_Rom_Data_Type p_log_data_struct = &log_data_struct;
 	
-		memcpy(&tmpLogInfoIndex, log_index,LOG_INDEX_LEN);
+		memcpy(&tmpLogInfoIndex, log_index, LOG_INDEX_LEN);
 
 		if (tmpLogInfoIndex.flag != 0xAA)
 		{
-			tmpLogInfoIndex.flag = 0xAA;
-			tmpLogInfoIndex.head = 0;
-			tmpLogInfoIndex.tail = 0;
-			memcpy(log_index, &tmpLogInfoIndex,LOG_INDEX_LEN);
-			set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+				tmpLogInfoIndex.flag = 0xAA;
+				tmpLogInfoIndex.head = 0;
+				tmpLogInfoIndex.tail = 0;
+				memcpy(log_index, &tmpLogInfoIndex, LOG_INDEX_LEN);
+				set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 		}
 		if (tmpLogInfoIndex.head == tmpLogInfoIndex.tail) 
 		{
@@ -215,54 +218,58 @@ uint8_t UserDelLogInfo(LogInfo_t *pBuf)
 		if (pBuf > 0)
 		{
 				read_log_data(p_log_data_struct);
-				memcpy((uint8_t *)pBuf, p_log_data_struct + sizeof(LogInfo_t) * tmpLogInfoIndex.tail, sizeof(LogInfo_t));
+				memcpy(tmpLogInfo.userId, p_log_data_struct + sizeof(LogInfo_t) * tmpLogInfoIndex.tail, sizeof(LogInfo_t));
 			
-				if ((memcmp(tmpLogInfo.userId , pBuf->userId, sizeof(tmpLogInfo.userId)) != 0) && 
+				if ((memcmp(tmpLogInfo.userId, pBuf->userId, sizeof(tmpLogInfo.userId)) != 0) && 
 					(tmpLogInfo.time == pBuf->time))
 				{
 						if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
 						
 						memcpy(log_index, &tmpLogInfoIndex, LOG_INDEX_LEN);
 						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+						return 1;
 				}
 		}
-		else
-		{
-				if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
-			
-				memcpy(log_index, &tmpLogInfoIndex, LOG_INDEX_LEN);
-				set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
-		}
-		return 1;
+//		else
+//		{
+//				if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
+//			
+//				memcpy(log_index, &tmpLogInfoIndex, LOG_INDEX_LEN);
+//				set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+//		}
+		return 0;
 }
 
-///*******************************************************************************
-// * @brief       保存用户信息
-// * @param       num：用户编号；
-// * @return      0-成功；0xFF-未完成；other-失败；
-// *******************************************************************************
-// */
-//#ifdef FLASHUSERINFO
-//uint8 UserSaveUserInfo(uint8 num, UserInfo_t *pBuf)
-//{
-//	if (num >= MAX_USER_NUM) return 1;
-//	pBuf->validity = 0xAAAAAAAA;
-//	return UserFlashWrite(USER_FLASH_PAGE_USERINFO_START + (num / (USER_FLASH_PAGE_SIZE / sizeof(UserInfo_t))), 
-//						  (uint16)(num % (USER_FLASH_PAGE_SIZE / sizeof(UserInfo_t))) * sizeof(UserInfo_t), 
-//						  (uint8*)pBuf, sizeof(UserInfo_t));
-//}
-//#else
-//uint8 UserSaveUserInfo(uint8 num, UserInfo_t *pBuf)
-//{
-//	uint8  ret = 1;
-//	
-//	if (num >= MAX_USER_NUM) return 1;
-//	if (UserAT24C64Write(EE_ADDR_USERINFO + sizeof(UserInfo_t) * num, 
-//							sizeof(UserInfo_t), (uint8 *)pBuf) == 1)
-//		ret = 0;
-//	return ret;
-//}
-//#endif
+/*******************************************************************************
+ * @brief       保存用户信息
+ * @param       num：用户编号；
+ * @return      0-成功；0xFF-未完成；other-失败；
+ *******************************************************************************
+ */
+#ifdef FLASHUSERINFO
+uint8_t UserSaveUserInfo(uint8_t num, UserInfo_t *pBuf, p_Rom_Data_Type p_user_info_data_struct)
+{
+	if (num >= MAX_USER_NUM) return 1;
+	pBuf->validity = 0xAAAAAAAA;
+	return UserFlashWrite(USER_FLASH_PAGE_USERINFO_START + (num / (USER_FLASH_PAGE_SIZE / sizeof(UserInfo_t))), 
+						  (uint16)(num % (USER_FLASH_PAGE_SIZE / sizeof(UserInfo_t))) * sizeof(UserInfo_t), 
+						  (uint8*)pBuf, sizeof(UserInfo_t));
+}
+#else
+uint8_t UserSaveUserInfo(uint8_t num, UserInfo_t *pBuf, p_Rom_Data_Type p_user_info_data_struct)
+{
+		uint8_t  ret = 1;
+	
+		if (num >= MAX_USER_NUM) return 1;
+	
+		memcpy(p_user_info_data_struct+sizeof(UserInfo_t) * num, (uint8_t *)pBuf, sizeof(UserInfo_t));
+		ret = 0;
+		write_flash_data(NRF_FICR->CODESIZE-USER_INFO_DATA_PAGE, p_user_info_data_struct);
+
+		return ret;
+}
+#endif
+
 ///*******************************************************************************
 // * @brief       删除用户信息
 // * @param       num：用户编号；
@@ -282,6 +289,50 @@ uint8_t UserDelLogInfo(LogInfo_t *pBuf)
 //}
 //#endif
 
+/**************************************************************************************************
+ * @brief       读取用户UID
+ * @param       num：用户内存编号
+ * @param       id：用户UID
+ * @return      0-成功；1-失败；
+ **************************************************************************************************
+ */
+uint8_t UserReadUserInfoUID(uint8_t num, uint8_t *uid, p_Rom_Data_Type p_user_info_data_struct)
+{
+		uint8_t  ret = 1;
+		UserInfo_t tempUserInfo;
+		
+		while (UserGetUserInfo(num, &tempUserInfo, p_user_info_data_struct) == 0xFF);
+		if ((tempUserInfo.flag & 0x83) == 0x82)
+		{
+				if (uid != 0) UserMemCmp(uid, tempUserInfo.userId, 8);
+				ret = 0;
+		}
+		
+		return ret;
+}
+
+/**************************************************************************************************
+ * @brief       读取用户信息编号
+ * @param       id：用户UID
+ * @return      用户信息编号
+ **************************************************************************************************
+ */
+uint8_t UserSearchUserInfoNumber(uint8_t *id, p_Rom_Data_Type p_user_info_data_struct)
+{
+		uint8_t  i;
+		UserInfo_t tempUserInfo;
+		
+		for (i = 0; i < MAX_USER_NUM; i ++)
+		{
+				while (UserGetUserInfo(i, &tempUserInfo, p_user_info_data_struct) == 0xFF);
+				if (((tempUserInfo.flag & 0x83) == 0x82) && (UserMemCmp(tempUserInfo.userId, id, 8) == 0))
+				{
+						break;
+				}
+		}
+		return i;
+}
+
 /*******************************************************************************
  * @brief       读取用户信息
  * @param       num：用户编号；
@@ -289,7 +340,7 @@ uint8_t UserDelLogInfo(LogInfo_t *pBuf)
  *******************************************************************************
  */
 #ifdef FLASHUSERINFO
-uint8_t UserGetUserInfo(uint8_t num, UserInfo_t *pBuf)
+uint8_t UserGetUserInfo(uint8_t num, UserInfo_t *pBuf, p_Rom_Data_Type p_user_info_data_struct)
 {
 	uint8  ret;
 	
@@ -307,19 +358,38 @@ uint8_t UserGetUserInfo(uint8_t num, UserInfo_t *pBuf)
 	return ret;
 }
 #else
-uint8_t UserGetUserInfo(uint8_t num, UserInfo_t *pBuf)
+uint8_t UserGetUserInfo(uint8_t num, UserInfo_t *pBuf, p_Rom_Data_Type p_user_info_data_struct)
 {
-	uint8_t  ret = 1;
-	
-	if (num >= MAX_USER_NUM) return 1;
-	
-//	if (UserAT24C64Read(EE_ADDR_USERINFO + sizeof(UserInfo_t) * num, 
-//						   sizeof(UserInfo_t), (uint8 *)pBuf) == 1)
-//		ret = 0;
-							 
-	return ret;
+		uint8_t  ret = 1;
+		
+		if (num >= MAX_USER_NUM) return 1;
+		
+		memcpy(pBuf, p_user_info_data_struct + sizeof(UserInfo_t) * num, sizeof(UserInfo_t));
+		ret = 0;
+								 
+		return ret;
 }
 #endif
+
+//读取user info数据
+void read_user_info_data(p_Rom_Data_Type p_user_info_data_struct)
+{
+		uint32_t        pg_num;
+
+		pg_num = NRF_FICR->CODESIZE - USER_INFO_DATA_PAGE;  // Use last 4 page in flash 页数量
+
+		read_flash_data(pg_num, p_user_info_data_struct);
+}
+
+//读取log数据
+void read_log_data(p_Rom_Data_Type p_log_data_struct)
+{
+		uint32_t        pg_num;
+
+		pg_num = NRF_FICR->CODESIZE - LOG_INFO_DATA_PAGE;  // Use last 3 page in flash 页数量
+
+		read_flash_data(pg_num, p_log_data_struct);
+}
 
 ///*******************************************************************************
 // * @brief       保存用户蓝牙钥匙
@@ -632,17 +702,6 @@ void init_solid_flash_data(void)
 //				return store_dynamic_flash(pg_num_a, p_dynamic_data_struct);
 //		}
 //}
-
-
-//读取log数据
-void read_log_data(Rom_Data_Type *p_log_data_struct)
-{
-		uint32_t        pg_num;
-
-		pg_num = NRF_FICR->CODESIZE - LOG_INFO_DATA_PAGE;  // Use last 3 page in flash 页数量
-
-		read_flash_data(pg_num, p_log_data_struct);
-}
 
 
 //bool store_dynamic_flash(const uint32_t pg_num, const p_Rom_Data_Type p_dynamic_data_struct)

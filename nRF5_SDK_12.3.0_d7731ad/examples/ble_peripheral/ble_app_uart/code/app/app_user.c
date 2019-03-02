@@ -167,28 +167,6 @@ void UserClrCurrentUser(void)
 	memset(sCurrentUserUID, 0, 8);
 }
 
-/**************************************************************************************************
- * @brief       读取用户信息编号
- * @param       id：用户UID
- * @return      用户信息编号
- **************************************************************************************************
- */
-uint8_t UserSearchUserInfoNumber(uint8_t *id)
-{
-		uint8_t  i;
-		UserInfo_t tempUserInfo;
-		
-		for (i = 0; i < MAX_USER_NUM; i ++)
-		{
-				while (UserGetUserInfo(i, &tempUserInfo) == 0xFF);
-				if (((tempUserInfo.flag & 0x83) == 0x82) && (UserMemCmp(tempUserInfo.userId, id, 8) == 0))
-				{
-						break;
-				}
-		}
-		return i;
-}
-
 ///**************************************************************************************************
 // * @brief       通过UID读取用户信息
 // * @param       id：用户UID
@@ -207,28 +185,6 @@ uint8_t UserSearchUserInfoNumber(uint8_t *id)
 //	}
 //	return 0;
 //}
-			
-/**************************************************************************************************
- * @brief       读取用户UID
- * @param       num：用户内存编号
- * @param       id：用户UID
- * @return      0-成功；1-失败；
- **************************************************************************************************
- */
-uint8_t UserReadUserInfoUID(uint8_t num, uint8_t *uid)
-{
-		uint8_t  ret = 1;
-		UserInfo_t tempUserInfo;
-		
-		while (UserGetUserInfo(num, &tempUserInfo) == 0xFF);
-		if ((tempUserInfo.flag & 0x83) == 0x82)
-		{
-				if (uid != 0) UserMemCmp(uid, tempUserInfo.userId, 8);
-				ret = 0;
-		}
-		
-		return ret;
-}
 
 /**************************************************************************************************
  * @brief       读取用户配置信息
@@ -239,256 +195,267 @@ uint8_t UserReadUserInfoUID(uint8_t num, uint8_t *uid)
  */
 uint8_t UserReadUserInfoConfig(uint8_t *uid, uint8_t *dat)
 {
-	uint8_t  tmp, ret = 1;
-	UserInfo_t tempUserInfo;
-	
-	tmp = UserSearchUserInfoNumber(uid);
-	if (tmp < MAX_USER_NUM)
-	{
-		while (UserGetUserInfo(tmp, &tempUserInfo) == 0xFF);
-		if (dat !=0 ) *dat = tempUserInfo.flag;
-		ret = 0;
-	}
-	
-	return ret;
+		uint8_t  tmp, ret = 1;
+		UserInfo_t tempUserInfo;
+		
+//		tmp = UserSearchUserInfoNumber(uid);
+//		if (tmp < MAX_USER_NUM)
+//		{
+//				while (UserGetUserInfo(tmp, &tempUserInfo) == 0xFF);
+//				if (dat !=0 ) *dat = tempUserInfo.flag;
+//				ret = 0;
+//		}
+		
+		return ret;
 }
 
-///**************************************************************************************************
-// * @brief       添加用户信息
-// * @param       type：1-添加用户；2-添加密码；3-添加指纹；4-添加 RFID ；5-蓝牙钥匙；6-指静脉；11-添加用户带有效时间；
-// * @return      0-成功；0xFF-未完成；other-失败；
-// **************************************************************************************************
-// */
-//uint8 UserAddUserInfoToSystem(uint8 type, uint8 *id, uint8 *pData)
-//{
-//	uint8  i, tmp, ret = 1;
-//	static uint8  sFlagState = 0;
-//	static uint8  sUserId = 0;
-//	static UserInfo_t tempUserInfo;
-//	
-//	if (type == 0)
-//	{
-//		for (i = 0; i < MAX_USER_NUM; i ++)
+/**************************************************************************************************
+ * @brief       添加用户信息
+ * @param       type：1-添加用户；2-添加密码；3-添加指纹；4-添加 RFID ；5-蓝牙钥匙；6-指静脉；11-添加用户带有效时间；
+ * @return      0-成功；0xFF-未完成；other-失败；
+ **************************************************************************************************
+ */
+uint8_t UserAddUserInfoToSystem(uint8_t type, uint8_t *id, uint8_t *pData)
+{
+		uint8_t  i, tmp, ret = 1;
+		static uint8_t  sFlagState = 0;
+		static uint8_t  sUserId = 0;
+		static UserInfo_t tempUserInfo;
+	
+		Rom_Data_Type user_info_data_struct;
+		p_Rom_Data_Type p_user_info_data_struct = &user_info_data_struct;		
+	
+		if (type == 0)
+		{
+				read_user_info_data(p_user_info_data_struct);
+			
+				for (i = 0; i < MAX_USER_NUM; i ++)
+				{
+						while (UserGetUserInfo(i, &tempUserInfo, p_user_info_data_struct) == 0xFF);
+						if (((tempUserInfo.flag & 0x83) == 0x82) && (UserMemCmp(tempUserInfo.userId, id, 8) == 0))
+						{
+								ret = 0;
+						}
+				}
+		}
+		else if ((type == 1) || (type == 11)) /* 添加用户 */
+		{
+				read_user_info_data(p_user_info_data_struct);
+				if (sFlagState == 0)
+				{
+						sFlagState = 1;
+						sUserId = UserSearchUserInfoNumber(pData, p_user_info_data_struct);
+						ret = 0xFF;
+				}
+				else if (sFlagState == 1)
+				{
+						sFlagState = 2;
+						ret = 0xFF;
+						if (sUserId < MAX_USER_NUM) // 已有此用户
+						{
+								while (UserGetUserInfo(sUserId, &tempUserInfo, p_user_info_data_struct) == 0xFF);
+								if (type == 11) /* 添加用户有效时间 */
+								{
+										tempUserInfo.startTime = pData[8];
+										tempUserInfo.startTime = (tempUserInfo.startTime << 8) + pData[9];
+										tempUserInfo.startTime = (tempUserInfo.startTime << 8) + pData[10];
+										tempUserInfo.startTime = (tempUserInfo.startTime << 8) + pData[11];
+										tempUserInfo.endTime = pData[12];
+										tempUserInfo.endTime = (tempUserInfo.endTime << 8) + pData[13];
+										tempUserInfo.endTime = (tempUserInfo.endTime << 8) + pData[14];
+										tempUserInfo.endTime = (tempUserInfo.endTime << 8) + pData[15];
+										if (tempUserInfo.startTime > SECONDS2000YEAR) tempUserInfo.startTime -= SECONDS2000YEAR;
+										else tempUserInfo.startTime = 0;
+										if (tempUserInfo.endTime > SECONDS2000YEAR) tempUserInfo.endTime -= SECONDS2000YEAR;
+										else tempUserInfo.endTime = 0;
+								}
+								else
+								{
+										tempUserInfo.startTime = 0;
+										tempUserInfo.endTime = 0xFFFFFFFF;
+								}
+						}
+						else // 新用户
+						{
+								tmp = 1;
+								for (i = 0; i < MAX_USER_NUM; i ++)
+								{
+										while (UserGetUserInfo(i, &tempUserInfo, p_user_info_data_struct) == 0xFF);
+										if (((tempUserInfo.flag & 0x03) != 0x02) || ((tempUserInfo.flag & 0x80) == 0))
+										{
+												tmp = 0;
+										}
+										else if (tempUserInfo.endTime < seconds_times)
+										{
+												tmp = 0;
+										}
+										if (tmp == 0)
+										{
+												tempUserInfo.flag = 0x82;
+												memcpy(tempUserInfo.userId, pData, 8);
+												if (type == 11) /* 添加用户有效时间 */
+												{
+														tempUserInfo.startTime = pData[8];
+														tempUserInfo.startTime = (tempUserInfo.startTime << 8) + pData[9];
+														tempUserInfo.startTime = (tempUserInfo.startTime << 8) + pData[10];
+														tempUserInfo.startTime = (tempUserInfo.startTime << 8) + pData[11];
+														tempUserInfo.endTime = pData[12];
+														tempUserInfo.endTime = (tempUserInfo.endTime << 8) + pData[13];
+														tempUserInfo.endTime = (tempUserInfo.endTime << 8) + pData[14];
+														tempUserInfo.endTime = (tempUserInfo.endTime << 8) + pData[15];
+													
+														if (tempUserInfo.startTime > SECONDS2000YEAR) tempUserInfo.startTime -= SECONDS2000YEAR;
+														else tempUserInfo.startTime = 0;
+														if (tempUserInfo.endTime > SECONDS2000YEAR) tempUserInfo.endTime -= SECONDS2000YEAR;
+														else tempUserInfo.endTime = 0;
+												}
+												else
+												{
+														tempUserInfo.startTime = 0;
+														tempUserInfo.endTime = 0xFFFFFFFF;
+												}
+												sUserId = i;
+												break;
+										}
+								}
+						}
+				}
+				else if (sFlagState == 2)
+				{
+						if (sUserId < MAX_USER_NUM)
+						{
+								ret = UserSaveUserInfo(sUserId, &tempUserInfo, p_user_info_data_struct);
+						}
+						else
+						{
+								ret = 1;
+						}
+				}
+		}
+//		else if (type == 2) /* 添加键盘密码 */
 //		{
-//			while (UserGetUserInfo(i, &tempUserInfo) == 0xFF);
-//			if (((tempUserInfo.flag & 0x83) == 0x82) && (UserMemCmp(tempUserInfo.userId, id, 8) == 0))
+//			if (sFlagState == 0)
 //			{
-//				ret = 0;
-//			}
-//		}
-//	}
-//	else if ((type == 1) || (type == 11)) /* 添加用户 */
-//	{
-//		if (sFlagState == 0)
-//		{
-//			sFlagState = 1;
-//			sUserId = UserSearchUserInfoNumber(pData);
-//			ret = 0xFF;
-//		}
-//		else if (sFlagState == 1)
-//		{
-//			sFlagState = 2;
-//			ret = 0xFF;
-//			if (sUserId < MAX_USER_NUM) // 已有此用户
-//			{
-//				while (UserGetUserInfo(sUserId, &tempUserInfo) == 0xFF);
-//				if (type == 11) /* 添加用户有效时间 */
+//				sFlagState = 1;
+//				sUserId = UserSearchUserInfoNumber(id);
+//				if (sUserId < MAX_USER_NUM)
 //				{
-//					tempUserInfo.startTime = pData[8];
-//					tempUserInfo.startTime = (tempUserInfo.startTime << 8) + pData[9];
-//					tempUserInfo.startTime = (tempUserInfo.startTime << 8) + pData[10];
-//					tempUserInfo.startTime = (tempUserInfo.startTime << 8) + pData[11];
-//					tempUserInfo.endTime = pData[12];
-//					tempUserInfo.endTime = (tempUserInfo.endTime << 8) + pData[13];
-//					tempUserInfo.endTime = (tempUserInfo.endTime << 8) + pData[14];
-//					tempUserInfo.endTime = (tempUserInfo.endTime << 8) + pData[15];
-//					if (tempUserInfo.startTime > SECONDS2000YEAR) tempUserInfo.startTime -= SECONDS2000YEAR;
-//					else tempUserInfo.startTime = 0;
-//					if (tempUserInfo.endTime > SECONDS2000YEAR) tempUserInfo.endTime -= SECONDS2000YEAR;
-//					else tempUserInfo.endTime = 0;
-//				}
-//				else
-//				{
-//					tempUserInfo.startTime = 0;
-//					tempUserInfo.endTime = 0xFFFFFFFF;
-//				}
-//			}
-//			else // 新用户
-//			{
-//				tmp = 1;
-//				for (i = 0; i < MAX_USER_NUM; i ++)
-//				{
-//					while (UserGetUserInfo(i, &tempUserInfo) == 0xFF);
-//					if (((tempUserInfo.flag & 0x03) != 0x02) || ((tempUserInfo.flag & 0x80) == 0))
+//					while (UserGetUserInfo(sUserId, &tempUserInfo) == 0xFF);
+//					if (((tempUserInfo.flag & 0x83) == 0x82) && (UserMemCmp(tempUserInfo.userId, id, 8) == 0))
 //					{
-//						tmp = 0;
+//						tempUserInfo.flag |= 0x40;
+//						osal_memcpy(tempUserInfo.password, pData, 8);
+//						ret = 0xFF;
 //					}
-//					else if (tempUserInfo.endTime < osal_getClock())
+//				}
+//			}
+//			else if (sFlagState == 1)
+//			{
+//				if (sUserId < MAX_USER_NUM)
+//				{
+//					ret = UserSaveUserInfo(sUserId, &tempUserInfo);
+//				}
+//			}
+//		}
+//		else if (type == 3) /* 添加指纹 */
+//		{
+//			if (sFlagState == 0)
+//			{
+//				sFlagState = 1;
+//				sUserId = UserSearchUserInfoNumber(id);
+//				if (sUserId < MAX_USER_NUM)
+//				{
+//					while (UserGetUserInfo(sUserId, &tempUserInfo) == 0xFF);
+//					if (((tempUserInfo.flag & 0x83) == 0x82) && (UserMemCmp(tempUserInfo.userId, id, 8) == 0))
 //					{
-//						tmp = 0;
+//						tempUserInfo.flag |= 0x20;
+//						tempUserInfo.fingerId = *pData;
+//						tempUserInfo.fingerId <<= 8;
+//						tempUserInfo.fingerId |= *(pData + 1);
+//						ret = 0xFF;
 //					}
-//					if (tmp == 0)
+//				}
+//			}
+//			else if (sFlagState == 1)
+//			{
+//				if (sUserId < MAX_USER_NUM)
+//				{
+//					ret = UserSaveUserInfo(sUserId, &tempUserInfo);
+//				}
+//			}
+//		}
+//		else if (type == 4) /* 添加 RFID */
+//		{
+//			if (sFlagState == 0)
+//			{
+//				sFlagState = 1;
+//				sUserId = UserSearchUserInfoNumber(id);
+//				if (sUserId < MAX_USER_NUM)
+//				{
+//					while (UserGetUserInfo(sUserId, &tempUserInfo) == 0xFF);
+//					if (((tempUserInfo.flag & 0x83) == 0x82) && (UserMemCmp(tempUserInfo.userId, id, 8) == 0))
 //					{
-//						tempUserInfo.flag = 0x82;
-//						osal_memcpy(tempUserInfo.userId, pData, 8);
-//						if (type == 11) /* 添加用户有效时间 */
-//						{
-//							tempUserInfo.startTime = pData[8];
-//							tempUserInfo.startTime = (tempUserInfo.startTime << 8) + pData[9];
-//							tempUserInfo.startTime = (tempUserInfo.startTime << 8) + pData[10];
-//							tempUserInfo.startTime = (tempUserInfo.startTime << 8) + pData[11];
-//							tempUserInfo.endTime = pData[12];
-//							tempUserInfo.endTime = (tempUserInfo.endTime << 8) + pData[13];
-//							tempUserInfo.endTime = (tempUserInfo.endTime << 8) + pData[14];
-//							tempUserInfo.endTime = (tempUserInfo.endTime << 8) + pData[15];
-//							if (tempUserInfo.startTime > SECONDS2000YEAR) tempUserInfo.startTime -= SECONDS2000YEAR;
-//							else tempUserInfo.startTime = 0;
-//							if (tempUserInfo.endTime > SECONDS2000YEAR) tempUserInfo.endTime -= SECONDS2000YEAR;
-//							else tempUserInfo.endTime = 0;
-//						}
-//						else
-//						{
-//							tempUserInfo.startTime = 0;
-//							tempUserInfo.endTime = 0xFFFFFFFF;
-//						}
-//						sUserId = i;
-//						break;
+//						tempUserInfo.flag |= 0x10;
+//						osal_memcpy(tempUserInfo.cardId, pData, 8);
+//						ret = 0xFF;
 //					}
 //				}
 //			}
-//		}
-//		else if (sFlagState == 2)
-//		{
-//			if (sUserId < MAX_USER_NUM)
+//			else if (sFlagState == 1)
 //			{
-//				ret = UserSaveUserInfo(sUserId, &tempUserInfo);
-//			}
-//		}
-//	}
-//	else if (type == 2) /* 添加键盘密码 */
-//	{
-//		if (sFlagState == 0)
-//		{
-//			sFlagState = 1;
-//			sUserId = UserSearchUserInfoNumber(id);
-//			if (sUserId < MAX_USER_NUM)
-//			{
-//				while (UserGetUserInfo(sUserId, &tempUserInfo) == 0xFF);
-//				if (((tempUserInfo.flag & 0x83) == 0x82) && (UserMemCmp(tempUserInfo.userId, id, 8) == 0))
+//				if (sUserId < MAX_USER_NUM)
 //				{
-//					tempUserInfo.flag |= 0x40;
-//					osal_memcpy(tempUserInfo.password, pData, 8);
-//					ret = 0xFF;
+//					ret = UserSaveUserInfo(sUserId, &tempUserInfo);
 //				}
 //			}
 //		}
-//		else if (sFlagState == 1)
+//		else if (type == 6) /* 添加指静脉 */
 //		{
-//			if (sUserId < MAX_USER_NUM)
+//			if (sFlagState == 0)
 //			{
-//				ret = UserSaveUserInfo(sUserId, &tempUserInfo);
-//			}
-//		}
-//	}
-//	else if (type == 3) /* 添加指纹 */
-//	{
-//		if (sFlagState == 0)
-//		{
-//			sFlagState = 1;
-//			sUserId = UserSearchUserInfoNumber(id);
-//			if (sUserId < MAX_USER_NUM)
-//			{
-//				while (UserGetUserInfo(sUserId, &tempUserInfo) == 0xFF);
-//				if (((tempUserInfo.flag & 0x83) == 0x82) && (UserMemCmp(tempUserInfo.userId, id, 8) == 0))
+//				sFlagState = 1;
+//				sUserId = UserSearchUserInfoNumber(id);
+//				if (sUserId < MAX_USER_NUM)
 //				{
-//					tempUserInfo.flag |= 0x20;
-//					tempUserInfo.fingerId = *pData;
-//					tempUserInfo.fingerId <<= 8;
-//					tempUserInfo.fingerId |= *(pData + 1);
-//					ret = 0xFF;
+//					while (UserGetUserInfo(sUserId, &tempUserInfo) == 0xFF);
+//					if (((tempUserInfo.flag & 0x83) == 0x82) && (UserMemCmp(tempUserInfo.userId, id, 8) == 0))
+//					{
+//						tempUserInfo.flag |= 0x04;
+//						tempUserInfo.fingerId = *pData;
+//						tempUserInfo.fingerId <<= 8;
+//						tempUserInfo.fingerId |= *(pData + 1);
+//						ret = 0xFF;
+//					}
+//				}
+//			}
+//			else if (sFlagState == 1)
+//			{
+//				if (sUserId < MAX_USER_NUM)
+//				{
+//					ret = UserSaveUserInfo(sUserId, &tempUserInfo);
 //				}
 //			}
 //		}
-//		else if (sFlagState == 1)
-//		{
-//			if (sUserId < MAX_USER_NUM)
-//			{
-//				ret = UserSaveUserInfo(sUserId, &tempUserInfo);
-//			}
-//		}
-//	}
-//	else if (type == 4) /* 添加 RFID */
-//	{
-//		if (sFlagState == 0)
-//		{
-//			sFlagState = 1;
-//			sUserId = UserSearchUserInfoNumber(id);
-//			if (sUserId < MAX_USER_NUM)
-//			{
-//				while (UserGetUserInfo(sUserId, &tempUserInfo) == 0xFF);
-//				if (((tempUserInfo.flag & 0x83) == 0x82) && (UserMemCmp(tempUserInfo.userId, id, 8) == 0))
-//				{
-//					tempUserInfo.flag |= 0x10;
-//					osal_memcpy(tempUserInfo.cardId, pData, 8);
-//					ret = 0xFF;
-//				}
-//			}
-//		}
-//		else if (sFlagState == 1)
-//		{
-//			if (sUserId < MAX_USER_NUM)
-//			{
-//				ret = UserSaveUserInfo(sUserId, &tempUserInfo);
-//			}
-//		}
-//	}
-//	else if (type == 6) /* 添加指静脉 */
-//	{
-//		if (sFlagState == 0)
-//		{
-//			sFlagState = 1;
-//			sUserId = UserSearchUserInfoNumber(id);
-//			if (sUserId < MAX_USER_NUM)
-//			{
-//				while (UserGetUserInfo(sUserId, &tempUserInfo) == 0xFF);
-//				if (((tempUserInfo.flag & 0x83) == 0x82) && (UserMemCmp(tempUserInfo.userId, id, 8) == 0))
-//				{
-//					tempUserInfo.flag |= 0x04;
-//					tempUserInfo.fingerId = *pData;
-//					tempUserInfo.fingerId <<= 8;
-//					tempUserInfo.fingerId |= *(pData + 1);
-//					ret = 0xFF;
-//				}
-//			}
-//		}
-//		else if (sFlagState == 1)
-//		{
-//			if (sUserId < MAX_USER_NUM)
-//			{
-//				ret = UserSaveUserInfo(sUserId, &tempUserInfo);
-//			}
-//		}
-//	}
-//	else
-//	{
-//		
-//	}
-//	
-//	if (ret == 0xFF)
-//	{
-//		
-//	}
-//	else if (ret == 0)
-//	{
-//		sFlagState = 0;
-//	}
-//	else
-//	{
-//		sFlagState = 0;
-//	}
-//	
-//	return ret;
-//}
+			else
+			{
+				
+			}
+			
+			if (ret == 0xFF)
+			{
+				
+			}
+			else if (ret == 0)
+			{
+					sFlagState = 0;
+			}
+			else
+			{
+					sFlagState = 0;
+			}
+			
+			return ret;
+}
 
 ///**************************************************************************************************
 // * @brief       删除用户信息
