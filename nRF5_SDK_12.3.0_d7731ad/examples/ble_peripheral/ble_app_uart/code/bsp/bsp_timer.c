@@ -34,6 +34,12 @@ void m_system_timeout_handler (void *p_context)
 //    APP_Charge_TimeProc(10);
     if(Tim_Ms_Struct.sys_ms_count >= MS_TO_S)     // 1S时间到
     {		
+				Tim_1s_Struct.sys_s_count++;
+				if(Tim_1s_Struct.sys_s_count >= S_TO_10S)     // 1S时间到
+				{	
+						Tim_1s_Struct.sys_s_count -= S_TO_10S;
+						if (gFlagAdjustTime > 1) {gFlagAdjustTime --;}
+				}
 				seconds_times++;
 				Tim_Ms_Struct.sys_ms_count -= MS_TO_S;
 				if(task_flag_struct.motordelay == ENABLE)
@@ -304,7 +310,7 @@ void sys_ndelay(uint8_t x_ms)
 				{
 						break;	
 				}	
-				sd_app_evt_wait();	
+//				sd_app_evt_wait();	
 //				setWDI();//在系统慢速定时器内清零	
 				if(temp != Tim_Ms_Struct.m_dly_ms)
 				{

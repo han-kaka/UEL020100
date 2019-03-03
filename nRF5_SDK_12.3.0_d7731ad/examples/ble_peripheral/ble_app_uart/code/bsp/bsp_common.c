@@ -22,7 +22,10 @@ static void bsp_peri_init(void)
 
 static void data_recover(void)
 {
-    solid_data_init();       
+    solid_data_init();  
+//				gSystemRunParam.flagInit = 0;
+//				memcpy(useraeskeybuf, tempkey, 16);
+//				set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);	
     dynamic_data_init();
 }
 
@@ -33,7 +36,7 @@ uint8_t com_bsp_init(void)
 	
     bsp_var_init();             //ver init
     data_recover();             //data recover
-    app_comm_init();            //COMM state and event init
+//    app_comm_init();            //COMM state and event init
 
     return true;
 }

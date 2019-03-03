@@ -84,7 +84,7 @@ typedef struct
 		uint8_t                            ee_addr_apn[SERVER_APN_LEN];
 		uint8_t                            ee_addr_logindex[LOG_INDEX_LEN];
 		uint8_t                            ee_addr_open_lock_dir;
-	
+		uint8_t                            ee_addr_init;
 }Solid_Data_Cell_Data_Type;
 
 typedef struct
@@ -126,6 +126,15 @@ typedef struct
 //		Dynamic_Lock_Data_Type             dynamic_lock_data_struct;
 //		uint8_t                            dynamic_lock_data_xor;
 //}Dynamic_Data_Cell_Type;
+/************************************************************************************************************/
+typedef union 
+{
+		uint8_t                            byte[ROMDATA_SAVE_BYTES];
+		uint32_t                           data[MAX_SAVE_SIZE];		
+		Solid_Data_Cell_Type               solid_data_cell_struct;          //¹ÌÌ¬´æ´¢
+//		Dynamic_Data_Cell_Type             dynamic_data_cell_struct;        //¶¯Ì¬´æ´¢
+
+}Rom_Data_Type;
 
 typedef struct
 {
@@ -137,15 +146,6 @@ typedef struct
 		uint8_t  data[16];
 } LogInfo_Type;
 
-/************************************************************************************************************/
-typedef union 
-{
-		uint8_t                            byte[ROMDATA_SAVE_BYTES];
-		uint32_t                           data[MAX_SAVE_SIZE];		
-		Solid_Data_Cell_Type               solid_data_cell_struct;          //¹ÌÌ¬´æ´¢
-//		Dynamic_Data_Cell_Type             dynamic_data_cell_struct;        //¶¯Ì¬´æ´¢
-
-}Rom_Data_Type;
 
 typedef struct
 {

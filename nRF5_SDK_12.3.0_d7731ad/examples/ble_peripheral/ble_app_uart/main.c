@@ -572,7 +572,9 @@ static void adv_manuf_data_get(uint8_t *src)
 #if SEGGER_RTT_DEBUG_ADV
 		SEGGER_RTT_printf(0, "get mac addr err_code = 0x%02X \r\n",err_code);
 #endif
-		
+		device_addr.addr[BLE_GAP_ADDR_LEN-1] += 1;
+		sd_ble_gap_address_set(BLE_GAP_ADDR_CYCLE_MODE_NONE, &device_addr);
+	
     for(int i = 0;i<BLE_GAP_ADDR_LEN;i++)
     {
         MAC_ADDR[i] = device_addr.addr[BLE_GAP_ADDR_LEN-1-i];
@@ -606,7 +608,7 @@ static void advertising_init(void)
     // Build advertising data struct to pass into @ref ble_advertising_init.
     memset(&advdata, 0, sizeof(advdata));
     advdata.name_type          = BLE_ADVDATA_FULL_NAME;
-    advdata.include_appearance = true;
+    advdata.include_appearance = false;
     advdata.flags              = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE;
 
     memset(&scanrsp, 0, sizeof(scanrsp));

@@ -38,10 +38,10 @@ static void write_flash_data(const uint32_t pg_num, const p_Rom_Data_Type p_rom_
 	
 		err_code = sd_flash_page_erase(pg_num);
 		APP_ERROR_CHECK(err_code);	
-//		sys_ndelay(4);
+		sys_ndelay(4);
 		p_src = (uint32_t *)p_rom_data_struct->data;
 		sd_flash_write(p_dst, p_src, MAX_SAVE_SIZE);
-//		sys_ndelay(4);
+		sys_ndelay(4);
 		__NOP();
 }
 /************************************************************************************************************/
@@ -55,6 +55,12 @@ bool write_solid_flash_data(const uint32_t pg_num, const p_Rom_Data_Type p_solid
 	
 		write_flash_data(pg_num, p_solid_data_struct);
 		read_flash_data(pg_num, p_rom_data_temp_struct);
+
+#if SEGGER_RTT_DEBUG_FLASH	
+		SEGGER_RTT_printf(0, "check_writed1 = %02x.\r\n",p_rom_data_temp_struct->solid_data_cell_struct.writed1);
+		SEGGER_RTT_printf(0, "check_writed2 = %02x.\r\n",p_rom_data_temp_struct->solid_data_cell_struct.writed2);
+		SEGGER_RTT_printf(0, "check_xor = %02x.\r\n",p_rom_data_temp_struct->solid_data_cell_struct.solid_data_cell_xor);
+#endif
 	
 		if((p_rom_data_temp_struct->solid_data_cell_struct.writed1 == 0xaa)
 			 && (p_rom_data_temp_struct->solid_data_cell_struct.writed2 == 0xaa)
@@ -79,9 +85,9 @@ bool store_solid_flsh_data(void)
 		Rom_Data_Type   solid_data_struct;
 		p_Rom_Data_Type p_solid_data_struct = &solid_data_struct;
 	
-	#if SEGGER_RTT_DEBUG_FLASH
+#if SEGGER_RTT_DEBUG_FLASH
 		SEGGER_RTT_printf(0, "store solid rom data!\r\n");
-	#endif
+#endif
 		pg_num = NRF_FICR->CODESIZE - SOLID_FLASH_DATA_PAGE;  // Use last 5 page in flash Ò³ÊıÁ¿
 	
 		p_solid_data_struct->solid_data_cell_struct.writed1 = 0xaa;
@@ -102,8 +108,16 @@ bool store_solid_flsh_data(void)
 		memcpy(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_logindex, log_index, LOG_INDEX_LEN);
 		
 		memcpy(&(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_open_lock_dir), &open_lock_dir, 1);
-	
-		p_solid_data_struct->solid_data_cell_struct.solid_data_cell_xor = get_xor((uint8_t*)(&solid_data_struct), sizeof(Solid_Data_Cell_Data_Type));
+
+		memcpy(&(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_init), &gSystemRunParam.flagInit, 1);
+		
+		p_solid_data_struct->solid_data_cell_struct.solid_data_cell_xor = get_xor((uint8_t*)(&(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct)), sizeof(Solid_Data_Cell_Data_Type));
+		
+#if SEGGER_RTT_DEBUG_FLASH	
+		SEGGER_RTT_printf(0, "check_writed1 = %02x.\r\n",p_solid_data_struct->solid_data_cell_struct.writed1);
+		SEGGER_RTT_printf(0, "check_writed2 = %02x.\r\n",p_solid_data_struct->solid_data_cell_struct.writed2);
+		SEGGER_RTT_printf(0, "check_xor = %02x.\r\n",p_solid_data_struct->solid_data_cell_struct.solid_data_cell_xor);
+#endif	
 		
 		return write_solid_flash_data(pg_num, p_solid_data_struct);
 }
@@ -513,6 +527,10 @@ void init_solid_flash_data(void)
 								
 				memcpy(&open_lock_dir,
 								&(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_open_lock_dir),
+								1);
+								
+				memcpy(&gSystemRunParam.flagInit,
+         				&(p_solid_data_struct->solid_data_cell_struct.solid_data_cell_data_struct.ee_addr_init),  
 								1);
 		}
 		else

@@ -4,6 +4,7 @@
 #include "global.h"
 
 #define MS_TO_S                 (100)
+#define S_TO_10S                (10)
 #define REWRITE_TIME            (180)
 #define RE_OPEN_STA_PROC_TIME   (3600UL)
 
@@ -52,6 +53,7 @@ typedef struct
 	  uint16_t rtyCount;
     uint16_t rewriteCount;
     uint16_t reOpenStaProcCount;
+		uint8_t  sys_s_count;
 }Tim_1s_Type;
 
 typedef struct 

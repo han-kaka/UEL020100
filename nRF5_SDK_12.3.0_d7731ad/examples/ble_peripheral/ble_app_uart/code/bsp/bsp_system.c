@@ -48,16 +48,16 @@ void init_peripheral(void)
     init_system_time();
     start_system_time();
 	
-    //------初始化各功能块---------------------	
-    //------初始化uart模块---------------------
-#if SEGGER_RTT_DEBUG_UART
-    SEGGER_RTT_printf(0, "UART Start!\r\n");
-#endif
-    myuart_start();
-    //init_dsr_detection();
-    //setWDI();	
-	
-		drive_open();
+//    //------初始化各功能块---------------------	
+//    //------初始化uart模块---------------------
+//#if SEGGER_RTT_DEBUG_UART
+//    SEGGER_RTT_printf(0, "UART Start!\r\n");
+//#endif
+//    myuart_start();
+//    //init_dsr_detection();
+//    //setWDI();	
+//	
+//		drive_open();
 //		saadc_init();
 	
 }

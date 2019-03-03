@@ -337,16 +337,16 @@ bool xor_check(uint8_t *hex_data_buf, uint16_t len_hex)
     }
     if(temp == hex_data_buf[i])
     {
-//				#if SEGGER_RTT_DEBUG_FLASH
-//					SEGGER_RTT_printf(0, "xor true!\r\n");
-//				#endif
+		#if SEGGER_RTT_DEBUG_FLASH
+					SEGGER_RTT_printf(0, "xor true!\r\n");
+		#endif
         return true;
     }
     else
     {
-//				#if SEGGER_RTT_DEBUG_FLASH
-//					SEGGER_RTT_printf(0, "xor false!\r\n");
-//				#endif
+		#if SEGGER_RTT_DEBUG_FLASH
+					SEGGER_RTT_printf(0, "xor false!\r\n");
+		#endif
         return false;
     }
 }
