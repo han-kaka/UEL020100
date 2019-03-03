@@ -82,10 +82,6 @@
 #define PERIPHERAL_LINK_COUNT           1                                           /**< Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
 
 #define DEVICE_NAME                     "ANGUMEN"                                   /**< Name of device. Will be included in the advertising data. */
-#define NUS_SERVICE_UUID_TYPE           BLE_UUID_TYPE_BLE                           /**< UUID type for the Nordic UART Service (vendor specific). */
-
-#define APP_ADV_INTERVAL                1600                                        /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
-#define APP_ADV_TIMEOUT_IN_SECONDS      0                                           /**< The advertising timeout (in units of seconds). */
 
 #define APP_TIMER_PRESCALER             0                                           /**< Value of the RTC1 PRESCALER register. */
 #define APP_TIMER_OP_QUEUE_SIZE         6                                           /**< Size of timer operation queues. */
@@ -105,9 +101,6 @@
 
 ble_nus_t                        m_nus;                                      /**< Structure to identify the Nordic UART Service. */
 static uint16_t                         m_conn_handle = BLE_CONN_HANDLE_INVALID;    /**< Handle of the current connection. */
-
-static ble_uuid_t                       m_adv_uuids[] = {{BLE_UUID_NUS_SERVICE, NUS_SERVICE_UUID_TYPE}};  /**< Universally unique service identifier. */
-
 
 /**@brief Function for assert macro callback.
  *
@@ -248,51 +241,6 @@ static void conn_params_init(void)
     err_code = ble_conn_params_init(&cp_init);
     APP_ERROR_CHECK(err_code);
 }
-
-
-/**@brief Function for putting the chip into sleep mode.
- *
- * @note This function will not return.
- */
-static void sleep_mode_enter(void)
-{
-    uint32_t err_code = bsp_indication_set(BSP_INDICATE_IDLE);
-    APP_ERROR_CHECK(err_code);
-
-    // Prepare wakeup buttons.
-//    err_code = bsp_btn_ble_sleep_mode_prepare();
-//    APP_ERROR_CHECK(err_code);
-
-    // Go to system-off mode (this function will not return; wakeup will cause a reset).
-    err_code = sd_power_system_off();
-    APP_ERROR_CHECK(err_code);
-}
-
-
-/**@brief Function for handling advertising events.
- *
- * @details This function will be called for advertising events which are passed to the application.
- *
- * @param[in] ble_adv_evt  Advertising event.
- */
-static void on_adv_evt(ble_adv_evt_t ble_adv_evt)
-{
-    uint32_t err_code;
-
-    switch (ble_adv_evt)
-    {
-        case BLE_ADV_EVT_FAST:
-            err_code = bsp_indication_set(BSP_INDICATE_ADVERTISING);
-            APP_ERROR_CHECK(err_code);
-            break;
-        case BLE_ADV_EVT_IDLE:
-            sleep_mode_enter();
-            break;
-        default:
-            break;
-    }
-}
-
 
 /**@brief Function for the application's SoftDevice event handler.
  *
@@ -555,81 +503,6 @@ void uart_event_handle(app_uart_evt_t * p_event)
 //    APP_ERROR_CHECK(err_code);
 //}
 ///**@snippet [UART Initialization] */
-
-static void adv_manuf_data_get(uint8_t *src)
-{
-    uint32_t err_code = 1;
-    ble_gap_addr_t device_addr;
-    
-    uint8_t MAC_ADDR[6];
-    // Get BLE address.
-#if (NRF_SD_BLE_API_VERSION == 3)
-    err_code = sd_ble_gap_addr_get(&device_addr);
-
-#else
-    err_code = sd_ble_gap_address_get(&device_addr);
-#endif
-#if SEGGER_RTT_DEBUG_ADV
-		SEGGER_RTT_printf(0, "get mac addr err_code = 0x%02X \r\n",err_code);
-#endif
-		device_addr.addr[BLE_GAP_ADDR_LEN-1] += 1;
-		sd_ble_gap_address_set(BLE_GAP_ADDR_CYCLE_MODE_NONE, &device_addr);
-	
-    for(int i = 0;i<BLE_GAP_ADDR_LEN;i++)
-    {
-        MAC_ADDR[i] = device_addr.addr[BLE_GAP_ADDR_LEN-1-i];
-    }
-    src[0] = 0xf6;
-		src[1] = 0xcb;
-		src[2] = 0x9a;
-		src[3] = 0x3b;
-		src[4] = 0x01;
-		src[5] = 0x01;
-		src[6] = 0x01;		
-		src[7] = 0x08;
-		src[8] = 0x00;
-		src[9] = 0x00;
-		src[10] = 0xa5;		
-		src[11] = 0x02;
-    memcpy(&src[12], MAC_ADDR, sizeof(MAC_ADDR));
-}
-
-/**@brief Function for initializing the Advertising functionality.
- */
-static void advertising_init(void)
-{
-    uint32_t               err_code;
-    ble_advdata_t          advdata;
-    ble_advdata_t          scanrsp;
-    ble_adv_modes_config_t options;
-    ble_advdata_manuf_data_t  manufdata; 
-    uint8_t manuf_data[18];			// Manufacturer Data
-
-    // Build advertising data struct to pass into @ref ble_advertising_init.
-    memset(&advdata, 0, sizeof(advdata));
-    advdata.name_type          = BLE_ADVDATA_FULL_NAME;
-    advdata.include_appearance = false;
-    advdata.flags              = BLE_GAP_ADV_FLAGS_LE_ONLY_GENERAL_DISC_MODE;
-
-    memset(&scanrsp, 0, sizeof(scanrsp));
-    scanrsp.uuids_complete.uuid_cnt = sizeof(m_adv_uuids) / sizeof(m_adv_uuids[0]);
-    scanrsp.uuids_complete.p_uuids  = m_adv_uuids;
-
-    memset(&options, 0, sizeof(options));
-    options.ble_adv_fast_enabled  = true;
-    options.ble_adv_fast_interval = APP_ADV_INTERVAL;
-    options.ble_adv_fast_timeout  = APP_ADV_TIMEOUT_IN_SECONDS;
-
-	  memset(manuf_data, 0, sizeof(manuf_data));
-    adv_manuf_data_get(manuf_data);
-    manufdata.company_identifier       = 0x0059; // Nordics company ID
-    manufdata.data.p_data              = manuf_data;    
-    manufdata.data.size                = sizeof(manuf_data);
-    scanrsp.p_manuf_specific_data = &manufdata;	
-	
-    err_code = ble_advertising_init(&advdata, &scanrsp, &options, on_adv_evt, NULL);
-    APP_ERROR_CHECK(err_code);
-}
 
 
 ///**@brief Function for initializing buttons and leds.

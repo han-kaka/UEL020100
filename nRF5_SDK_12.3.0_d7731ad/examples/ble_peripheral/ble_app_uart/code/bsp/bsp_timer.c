@@ -21,7 +21,7 @@ static uint8_t monthLength( uint8_t lpyr, uint8_t mon );
 void m_system_timeout_handler (void *p_context)
 { 
     Tim_Ms_Struct.sys_ms_count++;
-		Tim_Ms_Struct.m_dly_ms++;
+		Tim_Ms_Struct.m_dly_ms++;	
 	
     if(task_flag_struct.closeStaProc == DISABLE)
     {
@@ -304,6 +304,7 @@ void sys_ndelay(uint8_t x_ms)
 		uint8_t temp;
 
 		Tim_Ms_Struct.m_dly_ms = 0;
+		
 		while(true)
 		{ 
 				if(Tim_Ms_Struct.m_dly_ms >= x_ms)

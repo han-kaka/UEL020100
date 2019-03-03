@@ -167,25 +167,6 @@ void UserClrCurrentUser(void)
 	memset(sCurrentUserUID, 0, 8);
 }
 
-///**************************************************************************************************
-// * @brief       通过UID读取用户信息
-// * @param       id：用户UID
-// * @return      0-失败；1-成功；
-// **************************************************************************************************
-// */
-//uint8 UserSearchUserInfoUID(uint16 num, uint8 *id)
-//{
-//	UserInfo_t tempUserInfo;
-//	
-//	while (UserGetUserInfo(num, &tempUserInfo) == 0xFF);
-//	if ((tempUserInfo.flag & 0x83) == 0x82)
-//	{
-//		if (id != 0) osal_memcpy(id, tempUserInfo.userId, sizeof(tempUserInfo.userId));
-//		return 1;
-//	}
-//	return 0;
-//}
-
 /**************************************************************************************************
  * @brief       读取用户配置信息
  * @param       id：用户UID
@@ -436,25 +417,25 @@ uint8_t UserAddUserInfoToSystem(uint8_t type, uint8_t *id, uint8_t *pData)
 //				}
 //			}
 //		}
-			else
-			{
-				
-			}
+		else
+		{
 			
-			if (ret == 0xFF)
-			{
-				
-			}
-			else if (ret == 0)
-			{
-					sFlagState = 0;
-			}
-			else
-			{
-					sFlagState = 0;
-			}
+		}
+		
+		if (ret == 0xFF)
+		{
 			
-			return ret;
+		}
+		else if (ret == 0)
+		{
+				sFlagState = 0;
+		}
+		else
+		{
+				sFlagState = 0;
+		}
+			
+		return ret;
 }
 
 ///**************************************************************************************************

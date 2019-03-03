@@ -134,6 +134,7 @@ uint8_t UserCheckAppProtocolFormat(uint8_t *pBuf, uint16_t inputLen)					// 协议
 }
 
 
+
 ////void APP_BLETask_StateProc(void)
 ////{
 ////    switch(g_stBLE_Handler.State)
@@ -406,8 +407,8 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
 						if (UserGetCurrentUser() == 0)
 						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
-						while (1)
-						{
+//						while (1)
+//						{
 //								if (sReadUserCnt < MAX_USER_NUM)
 //								{
 //										if (UserReadUserInfoUID(sReadUserCnt, buf) == 0)
@@ -423,7 +424,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 //										UserReturnErrCode(command, PROTOCOL_APP_ERR_FINISHED);
 //										break;
 //								}
-						}
+//						}
 				}
 						break;
 //				
@@ -603,6 +604,8 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 					
 				case CMD_SWITCH:														/* 开关指令 */
 				{
+						LogInfo_t tmpLogInfo;
+					
 						#if SEGGER_RTT_DEBUG_SWITCH
 								SEGGER_RTT_printf(0, "cmd switch!\r\n");
 						#endif
@@ -626,12 +629,19 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						{
 								tmp |= BV(0);
 						}
-//						if (UserGetLogInfo(0) == 1) 
-//						{
-//								tmp |= BV(1);
-//						}
+						if (UserGetLogInfo(0) == 1) 
+						{
+								tmp |= BV(1);
+						}
 						pSendbuf[sendLength ++] = tmp;
 						Put_Return(command, sendLength);
+						
+						tmpLogInfo.flag = 0xA5;
+						tmpLogInfo.action = 0x04;
+						tmpLogInfo.time = seconds_times;
+						UserSearchUserInfoUID(gCurrentLocalUser, tmpLogInfo.userId);
+						UserSaveLogInfo(&tmpLogInfo);
+						
 						if (pData[8] == 0xA1)
 						{
 								Motor_State_Struct = INVERSION;
@@ -651,60 +661,64 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 								SEGGER_RTT_printf(0, "cmd adjust time!\r\n");
 						#endif
 					
-						#if PROTOCOL_APP_VERSION == 0x0100
-			/****************************** V1.0 版本程序开始 *****************************/
-						if (dataLen != 4)
-						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
-						//if (UserGetCurrentUser() == 0)
-						//{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
-						tmp32 = pData[0];
-						tmp32 = (tmp32 << 8) | pData[1];
-						tmp32 = (tmp32 << 8) | pData[2];
-						tmp32 = (tmp32 << 8) | pData[3];
-			/****************************** V1.0 版本程序结束 *****************************/
-						#else
-			/****************************** V1.1 版本程序开始 *****************************/
-						if (dataLen != 12)
-						{
-								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
-								break;
-						}			/* 数据长度错误，返回参数错误 */
-						
-						if (UserMemCmp(pData, timestamp, 8) <= 0) 
-								break;
-						memcpy(timestamp, pData, 8);
-						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
-						
-						tmp32 = pData[8];
-						tmp32 = (tmp32 << 8) | pData[9];
-						tmp32 = (tmp32 << 8) | pData[10];
-						tmp32 = (tmp32 << 8) | pData[11];
-			/****************************** V1.1 版本程序结束 *****************************/
-						#endif
-						
-						if (tmp32 < SECONDS2000YEAR)
-						{
-								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
-								break;
-						}
-						tmp32 -= SECONDS2000YEAR;
-						seconds_times = tmp32;
-//						set_clock(tmp32);
-//						osal_ConvertUTCTime( pTempTimeStruct, tmp32 );
-//						buf[0] = pTempTimeStruct->year - 2000;
-//						buf[1] = pTempTimeStruct->month + 1;
-//						buf[2] = pTempTimeStruct->day + 1;
-//						buf[3] = pTempTimeStruct->hour;
-//						buf[4] = pTempTimeStruct->minutes;
-//						buf[5] = pTempTimeStruct->seconds;
-//						UserSetPCF8563Hex(buf);
-						gFlagAdjustTime = 60000; /* 大约一周时间 */
+//						#if PROTOCOL_APP_VERSION == 0x0100
+//			/****************************** V1.0 版本程序开始 *****************************/
+//						if (dataLen != 4)
+//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
+//						//if (UserGetCurrentUser() == 0)
+//						//{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
+//						tmp32 = pData[0];
+//						tmp32 = (tmp32 << 8) | pData[1];
+//						tmp32 = (tmp32 << 8) | pData[2];
+//						tmp32 = (tmp32 << 8) | pData[3];
+//			/****************************** V1.0 版本程序结束 *****************************/
+//						#else
+//			/****************************** V1.1 版本程序开始 *****************************/
+//						if (dataLen != 12)
+//						{
+//								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+//								break;
+//						}			/* 数据长度错误，返回参数错误 */
+//						
+//						if (UserMemCmp(pData, timestamp, 8) <= 0) 
+//								break;
+//						memcpy(timestamp, pData, 8);
+////						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+//						
+//						tmp32 = pData[8];
+//						tmp32 = (tmp32 << 8) | pData[9];
+//						tmp32 = (tmp32 << 8) | pData[10];
+//						tmp32 = (tmp32 << 8) | pData[11];
+//			/****************************** V1.1 版本程序结束 *****************************/
+//						#endif
+//						
+//						if (tmp32 < SECONDS2000YEAR)
+//						{
+//								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+//								break;
+//						}
+//						tmp32 -= SECONDS2000YEAR;
+//						seconds_times = tmp32;
+////						set_clock(tmp32);
+////						osal_ConvertUTCTime( pTempTimeStruct, tmp32 );
+////						buf[0] = pTempTimeStruct->year - 2000;
+////						buf[1] = pTempTimeStruct->month + 1;
+////						buf[2] = pTempTimeStruct->day + 1;
+////						buf[3] = pTempTimeStruct->hour;
+////						buf[4] = pTempTimeStruct->minutes;
+////						buf[5] = pTempTimeStruct->seconds;
+////						UserSetPCF8563Hex(buf);
+//						gFlagAdjustTime = 60000; /* 大约一周时间 */
 						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
 				}
 						break;
 				
 				case CMD_READ_LOG:														/* 读取日志 */
 				{
+						#if SEGGER_RTT_DEBUG_READ_LOG
+								SEGGER_RTT_printf(0, "cmd read log!\r\n");
+						#endif
+					
 						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
 						if (UserGetLogInfo(pTmpLogInfo) == 1)
 						{

@@ -205,14 +205,15 @@ bool Write_Solid_Romdata(const uint32_t pg_num, const p_Rom_Data_Type p_rom_data
 
 //void init_super_dynamic_romdata(void);
 
-//uint8 UserSaveLogInfo(LogInfo_t *pBuf);
+uint8_t UserSaveLogInfo(LogInfo_t *pBuf);
 void read_log_data(p_Rom_Data_Type p_log_data_struct);
 void read_user_info_data(p_Rom_Data_Type p_user_info_data_struct);
 uint8_t UserSearchUserInfoNumber(uint8_t *id, p_Rom_Data_Type p_user_info_data_struct);
-uint8_t UserReadUserInfoUID(uint8_t num, uint8_t *uid, p_Rom_Data_Type p_user_info_data_struct);\
+uint8_t UserReadUserInfoUID(uint8_t num, uint8_t *uid, p_Rom_Data_Type p_user_info_data_struct);
 uint8_t UserSaveUserInfo(uint8_t num, UserInfo_t *pBuf, p_Rom_Data_Type p_user_info_data_struct);
 uint8_t UserGetLogInfo(LogInfo_t *pBuf);
 uint8_t UserDelLogInfo(LogInfo_t *pBuf);
+uint8_t UserSearchUserInfoUID(uint16_t num, uint8_t *id);
 //#ifdef FLASHUSERINFO
 //	uint8 UserDelUserInfo(uint8 num);
 //#endif

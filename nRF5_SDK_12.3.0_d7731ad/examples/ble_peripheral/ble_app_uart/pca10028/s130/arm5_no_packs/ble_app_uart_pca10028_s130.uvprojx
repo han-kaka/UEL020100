@@ -2189,6 +2189,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\code\app\app_user.c</FilePath>
             </File>
+            <File>
+              <FileName>app_adv_ble.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\code\app\app_adv_ble.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -4515,6 +4520,11 @@
               <FileName>app_user.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\code\app\app_user.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_adv_ble.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\code\app\app_adv_ble.c</FilePath>
             </File>
           </Files>
         </Group>

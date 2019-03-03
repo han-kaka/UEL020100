@@ -3781,7 +3781,12 @@
 #ifndef SEGGER_RTT_DEBUG_ADJUST_TIME
 #define SEGGER_RTT_DEBUG_ADJUST_TIME 1
 #endif
+// <q> debug ble read log
+#ifndef SEGGER_RTT_DEBUG_READ_LOG
+#define SEGGER_RTT_DEBUG_READ_LOG 1
 #endif
+#endif
+
 // </e> 
 // <q> debug ble send data
 #ifndef SEGGER_RTT_DEBUG_SEND_DATA
