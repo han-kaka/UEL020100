@@ -719,27 +719,27 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 								SEGGER_RTT_printf(0, "cmd read log!\r\n");
 						#endif
 					
-						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
-						if (UserGetLogInfo(pTmpLogInfo) == 1)
-						{
-								pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_NONE;
-								memcpy(pSendbuf + sendLength, pTmpLogInfo->userId, sizeof(pTmpLogInfo->userId));
-								sendLength += sizeof(pTmpLogInfo->userId);
-								pTmpLogInfo->time += SECONDS2000YEAR;
-								pSendbuf[sendLength ++] = pTmpLogInfo->time >> 24;
-								pSendbuf[sendLength ++] = pTmpLogInfo->time >> 16;
-								pSendbuf[sendLength ++] = pTmpLogInfo->time >> 8;
-								pSendbuf[sendLength ++] = pTmpLogInfo->time >> 0;
-								pSendbuf[sendLength ++] = pTmpLogInfo->action;
-						}
-						else 
-						{
-								pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_FINISHED;
-								memset(pSendbuf + sendLength, 0, 13);
-								sendLength += 13;
-						}
-						
-						Put_Return(command, sendLength);
+//						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
+//						if (UserGetLogInfo(pTmpLogInfo) == 1)
+//						{
+//								pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_NONE;
+//								memcpy(pSendbuf + sendLength, pTmpLogInfo->userId, sizeof(pTmpLogInfo->userId));
+//								sendLength += sizeof(pTmpLogInfo->userId);
+//								pTmpLogInfo->time += SECONDS2000YEAR;
+//								pSendbuf[sendLength ++] = pTmpLogInfo->time >> 24;
+//								pSendbuf[sendLength ++] = pTmpLogInfo->time >> 16;
+//								pSendbuf[sendLength ++] = pTmpLogInfo->time >> 8;
+//								pSendbuf[sendLength ++] = pTmpLogInfo->time >> 0;
+//								pSendbuf[sendLength ++] = pTmpLogInfo->action;
+//						}
+//						else 
+//						{
+//								pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_FINISHED;
+//								memset(pSendbuf + sendLength, 0, 13);
+//								sendLength += 13;
+//						}
+//						
+//						Put_Return(command, sendLength);
 				}
 						break;
 			

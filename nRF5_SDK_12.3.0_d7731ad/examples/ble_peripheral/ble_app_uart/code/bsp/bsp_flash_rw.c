@@ -135,7 +135,10 @@ uint8_t UserSaveLogInfo(LogInfo_t *pBuf)
 		Rom_Data_Type log_data_struct;
 		p_Rom_Data_Type p_log_data_struct = &log_data_struct;
 	
-		memcpy(&tmpLogInfoIndex, log_index, LOG_INDEX_LEN);
+		tmpLogInfoIndex.flag = log_index[0];
+		tmpLogInfoIndex.head = (log_index[1] << 8) | log_index[2]; 
+		tmpLogInfoIndex.tail = (log_index[3] << 8) | log_index[4]; 
+
 		read_log_data(p_log_data_struct);
 	
 		if (tmpLogInfoIndex.flag != 0xAA)
@@ -175,12 +178,29 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
 		LogInfoIndex_t tmpLogInfoIndex;
 		Rom_Data_Type log_data_struct;
 		p_Rom_Data_Type p_log_data_struct = &log_data_struct;
-	
-		memcpy(&tmpLogInfoIndex, log_index, LOG_INDEX_LEN);
+			
+		tmpLogInfoIndex.flag = log_index[0];
+		tmpLogInfoIndex.head = (log_index[1] << 8) | log_index[2]; 
+		tmpLogInfoIndex.tail = (log_index[3] << 8) | log_index[4]; 
+//	
 #if SEGGER_RTT_DEBUG_READ_LOG
-		SEGGER_RTT_printf(0, "tmpLogInfoIndex.flag = %02x!\r\n",tmpLogInfoIndex.flag);
-		SEGGER_RTT_printf(0, "tmpLogInfoIndex.head = %04x!\r\n",tmpLogInfoIndex.head);
-		SEGGER_RTT_printf(0, "tmpLogInfoIndex.tail = %04x!\r\n",tmpLogInfoIndex.tail);
+//		SEGGER_RTT_printf(0, "log index:");
+//		for(uint8_t i=0; i<10; i++)
+//		{
+//				SEGGER_RTT_printf(0, "%02x", log_index[i]);
+//		}
+//		SEGGER_RTT_printf(0, "\n");
+
+//		SEGGER_RTT_printf(0, "tmpLogInfoIndex:");
+//		for(uint8_t i=0; i<10; i++)
+//		{
+//				SEGGER_RTT_printf(0, "%02x", ((uint8_t*)(&tmpLogInfoIndex))[i]);
+//		}
+//		SEGGER_RTT_printf(0, "\n");
+//		
+//		SEGGER_RTT_printf(0, "tmpLogInfoIndex.flag = %02x!\r\n",tmpLogInfoIndex.flag);
+//		SEGGER_RTT_printf(0, "tmpLogInfoIndex.head = %x!\r\n",tmpLogInfoIndex.head);
+//		SEGGER_RTT_printf(0, "tmpLogInfoIndex.tail = %x!\r\n",tmpLogInfoIndex.tail);
 #endif
 		if (tmpLogInfoIndex.flag != 0xAA)
 		{
@@ -230,7 +250,9 @@ uint8_t UserDelLogInfo(LogInfo_t *pBuf)
 		Rom_Data_Type log_data_struct;
 		p_Rom_Data_Type p_log_data_struct = &log_data_struct;
 	
-		memcpy(&tmpLogInfoIndex, log_index, LOG_INDEX_LEN);
+		tmpLogInfoIndex.flag = log_index[0];
+		tmpLogInfoIndex.head = (log_index[1] << 8) | log_index[2]; 
+		tmpLogInfoIndex.tail = (log_index[3] << 8) | log_index[4]; 
 
 		if (tmpLogInfoIndex.flag != 0xAA)
 		{
