@@ -161,7 +161,11 @@ uint8_t UserSaveLogInfo(LogInfo_t *pBuf)
 		UserNBModuleSetTodoFlag(0x01);
 #endif
 		
-		memcmp(log_index, &tmpLogInfoIndex, LOG_INDEX_LEN);
+		log_index[0] = tmpLogInfoIndex.flag;
+		log_index[1] = (tmpLogInfoIndex.head >> 8) & 0xff;
+		log_index[2] = tmpLogInfoIndex.head & 0xff;
+		log_index[3] = (tmpLogInfoIndex.tail >> 8) & 0xff;
+		log_index[4] = tmpLogInfoIndex.tail & 0xff;
 		set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 		
 		return 1;
@@ -209,7 +213,11 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
 				tmpLogInfoIndex.head = 0;
 				tmpLogInfoIndex.tail = 0;
 			
-				memcpy(log_index, &tmpLogInfoIndex, LOG_INDEX_LEN);
+				log_index[0] = tmpLogInfoIndex.flag;
+				log_index[1] = (tmpLogInfoIndex.head >> 8) & 0xff;
+				log_index[2] = tmpLogInfoIndex.head & 0xff;
+				log_index[3] = (tmpLogInfoIndex.tail >> 8) & 0xff;
+				log_index[4] = tmpLogInfoIndex.tail & 0xff;
 				set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 		}
 		if (tmpLogInfoIndex.head == tmpLogInfoIndex.tail) 
@@ -259,7 +267,11 @@ uint8_t UserDelLogInfo(LogInfo_t *pBuf)
 				tmpLogInfoIndex.flag = 0xAA;
 				tmpLogInfoIndex.head = 0;
 				tmpLogInfoIndex.tail = 0;
-				memcpy(log_index, &tmpLogInfoIndex, LOG_INDEX_LEN);
+				log_index[0] = tmpLogInfoIndex.flag;
+				log_index[1] = (tmpLogInfoIndex.head >> 8) & 0xff;
+				log_index[2] = tmpLogInfoIndex.head & 0xff;
+				log_index[3] = (tmpLogInfoIndex.tail >> 8) & 0xff;
+				log_index[4] = tmpLogInfoIndex.tail & 0xff;
 				set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 		}
 		if (tmpLogInfoIndex.head == tmpLogInfoIndex.tail) 
@@ -282,8 +294,13 @@ uint8_t UserDelLogInfo(LogInfo_t *pBuf)
 				{
 						if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
 						
-						memcpy(log_index, &tmpLogInfoIndex, LOG_INDEX_LEN);
+						log_index[0] = tmpLogInfoIndex.flag;
+						log_index[1] = (tmpLogInfoIndex.head >> 8) & 0xff;
+						log_index[2] = tmpLogInfoIndex.head & 0xff;
+						log_index[3] = (tmpLogInfoIndex.tail >> 8) & 0xff;
+						log_index[4] = tmpLogInfoIndex.tail & 0xff;
 						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+					
 						return 1;
 				}
 		}
@@ -291,7 +308,11 @@ uint8_t UserDelLogInfo(LogInfo_t *pBuf)
 		{
 				if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
 			
-				memcpy(log_index, &tmpLogInfoIndex, LOG_INDEX_LEN);
+				log_index[0] = tmpLogInfoIndex.flag;
+				log_index[1] = (tmpLogInfoIndex.head >> 8) & 0xff;
+				log_index[2] = tmpLogInfoIndex.head & 0xff;
+				log_index[3] = (tmpLogInfoIndex.tail >> 8) & 0xff;
+				log_index[4] = tmpLogInfoIndex.tail & 0xff;
 				set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 		}
 		return 0;
@@ -604,7 +625,6 @@ void init_solid_flash_data(void)
 		#if SEGGER_RTT_DEBUG_FLASH
 				SEGGER_RTT_printf(0, "init solid flash data!\r\n");
 		#endif
-//				NRF_LOG_DIRECT("init solid rom data!\r\n");
 //				init_register_data();
 //				init_param_data();
 //				init_aes_key_data();
