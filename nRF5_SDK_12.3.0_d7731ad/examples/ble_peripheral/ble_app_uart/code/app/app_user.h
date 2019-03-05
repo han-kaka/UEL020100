@@ -12,7 +12,7 @@
 #else
 	#define MAX_USER_NUM			16			/* 最大用户数量 */
 #endif
-#define MAX_LOG_NUM					100			/* 最大日志数量 */
+#define MAX_LOG_NUM					15			/* 最大日志数量 */
 
 #ifdef PCB_L1_2_3
 	#define HARD_VERSION_INFO		"HV1.2.3"	/* 硬件版本信息 */

@@ -147,9 +147,39 @@ uint8_t UserSaveLogInfo(LogInfo_t *pBuf)
 				tmpLogInfoIndex.head = 0;
 				tmpLogInfoIndex.tail = 0;
 		}
-	
-		memcpy(p_log_data_struct+sizeof(LogInfo_t) * tmpLogInfoIndex.head, (uint8_t *)pBuf, sizeof(LogInfo_t));
+		
+#if SEGGER_RTT_DEBUG_READ_LOG
+//		SEGGER_RTT_printf(0, "tmpLogInfoIndex.flag = %02x!\r\n",tmpLogInfoIndex.flag);
+//		SEGGER_RTT_printf(0, "tmpLogInfoIndex.head = %x!\r\n",tmpLogInfoIndex.head);
+//		SEGGER_RTT_printf(0, "tmpLogInfoIndex.tail = %x!\r\n",tmpLogInfoIndex.tail);	
+//		SEGGER_RTT_printf(0, "p_log_data_struct: %x\r\n", p_log_data_struct);
+//		SEGGER_RTT_printf(0, "sizeof(LogInfo_t): %d\r\n", sizeof(LogInfo_t));
+//		SEGGER_RTT_printf(0, "before:\r\n");
+//		for(uint8_t i=0; i<sizeof(LogInfo_t); i++)
+//		{
+//				SEGGER_RTT_printf(0, "%02x", ((uint8_t *)p_log_data_struct+sizeof(LogInfo_t)*tmpLogInfoIndex.head)[i]); 
+//		}
+//		SEGGER_RTT_printf(0, "\n");
 
+//		SEGGER_RTT_printf(0, "pbuf:\r\n");
+//		for(uint8_t i=0; i<sizeof(LogInfo_t); i++)
+//		{
+//				SEGGER_RTT_printf(0, "%02x", ((uint8_t *)pBuf)[i]);
+//		}
+//		SEGGER_RTT_printf(0, "\n");
+#endif
+		
+		memcpy(((uint8_t *)p_log_data_struct+sizeof(LogInfo_t)*tmpLogInfoIndex.head), (uint8_t *)pBuf, sizeof(LogInfo_t));
+		
+#if SEGGER_RTT_DEBUG_READ_LOG
+//		SEGGER_RTT_printf(0, "after:");
+//		for(uint8_t i=0; i<sizeof(LogInfo_t); i++)
+//		{
+//				SEGGER_RTT_printf(0, "%02x", ((uint8_t *)p_log_data_struct+sizeof(LogInfo_t)*tmpLogInfoIndex.head)[i]);
+//		}
+//		SEGGER_RTT_printf(0, "\n");
+#endif
+		
 		write_flash_data(NRF_FICR->CODESIZE-LOG_INFO_DATA_PAGE, p_log_data_struct);
 		
 		if (++tmpLogInfoIndex.head >= MAX_LOG_NUM) tmpLogInfoIndex.head = 0;
@@ -186,7 +216,7 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
 		tmpLogInfoIndex.flag = log_index[0];
 		tmpLogInfoIndex.head = (log_index[1] << 8) | log_index[2]; 
 		tmpLogInfoIndex.tail = (log_index[3] << 8) | log_index[4]; 
-//	
+	
 #if SEGGER_RTT_DEBUG_READ_LOG
 //		SEGGER_RTT_printf(0, "log index:");
 //		for(uint8_t i=0; i<10; i++)
@@ -202,13 +232,15 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
 //		}
 //		SEGGER_RTT_printf(0, "\n");
 //		
-//		SEGGER_RTT_printf(0, "tmpLogInfoIndex.flag = %02x!\r\n",tmpLogInfoIndex.flag);
-//		SEGGER_RTT_printf(0, "tmpLogInfoIndex.head = %x!\r\n",tmpLogInfoIndex.head);
-//		SEGGER_RTT_printf(0, "tmpLogInfoIndex.tail = %x!\r\n",tmpLogInfoIndex.tail);
+		SEGGER_RTT_printf(0, "tmpLogInfoIndex.flag = %02x!\r\n",tmpLogInfoIndex.flag);
+		SEGGER_RTT_printf(0, "tmpLogInfoIndex.head = %x!\r\n",tmpLogInfoIndex.head);
+		SEGGER_RTT_printf(0, "tmpLogInfoIndex.tail = %x!\r\n",tmpLogInfoIndex.tail);
 #endif
 		if (tmpLogInfoIndex.flag != 0xAA)
 		{
+		#if SEGGER_RTT_DEBUG_READ_LOG
 				SEGGER_RTT_printf(0, "not aa!\r\n");
+		#endif	
 				tmpLogInfoIndex.flag = 0xAA;
 				tmpLogInfoIndex.head = 0;
 				tmpLogInfoIndex.tail = 0;
@@ -239,9 +271,34 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
 				SEGGER_RTT_printf(0, "read log flash!\r\n");
 		#endif
 				read_log_data(p_log_data_struct);
-				memcpy((uint8_t *)pBuf, p_log_data_struct + sizeof(LogInfo_t) * tmpLogInfoIndex.tail, sizeof(LogInfo_t));
+		
+		#if SEGGER_RTT_DEBUG_READ_LOG				
+//				SEGGER_RTT_printf(0, "before:\r\n");
+//				for(uint8_t i=0; i<sizeof(LogInfo_t); i++)
+//				{
+//						SEGGER_RTT_printf(0, "%02x", ((uint8_t *)p_log_data_struct+sizeof(LogInfo_t)*tmpLogInfoIndex.tail)[i]); 
+//				}
+//				SEGGER_RTT_printf(0, "\n");
+
+//				SEGGER_RTT_printf(0, "pbuf:\r\n");
+//				for(uint8_t i=0; i<sizeof(LogInfo_t); i++)
+//				{
+//						SEGGER_RTT_printf(0, "%02x", ((uint8_t *)pBuf)[i]);
+//				}
+//				SEGGER_RTT_printf(0, "\n");
+		#endif
+				memcpy((uint8_t *)pBuf, ((uint8_t *)p_log_data_struct+sizeof(LogInfo_t)*tmpLogInfoIndex.tail), sizeof(LogInfo_t));
+		
+		#if SEGGER_RTT_DEBUG_READ_LOG
+//				SEGGER_RTT_printf(0, "after:\r\npbuf:\r\n");
+//				for(uint8_t i=0; i<sizeof(LogInfo_t); i++)
+//				{
+//						SEGGER_RTT_printf(0, "%02x", ((uint8_t *)p_log_data_struct+sizeof(LogInfo_t)*tmpLogInfoIndex.head)[i]);
+//				}
+//				SEGGER_RTT_printf(0, "\n");
+		#endif
 		}
-		return 0;
+		return 1;
 }
 
 /*******************************************************************************
