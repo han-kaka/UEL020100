@@ -1,5 +1,6 @@
 #include "app_comm_ble.h"
 #include "nrf_drv_rng.h"
+#include "aes.h"
 
 //BLE_Handler_t        g_stBLE_Handler;
 
@@ -194,16 +195,17 @@ void Put_Return(uint8_t command, uint8_t length)
 		pBuf[postion++] = sProtocolAppFormat.headData.dataSources;
 		if (((command == CMD_READ_LOG) || (command == CMD_ADD_USER)) && (length > 0))
 		{
-//				tmpLen = AES_get_length(length - 1);
-//				pBuf[postion++] = tmpLen + 1;
-//				postion++;
+				tmpLen = AES_get_length(length - 1);
+				pBuf[postion++] = tmpLen + 1;
+				postion++;
 //				AES_Init(useraeskeybuf);
 //				AES_Encrypt_PKCS7(pBuf + postion, pBuf + postion, length - 1, useraeskeybuf);
-//				postion += tmpLen;
-//				tmpLen = postion;
-//				pBuf[postion++] = CRC_8(pBuf, tmpLen);
-//				pBuf[postion++] = HI_UINT16(PROTOCOL_APP_TAIL);
-//				pBuf[postion++] = LO_UINT16(PROTOCOL_APP_TAIL);
+				AES128_CBC_encrypt_buffer(pBuf + postion, pBuf + postion, length - 1, useraeskeybuf, useraeskeybuf); 
+				postion += tmpLen;
+				tmpLen = postion;
+				pBuf[postion++] = CRC_8(pBuf, tmpLen);
+				pBuf[postion++] = HI_UINT16(PROTOCOL_APP_TAIL);
+				pBuf[postion++] = LO_UINT16(PROTOCOL_APP_TAIL);
 		}
 		else
 		{

@@ -55,6 +55,11 @@ static uint8_t  sLoginFlag = 0, sCurrentUserUID[8];
 //	return i;
 //}
 
+unsigned int AES_get_length(unsigned int length)
+{
+	return ((length>>4) + 1)<<4;
+}
+
 /**
 * @function SC_StrPrintlen
 * @brief    返回ch字符串的长度
