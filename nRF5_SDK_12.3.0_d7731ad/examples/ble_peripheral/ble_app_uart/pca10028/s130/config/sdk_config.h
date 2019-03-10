@@ -3757,7 +3757,7 @@
 #endif
 // <q> debug ble parse protocol
 #ifndef SEGGER_RTT_DEBUG_PARSE_PROTOCOL
-#define SEGGER_RTT_DEBUG_PARSE_PROTOCOL 0
+#define SEGGER_RTT_DEBUG_PARSE_PROTOCOL 1
 #endif
 // <q> debug ble crc check
 #ifndef SEGGER_RTT_DEBUG_CRC_CHECK
@@ -3784,6 +3784,26 @@
 // <q> debug ble read log
 #ifndef SEGGER_RTT_DEBUG_READ_LOG
 #define SEGGER_RTT_DEBUG_READ_LOG 1
+#endif
+// <q> debug ble set keyboard
+#ifndef SEGGER_RTT_DEBUG_SET_KEYBOARD
+#define SEGGER_RTT_DEBUG_SET_KEYBOARD 1
+#endif
+// <q> debug ble user login
+#ifndef SEGGER_RTT_DEBUG_USER_LOGIN
+#define SEGGER_RTT_DEBUG_USER_LOGIN 1
+#endif
+// <q> debug ble del user
+#ifndef SEGGER_RTT_DEBUG_DEL_USER
+#define SEGGER_RTT_DEBUG_DEL_USER 1
+#endif
+// <q> debug ble read user
+#ifndef SEGGER_RTT_DEBUG_READ_USER
+#define SEGGER_RTT_DEBUG_READ_USER 1
+#endif
+// <q> debug ble add user
+#ifndef SEGGER_RTT_DEBUG_ADD_USER
+#define SEGGER_RTT_DEBUG_ADD_USER 1
 #endif
 #endif
 

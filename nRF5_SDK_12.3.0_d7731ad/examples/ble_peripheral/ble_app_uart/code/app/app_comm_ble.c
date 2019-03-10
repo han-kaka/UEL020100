@@ -289,25 +289,25 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 	
 		if (sProtocolAppFormat.headData.version != PROTOCOL_APP_VERSION)			// 判断协议头正确性
 		{
-				#if SEGGER_RTT_DEBUG_AES_DECODE
-						SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_VERSION_1!\r\n");
-				#endif
+		#if SEGGER_RTT_DEBUG_AES_DECODE
+				SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_VERSION_1!\r\n");
+		#endif
 				UserReturnErrCode(command, PROTOCOL_APP_ERR_VERSION);
 				return ret;
 		}
 		if (dataLen == 0)
 		{
-				#if SEGGER_RTT_DEBUG_AES_DECODE
-						SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_PARAM_2!\r\n");
-				#endif
+		#if SEGGER_RTT_DEBUG_AES_DECODE
+				SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_PARAM_2!\r\n");
+		#endif
 				UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
 				return ret;
 		}
 		if ((gSystemRunParam.flagInit != 0xA5) && (command != CMD_GET_AESKEY))
 		{
-				#if SEGGER_RTT_DEBUG_AES_DECODE
-						SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_PARAM_3!\r\n");
-				#endif
+		#if SEGGER_RTT_DEBUG_AES_DECODE
+				SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_PARAM_3!\r\n");
+		#endif
 				UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
 				return ret;
 		}
@@ -357,6 +357,10 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 				case CMD_ADD_ADMIN:														/* 添加管理员 */
 				case CMD_ADD_USER:														/* 添加用户 */
 				{
+				#if SEGGER_RTT_DEBUG_ADD_USER
+						SEGGER_RTT_printf(0, "cmd add user!\r\n");
+				#endif
+					
 						if (stateProcessCommand == 0)
 						{
 								if ((dataLen != 16) && (dataLen != 24))
@@ -405,6 +409,10 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 				
 				case CMD_READ_USER:														/* 读取用户 */
 				{
+				#if SEGGER_RTT_DEBUG_READ_USER
+						SEGGER_RTT_printf(0, "cmd read user!\r\n");
+				#endif
+					
 						if ((dataLen != 1) || (*pData != 0xA2))
 						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
 						if (UserGetCurrentUser() == 0)
@@ -429,48 +437,62 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 //						}
 				}
 						break;
-//				
-//				case CMD_DEL_USER:														/* 删除用户 */
-//				{
-////						if (dataLen != 8)
-////						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
-////						if (UserGetCurrentUser() == 0)
-////						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
-////						
-////						UserDelUserInfoFromSystem(pData);
-////						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
-//				}	
-//					break;
-//				
+				
+				case CMD_DEL_USER:														/* 删除用户 */
+				{
+				#if SEGGER_RTT_DEBUG_DEL_USER
+						SEGGER_RTT_printf(0, "cmd del user!\r\n");
+				#endif
+//						if (dataLen != 8)
+//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
+//						if (UserGetCurrentUser() == 0)
+//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
+//						
+//						UserDelUserInfoFromSystem(pData);
+//						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
+				}	
+					break; 
+				
 				case CMD_USER_LOGIN:													/* 用户登录 */
 				{
-//						if (dataLen != 16)
-//						{
-//								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
-//								break;
-//						}
-//						
-//						if (UserMemCmp(pData, timestamp, 8) <= 0) 
-//								break;
-//						memcpy(timestamp, pData+8, 8);
-//						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
-//						
-//						tmp = UserSearchUserInfoNumber(pData);
-//						if (tmp < MAX_USER_NUM)
-//						{
-//								sReadUserCnt = 0;
+				#if SEGGER_RTT_DEBUG_USER_LOGIN
+						SEGGER_RTT_printf(0, "cmd user login!\r\n");
+				#endif
+						Rom_Data_Type user_info_data_struct;
+						p_Rom_Data_Type p_user_info_data_struct = &user_info_data_struct;	
+					
+						if (dataLen != 16)
+						{
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+								break;
+						}
+						
+						if (UserMemCmp(pData+8, timestamp, 8) <= 0) 
+								break;
+						memcpy(timestamp, pData+8, 8);
+						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+						
+						read_user_info_data(p_user_info_data_struct);
+//						tmp = UserSearchUserInfoNumber(pData, p_user_info_data_struct);
+						if (tmp < MAX_USER_NUM)
+						{
+								sReadUserCnt = 0;
 //								UserSetCurrentUser(pData);
-//								UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
-//						}
-//						else
-//						{
-//								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
-//						}
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
+						}
+						else
+						{
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
+						}
 				}
 					break;
 				
 				case CMD_SET_KEYBOARD:													/* 设置键盘密码 */
 				{
+				#if SEGGER_RTT_DEBUG_SET_KEYBOARD
+						SEGGER_RTT_printf(0, "cmd set keyboard!\r\n");
+				#endif
+					
 						UserReturnErrCode(command, PROTOCOL_APP_ERR_VERSION);
 //						if (stateProcessCommand == 0)
 //						{
@@ -667,8 +689,8 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 			/****************************** V1.0 版本程序开始 *****************************/
 						if (dataLen != 4)
 						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
-						//if (UserGetCurrentUser() == 0)
-						//{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
+//						if (UserGetCurrentUser() == 0)
+//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
 						tmp32 = pData[0];
 						tmp32 = (tmp32 << 8) | pData[1];
 						tmp32 = (tmp32 << 8) | pData[2];
