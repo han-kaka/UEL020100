@@ -2194,11 +2194,6 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\code\app\app_adv_ble.c</FilePath>
             </File>
-            <File>
-              <FileName>app_waes.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\code\app\app_waes.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>
@@ -4530,11 +4525,6 @@
               <FileName>app_adv_ble.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\code\app\app_adv_ble.c</FilePath>
-            </File>
-            <File>
-              <FileName>app_waes.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\code\app\app_waes.c</FilePath>
             </File>
           </Files>
         </Group>

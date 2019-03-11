@@ -457,7 +457,7 @@ uint8_t UserSearchUserInfoNumber(uint8_t *id, p_Rom_Data_Type p_user_info_data_s
 		uint8_t  i;
 		UserInfo_t tempUserInfo;
 		
-		for (i = 0; i < MAX_USER_NUM; i ++)
+		for (i=0; i<MAX_USER_NUM; i++)
 		{
 				while (UserGetUserInfo(i, &tempUserInfo, p_user_info_data_struct) == 0xFF);
 				if (((tempUserInfo.flag & 0x83) == 0x82) && (UserMemCmp(tempUserInfo.userId, id, 8) == 0))
@@ -522,9 +522,9 @@ uint8_t UserGetUserInfo(uint8_t num, UserInfo_t *pBuf, p_Rom_Data_Type p_user_in
 		
 		if (num >= MAX_USER_NUM) return 1;
 		
-		memcpy(pBuf, p_user_info_data_struct + sizeof(UserInfo_t) * num, sizeof(UserInfo_t));
+		memcpy((uint8_t *)pBuf, ((uint8_t *)p_user_info_data_struct+sizeof(UserInfo_t)*num), sizeof(UserInfo_t));
 		ret = 0;
-								 
+
 		return ret;
 }
 #endif
