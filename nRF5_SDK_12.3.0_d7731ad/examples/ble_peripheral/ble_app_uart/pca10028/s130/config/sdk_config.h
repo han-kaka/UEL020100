@@ -3757,11 +3757,11 @@
 #endif
 // <q> debug ble parse protocol
 #ifndef SEGGER_RTT_DEBUG_PARSE_PROTOCOL
-#define SEGGER_RTT_DEBUG_PARSE_PROTOCOL 1
+#define SEGGER_RTT_DEBUG_PARSE_PROTOCOL 0
 #endif
 // <q> debug ble crc check
 #ifndef SEGGER_RTT_DEBUG_CRC_CHECK
-#define SEGGER_RTT_DEBUG_CRC_CHECK 1
+#define SEGGER_RTT_DEBUG_CRC_CHECK 0
 #endif
 // <e> debug ble aes decode 
 #ifndef SEGGER_RTT_DEBUG_AES_DECODE
@@ -3804,6 +3804,10 @@
 // <q> debug ble add user
 #ifndef SEGGER_RTT_DEBUG_ADD_USER
 #define SEGGER_RTT_DEBUG_ADD_USER 1
+#endif
+// <q> debug ble add peripheral
+#ifndef SEGGER_RTT_DEBUG_ADD_PERIPHERAL
+#define SEGGER_RTT_DEBUG_ADD_PERIPHERAL 1
 #endif
 #endif
 
