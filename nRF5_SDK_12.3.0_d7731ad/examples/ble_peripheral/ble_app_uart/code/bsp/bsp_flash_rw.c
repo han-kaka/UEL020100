@@ -397,7 +397,7 @@ uint8_t UserSaveUserInfo(uint8_t num, UserInfo_t *pBuf, p_Rom_Data_Type p_user_i
 	
 		if (num >= MAX_USER_NUM) return 1;
 	
-		memcpy(p_user_info_data_struct+sizeof(UserInfo_t) * num, (uint8_t *)pBuf, sizeof(UserInfo_t));
+		memcpy(((uint8_t *)p_user_info_data_struct+sizeof(UserInfo_t)*num), (uint8_t *)pBuf, sizeof(UserInfo_t));
 		ret = 0;
 		write_flash_data(NRF_FICR->CODESIZE-USER_INFO_DATA_PAGE, p_user_info_data_struct);
 
@@ -465,6 +465,9 @@ uint8_t UserSearchUserInfoNumber(uint8_t *id, p_Rom_Data_Type p_user_info_data_s
 						break;
 				}
 		}
+#if SEGGER_RTT_DEBUG_USER_LOGIN
+		SEGGER_RTT_printf(0, "search user info num: %d\r\n", i);
+#endif
 		return i;
 }
 

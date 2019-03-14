@@ -57,6 +57,7 @@
 #include "app_comm_ble.h"
 #include "app_comm_NB86.h"
 #include "app_adv_ble.h"
+#include "app_waes.h"
 #include "app_common.h"
 
 #include "task_safeguard.h"

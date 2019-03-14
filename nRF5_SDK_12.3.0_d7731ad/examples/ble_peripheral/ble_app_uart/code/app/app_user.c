@@ -55,11 +55,6 @@ static uint8_t  sLoginFlag = 0, sCurrentUserUID[8];
 //	return i;
 //}
 
-unsigned int AES_get_length(unsigned int length)
-{
-	return ((length>>4) + 1)<<4;
-}
-
 /**
 * @function SC_StrPrintlen
 * @brief    返回ch字符串的长度
@@ -229,16 +224,26 @@ uint8_t UserAddUserInfoToSystem(uint8_t type, uint8_t *id, uint8_t *pData)
 				read_user_info_data(p_user_info_data_struct);
 				if (sFlagState == 0)
 				{
+				#if SEGGER_RTT_DEBUG_ADD_USER
+						SEGGER_RTT_printf(0, "sFlagState = %d\r\n", sFlagState);
+				#endif
 						sFlagState = 1;
 						sUserId = UserSearchUserInfoNumber(pData, p_user_info_data_struct);
 						ret = 0xFF;
 				}
 				else if (sFlagState == 1)
 				{
+				#if SEGGER_RTT_DEBUG_ADD_USER
+						SEGGER_RTT_printf(0, "sFlagState = %d\r\n", sFlagState);
+				#endif
 						sFlagState = 2;
 						ret = 0xFF;
+
 						if (sUserId < MAX_USER_NUM) // 已有此用户
 						{
+						#if SEGGER_RTT_DEBUG_ADD_USER
+								SEGGER_RTT_printf(0, "has user\r\n");
+						#endif
 								while (UserGetUserInfo(sUserId, &tempUserInfo, p_user_info_data_struct) == 0xFF);
 								if (type == 11) /* 添加用户有效时间 */
 								{
@@ -263,6 +268,9 @@ uint8_t UserAddUserInfoToSystem(uint8_t type, uint8_t *id, uint8_t *pData)
 						}
 						else // 新用户
 						{
+						#if SEGGER_RTT_DEBUG_ADD_USER
+								SEGGER_RTT_printf(0, "new user\r\n");
+						#endif
 								tmp = 1;
 								for (i = 0; i < MAX_USER_NUM; i ++)
 								{
@@ -308,9 +316,16 @@ uint8_t UserAddUserInfoToSystem(uint8_t type, uint8_t *id, uint8_t *pData)
 				}
 				else if (sFlagState == 2)
 				{
+				#if SEGGER_RTT_DEBUG_ADD_USER
+						SEGGER_RTT_printf(0, "sFlagState = %d\r\n", sFlagState);
+						SEGGER_RTT_printf(0, "sUserId = %d\r\n", sUserId);
+				#endif
 						if (sUserId < MAX_USER_NUM)
 						{
 								ret = UserSaveUserInfo(sUserId, &tempUserInfo, p_user_info_data_struct);
+						#if SEGGER_RTT_DEBUG_ADD_USER
+								SEGGER_RTT_printf(0, "ret = %d\r\n", ret);
+						#endif
 						}
 						else
 						{

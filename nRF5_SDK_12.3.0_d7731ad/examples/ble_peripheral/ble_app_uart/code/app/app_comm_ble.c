@@ -198,7 +198,7 @@ void Put_Return(uint8_t command, uint8_t length)
 				tmpLen = AES_get_length(length - 1);
 				pBuf[postion++] = tmpLen + 1;
 				postion++;
-				AES128_CBC_encrypt_buffer(pBuf + postion, pBuf + postion, length - 1, useraeskeybuf, useraeskeybuf); 
+				AES_Encrypt_PKCS7(pBuf + postion, pBuf + postion, length - 1, useraeskeybuf, useraeskeybuf); 
 				postion += tmpLen;
 				tmpLen = postion;
 				pBuf[postion++] = CRC_8(pBuf, tmpLen);
@@ -358,49 +358,61 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						SEGGER_RTT_printf(0, "cmd add user!\r\n");
 				#endif
 					
-//						if (stateProcessCommand == 0)
-//						{
-//								if ((dataLen != 16) && (dataLen != 24))
-//								{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}
-//								
-//								if (dataLen == 16) 
-//								{
-//										sFlagAddUser = 1;
-//										if (UserMemCmp(pData + 8, timestamp, 8) <= 0) break;
-//										memcpy(timestamp, pData+8, 8);
-//										set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
-//								}
-//								else 
-//								{
-//										sFlagAddUser = 11;
-//										if (UserMemCmp(pData + 16, timestamp, 8) <= 0) break;
-//										memcpy(timestamp, pData+16, 8);
-//										set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
-//								}
-//								stateProcessCommand = 1;
-//								ret = 0xFF;
-//						}
-//						else if (stateProcessCommand == 1)
-//						{
-//								ret = UserAddUserInfoToSystem(sFlagAddUser, 0, pData);
-//								if (ret == 0)
-//								{
-//										sReadUserCnt = 0;
-//										UserSetCurrentUser(pData);
-//										UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, (char *)pData + 8, 16);
-//								}
-//								else if (ret == 0xFF)
-//								{
-//								}
-//								else
-//								{
-//										UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_GEN, (char *)pData + 8, 16);
-//								}
-//						}
-//						else 
-//						{
-//								UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_GEN, (char *)pData + 8, 16);
-//						}
+						if (stateProcessCommand == 0)
+						{
+								if ((dataLen != 16) && (dataLen != 24))
+								{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}
+								
+								if (dataLen == 16) 
+								{
+										sFlagAddUser = 1;
+										if (UserMemCmp(pData + 8, timestamp, 8) <= 0) break;
+										memcpy(timestamp, pData+8, 8);
+										set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+								}
+								else 
+								{
+										sFlagAddUser = 11;
+										if (UserMemCmp(pData + 16, timestamp, 8) <= 0) break;
+										memcpy(timestamp, pData+16, 8);
+										set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+								}
+								stateProcessCommand = 1;
+								ret = 0xFF;
+						#if SEGGER_RTT_DEBUG_ADD_USER
+								SEGGER_RTT_printf(0, "stateProcessCommand = %d\r\n", stateProcessCommand);
+						#endif
+						}
+						else if (stateProcessCommand == 1)
+						{
+								ret = UserAddUserInfoToSystem(sFlagAddUser, 0, pData);
+								if (ret == 0)
+								{
+										sReadUserCnt = 0;
+										UserSetCurrentUser(pData);
+										UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, (char *)pData + 8, 16);
+								#if SEGGER_RTT_DEBUG_ADD_USER
+										SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_NONE\r\n");
+								#endif
+								}
+								else if (ret == 0xFF)
+								{
+								}
+								else
+								{
+										UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_GEN, (char *)pData + 8, 16);
+								#if SEGGER_RTT_DEBUG_ADD_USER
+										SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_GEN\r\n");
+								#endif
+								}
+						}
+						else 
+						{
+								UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_GEN, (char *)pData + 8, 16);
+						#if SEGGER_RTT_DEBUG_ADD_USER
+								SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_GEN\r\n");
+						#endif
+						}
 				}
 						break;
 				
@@ -414,24 +426,28 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
 						if (UserGetCurrentUser() == 0)
 						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
-//						while (1)
-//						{
-//								if (sReadUserCnt < MAX_USER_NUM)
-//								{
-//										if (UserReadUserInfoUID(sReadUserCnt, buf) == 0)
-//										{
-//											UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, (char *)buf, 8);
-//											sReadUserCnt++;
-//											break;
-//										}
-//										sReadUserCnt++;
-//								}
-//								else
-//								{
-//										UserReturnErrCode(command, PROTOCOL_APP_ERR_FINISHED);
-//										break;
-//								}
-//						}
+						while (1)
+						{
+								Rom_Data_Type user_info_data_struct;
+								p_Rom_Data_Type p_user_info_data_struct = &user_info_data_struct;	
+								read_user_info_data(p_user_info_data_struct);
+							
+								if (sReadUserCnt < MAX_USER_NUM)
+								{
+										if (UserReadUserInfoUID(sReadUserCnt, buf, p_user_info_data_struct) == 0)
+										{
+												UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, (char *)buf, 8);
+												sReadUserCnt++;
+												break;
+										}
+										sReadUserCnt++;
+								}
+								else
+								{
+										UserReturnErrCode(command, PROTOCOL_APP_ERR_FINISHED);
+										break;
+								}
+						}
 				}
 						break;
 				
@@ -460,6 +476,9 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 					
 						if (dataLen != 16)
 						{
+						#if SEGGER_RTT_DEBUG_USER_LOGIN
+								SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_PARAM\r\n");
+						#endif
 								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
 								break;
 						}
@@ -476,7 +495,6 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 								sReadUserCnt = 0;
 								UserSetCurrentUser(pData);
 						#if SEGGER_RTT_DEBUG_USER_LOGIN
-								SEGGER_RTT_printf(0, "user info num: %d\r\n", tmp);
 								SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_NONE\r\n");
 						#endif
 								UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
@@ -621,11 +639,11 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 								break;
 						#endif
 						}
-						else
-						{
-								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
-								break;
-						}
+//						else
+//						{
+//								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+//								break;
+//						}
 						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
 				}
 						break;

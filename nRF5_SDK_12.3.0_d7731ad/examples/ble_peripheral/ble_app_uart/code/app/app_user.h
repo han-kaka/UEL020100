@@ -65,7 +65,6 @@ void     UserClrCurrentUser(void);
 //void   UserHardDelayMs(uint16 ms);
 //void   UserHardWDGDelayMs(uint16 ms);
 //void   TestBug(uint8 bugcont);
-unsigned int AES_get_length(unsigned int length);
 #endif
 
 
