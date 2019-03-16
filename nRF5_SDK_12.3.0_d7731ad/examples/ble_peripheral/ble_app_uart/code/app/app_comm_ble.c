@@ -871,36 +871,36 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						memcpy(timestamp, pData, 8);
 						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 						
-//						if (pData[8] == 0x01)	// 配置开锁方向
-//						{
-//								if ((pData[9] == 0x01) || pData[9] == 0x02)
-//								{
-//										memcpy(&open_lock_dir, pData+9, 1);
-//										set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
-//										UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
-////										SC_ProtocolOpenLockDir(pData[9]);
-//								}
-//								else
-//								{
-//										UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
-//								}
-//						}
-//						else if (pData[8] == 0x10)	// 配置IP地址和端口号
-//						{
-//								memcpy(NB_NetPar.ServerIP, pData+9, SERVER_IP_LEN);
-//								set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
-//								UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
-//						}
-//						else if (pData[8] == 0x11)	// 配置APN
-//						{
-//								memcpy(NB_NetPar.ServerAPN, pData+9, SERVER_APN_LEN);
-//								set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
-//								UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
-//						}
-//						else
-//						{
-//							UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
-//						}
+						if (pData[8] == 0x01)	// 配置开锁方向
+						{
+								if ((pData[9] == 0x01) || pData[9] == 0x02)
+								{
+										memcpy(&open_lock_dir, pData+9, 1);
+										set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+										UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
+//										SC_ProtocolOpenLockDir(pData[9]);
+								}
+								else
+								{
+										UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+								}
+						}
+						else if (pData[8] == 0x10)	// 配置IP地址和端口号
+						{
+								memcpy(NB_NetPar.ServerIP, pData+9, SERVER_IP_LEN);
+								set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
+						}
+						else if (pData[8] == 0x11)	// 配置APN
+						{
+								memcpy(NB_NetPar.ServerAPN, pData+9, SERVER_APN_LEN);
+								set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
+						}
+						else
+						{
+							UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+						}
 				}
 						break;
 					
