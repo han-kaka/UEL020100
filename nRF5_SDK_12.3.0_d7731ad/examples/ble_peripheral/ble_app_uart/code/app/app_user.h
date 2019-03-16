@@ -49,7 +49,7 @@ uint16_t SC_StrPrintlen(uint8_t *ch);
 int8_t   UserMemCmp( const void *src1, const void *src2, unsigned int len );
 uint8_t  UserReadUserInfoConfig(uint8_t *uid, uint8_t *dat);
 uint8_t  UserAddUserInfoToSystem(uint8_t type, uint8_t *id, uint8_t *pData);
-//uint8  UserDelUserInfoFromSystem(uint8 *uid);
+uint8_t  UserDelUserInfoFromSystem(uint8_t *uid);
 //void   UserClearUserInfoFromSystem(void);
 void     UserSetCurrentUser(uint8_t *uid);
 uint8_t* UserGetCurrentUser(void);

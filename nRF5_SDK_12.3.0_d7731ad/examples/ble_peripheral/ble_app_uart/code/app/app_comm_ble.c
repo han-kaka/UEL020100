@@ -314,7 +314,6 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 		
 		switch (command)
 		{
-			
 				case CMD_GET_HARD_INFO_VERSION:											/* 获取硬件版本信息 */
 						UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, HARD_VERSION_INFO, sizeof(HARD_VERSION_INFO));
 						break;
@@ -456,13 +455,13 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 				#if SEGGER_RTT_DEBUG_DEL_USER
 						SEGGER_RTT_printf(0, "cmd del user!\r\n");
 				#endif
-//						if (dataLen != 8)
-//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
-//						if (UserGetCurrentUser() == 0)
-//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
-//						
-//						UserDelUserInfoFromSystem(pData);
-//						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
+						if (dataLen != 8)
+						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
+						if (UserGetCurrentUser() == 0)
+						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
+						
+						UserDelUserInfoFromSystem(pData);
+						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
 				}	
 					break; 
 				
@@ -514,73 +513,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 				#if SEGGER_RTT_DEBUG_SET_KEYBOARD
 						SEGGER_RTT_printf(0, "cmd set keyboard!\r\n");
 				#endif
-					
 						UserReturnErrCode(command, PROTOCOL_APP_ERR_VERSION);
-//						if (stateProcessCommand == 0)
-//						{
-//							stateProcessCommand = 1;
-//							ret = 0xFF;
-//							
-//							if (dataLen != 8)
-//							{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
-//							if (UserGetCurrentUser() == 0)
-//							{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
-//						}
-//						else if (stateProcessCommand == 1)
-//						{
-//							for (sTemp = 0; sTemp < MAX_USER_NUM; sTemp ++)
-//							{
-//								while (UserGetUserInfo(sTemp, &tempUserInfo) == 0xFF);
-//								if ((tempUserInfo.flag & 0xC3) != 0xC2) continue;
-//								if (UserMemCmp(tempUserInfo.userId, UserGetCurrentUser(), sizeof(tempUserInfo.userId)) == 0) continue;
-//								if (UserMemCmp(tempUserInfo.password, pData, sizeof(tempUserInfo.password)) == 0)
-//								{
-//									break;
-//								}
-//							}
-//							if (sTemp < MAX_USER_NUM)
-//							{
-//								stateProcessCommand = 3;
-//							}
-//							else
-//							{
-//								stateProcessCommand = 2;
-//							}
-//							ret = 0xFF;
-//						}
-//						else if (stateProcessCommand == 2)
-//						{
-//							ret = UserAddUserInfoToSystem(2, UserGetCurrentUser(), pData);
-//							if (ret == 0)
-//							{
-//								UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
-//							}
-//							else if (ret == 0xFF)
-//							{
-//								
-//							}
-//							else
-//							{
-//								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
-//							}
-//						}
-//						else if (stateProcessCommand == 3)
-//						{
-//							osal_memset(buf, 0, 8);
-//							ret = UserAddUserInfoToSystem(2, tempUserInfo.userId, buf);
-//							if (ret == 0)
-//							{
-//								UserReturnErrCode(command, PROTOCOL_APP_ERR_PASSWORD_SAME);
-//							}
-//							else if (ret == 0xFF)
-//							{
-//								
-//							}
-//							else
-//							{
-//								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
-//							}
-//						}
 				}
 						break;
 				
@@ -755,7 +688,6 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 				#if SEGGER_RTT_DEBUG_READ_LOG
 						SEGGER_RTT_printf(0, "cmd read log!\r\n");
 				#endif
-					
 						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
 						if (UserGetLogInfo(pTmpLogInfo) == 1)
 						{
@@ -788,6 +720,9 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 			
 				case CMD_READ_USER_CONFIG:												/* 读取用户信息 */
 				{
+				#if SEGGER_RTT_DEBUG_READ_USER
+						SEGGER_RTT_printf(0, "cmd read log!\r\n");
+				#endif
 //						if ((dataLen != 1) || (*pData != 0xAB))
 //						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
 //						if (UserGetCurrentUser() == 0)

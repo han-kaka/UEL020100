@@ -238,9 +238,6 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
 #endif
 		if (tmpLogInfoIndex.flag != 0xAA)
 		{
-		#if SEGGER_RTT_DEBUG_READ_LOG
-				SEGGER_RTT_printf(0, "not aa!\r\n");
-		#endif	
 				tmpLogInfoIndex.flag = 0xAA;
 				tmpLogInfoIndex.head = 0;
 				tmpLogInfoIndex.tail = 0;
@@ -255,9 +252,6 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
 		if (tmpLogInfoIndex.head == tmpLogInfoIndex.tail) 
 		{
 				ChangeAdvData(5, 0); // 更新广播标志位
-#if SEGGER_RTT_DEBUG_READ_LOG
-				SEGGER_RTT_printf(0, "return 0!\r\n");
-#endif
 				return 0;
 		}
 		else

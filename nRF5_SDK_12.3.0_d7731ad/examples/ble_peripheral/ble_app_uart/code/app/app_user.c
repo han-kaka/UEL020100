@@ -458,31 +458,29 @@ uint8_t UserAddUserInfoToSystem(uint8_t type, uint8_t *id, uint8_t *pData)
 		return ret;
 }
 
-///**************************************************************************************************
-// * @brief       删除用户信息
-// * @param       id：用户UID
-// * @return      删除的位置编号
-// **************************************************************************************************
-// */
-//uint8 UserDelUserInfoFromSystem(uint8 *uid)
-//{
-//	uint8  tmp;
-//	UserInfo_t tempUserInfo;
-//	
-//	tmp = UserSearchUserInfoNumber(uid);
-//	if (tmp < MAX_USER_NUM)
-//	{
-//		while (UserGetUserInfo(tmp, &tempUserInfo) == 0xFF);
-//		osal_memset(&tempUserInfo, 0, sizeof(UserInfo_t));
-//		#ifdef FLASHUSERINFO
-//		UserDelUserInfo(tmp);
-//		#else
-//		UserSaveUserInfo(tmp, &tempUserInfo);
-//		#endif
-//	}
-//	
-//	return tmp;
-//}
+/**************************************************************************************************
+ * @brief       删除用户信息
+ * @param       id：用户UID
+ * @return      删除的位置编号
+ **************************************************************************************************
+ */
+uint8_t UserDelUserInfoFromSystem(uint8_t *uid)
+{
+		uint8_t  tmp;
+		UserInfo_t tempUserInfo;
+		Rom_Data_Type user_info_data_struct;
+		p_Rom_Data_Type p_user_info_data_struct = &user_info_data_struct;	
+	
+		read_user_info_data(p_user_info_data_struct);
+		tmp = UserSearchUserInfoNumber(uid, p_user_info_data_struct);
+		if (tmp < MAX_USER_NUM)
+		{
+				while (UserGetUserInfo(tmp, &tempUserInfo, p_user_info_data_struct) == 0xFF);
+				memset(&tempUserInfo, 0, sizeof(UserInfo_t));
+				UserSaveUserInfo(tmp, &tempUserInfo, p_user_info_data_struct);
+		}
+		return tmp;
+}
 
 ///**************************************************************************************************
 // * @brief       清空用户信息
