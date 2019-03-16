@@ -276,12 +276,9 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 		uint16 temp16;
 		#endif
 		uint32_t tmp32;
-//	static uint8  sTemp;
 		static uint8_t  sReadUserCnt = 0;
 		static uint8_t  sFlagAddUser = 0;
 		uint8_t  buf[16];
-//	static UserInfo_t tempUserInfo;
-//		UTCTimeStruct *pTempTimeStruct = (UTCTimeStruct *)(buf + 6);
 		LogInfo_t *pTmpLogInfo = (LogInfo_t *)buf;
 	
 		if (sProtocolAppFormat.headData.version != PROTOCOL_APP_VERSION)			// 判断协议头正确性
@@ -723,42 +720,43 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 				#if SEGGER_RTT_DEBUG_READ_USER
 						SEGGER_RTT_printf(0, "cmd read log!\r\n");
 				#endif
-//						if ((dataLen != 1) || (*pData != 0xAB))
-//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
-//						if (UserGetCurrentUser() == 0)
-//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
-//						
-//						if (UserReadUserInfoConfig(UserGetCurrentUser(), &tmp) == 0)
-//						{
-//							buf[0] = 0; buf[1] = 0;
-//							if (tmp & 0x40) buf[1] |= 0x01;
-//							if (tmp & 0x20) buf[1] |= 0x02;
-//							if (tmp & 0x10) buf[1] |= 0x04;
-//							if (tmp & 0x08) buf[1] |= 0x08;
-//							UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, (char *)buf, 2);
-//						}
-//						
-//						while (1)
-//						{
-//								if (sReadUserCnt < MAX_USER_NUM)
-//								{
-//										Rom_Data_Type user_info_data_struct;
-//										p_Rom_Data_Type p_user_info_data_struct = &user_info_data_struct;	
-//										
-//										if (UserReadUserInfoUID(sReadUserCnt, buf, p_user_info_data_struct) == 0)
-//										{
-//												UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, (char *)buf, 8);
-//												sReadUserCnt++;
-//												break;
-//										}
-//										sReadUserCnt++;
-//								}
-//								else
-//								{
-//										UserReturnErrCode(command, PROTOCOL_APP_ERR_FINISHED);
-//										break;
-//								}
-//						}
+						if ((dataLen != 1) || (*pData != 0xAB))
+						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
+						if (UserGetCurrentUser() == 0)
+						{UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_PERMIT);break;}	/* 未登录，返回权限错误 */
+						
+						if (UserReadUserInfoConfig(UserGetCurrentUser(), &tmp) == 0)
+						{
+								buf[0] = 0; buf[1] = 0;
+								if (tmp & 0x40) buf[1] |= 0x01;
+								if (tmp & 0x20) buf[1] |= 0x02;
+								if (tmp & 0x10) buf[1] |= 0x04;
+								if (tmp & 0x08) buf[1] |= 0x08;
+								UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, (char *)buf, 2);
+						}
+						
+						while (1)
+						{
+								Rom_Data_Type user_info_data_struct;
+								p_Rom_Data_Type p_user_info_data_struct = &user_info_data_struct;	
+								read_user_info_data(p_user_info_data_struct);
+							
+								if (sReadUserCnt < MAX_USER_NUM)
+								{
+										if (UserReadUserInfoUID(sReadUserCnt, buf, p_user_info_data_struct) == 0)
+										{
+												UserReturnErrCodeAndData(command, PROTOCOL_APP_ERR_NONE, (char *)buf, 8);
+												sReadUserCnt++;
+												break;
+										}
+										sReadUserCnt++;
+								}
+								else
+								{
+										UserReturnErrCode(command, PROTOCOL_APP_ERR_FINISHED);
+										break;
+								}
+						}
 				}
 						break;
 				

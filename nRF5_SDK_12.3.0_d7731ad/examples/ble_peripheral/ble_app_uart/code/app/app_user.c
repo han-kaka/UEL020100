@@ -178,14 +178,17 @@ uint8_t UserReadUserInfoConfig(uint8_t *uid, uint8_t *dat)
 {
 		uint8_t  tmp, ret = 1;
 		UserInfo_t tempUserInfo;
-		
-//		tmp = UserSearchUserInfoNumber(uid);
-//		if (tmp < MAX_USER_NUM)
-//		{
-//				while (UserGetUserInfo(tmp, &tempUserInfo) == 0xFF);
-//				if (dat !=0 ) *dat = tempUserInfo.flag;
-//				ret = 0;
-//		}
+		Rom_Data_Type user_info_data_struct;
+		p_Rom_Data_Type p_user_info_data_struct = &user_info_data_struct;	
+	
+		read_user_info_data(p_user_info_data_struct);
+		tmp = UserSearchUserInfoNumber(uid, p_user_info_data_struct);
+		if (tmp < MAX_USER_NUM)
+		{
+				while (UserGetUserInfo(tmp, &tempUserInfo, p_user_info_data_struct) == 0xFF);
+				if (dat !=0 ) *dat = tempUserInfo.flag;
+				ret = 0;
+		}
 		
 		return ret;
 }
@@ -222,6 +225,7 @@ uint8_t UserAddUserInfoToSystem(uint8_t type, uint8_t *id, uint8_t *pData)
 		else if ((type == 1) || (type == 11)) /* Ìí¼ÓÓÃ»§ */
 		{
 				read_user_info_data(p_user_info_data_struct);
+			
 				if (sFlagState == 0)
 				{
 				#if SEGGER_RTT_DEBUG_ADD_USER
