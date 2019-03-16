@@ -860,17 +860,17 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 				
 				case CMD_PARAM_CONFIG:													/* 参数配置指令 */
 				{
-//						if (dataLen < 9)
-//						{
-//								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
-//								break;
-//						}
-//						
-//						if (UserMemCmp(pData, timestamp, 8) <= 0) 
-//								break;
-//						memcpy(timestamp, pData, 8);
-//						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
-//						
+						if (dataLen < 9)
+						{
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+								break;
+						}
+						
+						if (UserMemCmp(pData, timestamp, 8) <= 0) 
+								break;
+						memcpy(timestamp, pData, 8);
+						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+						
 //						if (pData[8] == 0x01)	// 配置开锁方向
 //						{
 //								if ((pData[9] == 0x01) || pData[9] == 0x02)
@@ -906,56 +906,56 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 					
 				case CMD_PARAM_READ:													/* 参数读取指令 */
 				{
-//						if (dataLen < 9)
-//						{
-//								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
-//								break;
-//						}
-//						if (UserMemCmp(pData, timestamp, 8) <= 0) 
-//								break;
-//						memcpy(timestamp, pData, 8);
-//						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
-//					
-//						if (pData[8] == 0x12)	// 参数IMEI
-//						{
-//								if (gSystemRunParam.flagAny & 0x01)
-//								{
-//										i = 0;
-//										pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
-//										pSendbuf[i++] = PROTOCOL_APP_ERR_NONE;		
-//										memcpy(pSendbuf + i, NB_CommPacket.Init_Data.imei, IMEI_LEN);
-//										tmp = SC_StrPrintlen(pSendbuf + i) % 17;
-//										pSendbuf[i + tmp] = 0; i ++;
-//										i += tmp;
-//										Put_Return(command, i);
-//								}
-//								else
-//								{
-//										UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_FOUND_NB);
-//								}
-//						}
-//						else if (pData[8] == 0x13)	// ICCID
-//						{
-//								if (gSystemRunParam.flagAny & 0x02)
-//								{
-//										i = 0;
-//										pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
-//										pSendbuf[i++] = PROTOCOL_APP_ERR_NONE;
-//										memcpy(pSendbuf + i, NB_CommPacket.Init_Data.iccid, ICCID_LEN);									
-//										tmp = SC_StrPrintlen(pSendbuf + i) % 33;
-//										pSendbuf[i + tmp] = 0; i ++;
-//										i += tmp;
-//										Put_Return(command, i);
-//								}
-//								else
-//								{
-//										UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_FOUND_SIM);
-//								}
-//						}
-//						else
-//						{
-//								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
-//						}
+						if (dataLen < 9)
+						{
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+								break;
+						}
+						if (UserMemCmp(pData, timestamp, 8) <= 0) 
+								break;
+						memcpy(timestamp, pData, 8);
+						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+					
+						if (pData[8] == 0x12)	// 参数IMEI
+						{
+								if (gSystemRunParam.flagAny & 0x01)
+								{
+										i = 0;
+										pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
+										pSendbuf[i++] = PROTOCOL_APP_ERR_NONE;		
+										memcpy((uint8_t *)(pSendbuf + i), (uint8_t *)NB_CommPacket.Init_Data.imei, IMEI_LEN);
+										tmp = SC_StrPrintlen(pSendbuf + i) % 17;
+										pSendbuf[i + tmp] = 0; i ++;
+										i += tmp;
+										Put_Return(command, i);
+								}
+								else
+								{
+										UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_FOUND_NB);
+								}
+						}
+						else if (pData[8] == 0x13)	// ICCID
+						{
+								if (gSystemRunParam.flagAny & 0x02)
+								{
+										i = 0;
+										pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
+										pSendbuf[i++] = PROTOCOL_APP_ERR_NONE;
+										memcpy((uint8_t *)(pSendbuf + i), (uint8_t *)NB_CommPacket.Init_Data.iccid, ICCID_LEN);									
+										tmp = SC_StrPrintlen(pSendbuf + i) % 33;
+										pSendbuf[i + tmp] = 0; i++;
+										i += tmp;
+										Put_Return(command, i);
+								}
+								else
+								{
+										UserReturnErrCode(command, PROTOCOL_APP_ERR_NOT_FOUND_SIM);
+								}
+						}
+						else
+						{
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+						}
 				}
 						break;
 				
