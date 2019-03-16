@@ -3813,6 +3813,14 @@
 #ifndef SEGGER_RTT_DEBUG_ADD_PERIPHERAL
 #define SEGGER_RTT_DEBUG_ADD_PERIPHERAL 1
 #endif
+// <q> debug ble factoryreset
+#ifndef SEGGER_RTT_DEBUG_FACTORYRESET
+#define SEGGER_RTT_DEBUG_FACTORYRESET 1
+#endif
+// <q> debug ble terfiledata
+#ifndef SEGGER_RTT_DEBUG_TERFILEDATA
+#define SEGGER_RTT_DEBUG_TERFILEDATA 1
+#endif
 #endif
 
 // </e> 

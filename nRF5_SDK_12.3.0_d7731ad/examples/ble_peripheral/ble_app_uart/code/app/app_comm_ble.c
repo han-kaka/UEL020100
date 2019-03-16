@@ -792,14 +792,19 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 					
 				case CMD_FACTORYRESET:													/* 恢复出厂设置 */
 				{
-//						if (dataLen != 129)
-//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}
-//						if (pData[8] != 0xAA)
-//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}
-////						UserGetAppData(P_EE_ADDR_TIMESTAMP, buf);
-//						if (UserMemCmp(pData, buf, 8) <= 0) break;
-//						UserSaveAppData(P_EE_ADDR_TIMESTAMP, pData);
-//						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
+				#if SEGGER_RTT_DEBUG_FACTORYRESET
+						SEGGER_RTT_printf(0, "cmd factoryrest!\r\n");
+				#endif
+						if (dataLen != 129)
+						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}
+						if (pData[8] != 0xAA)
+						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}					
+						if (UserMemCmp(pData, timestamp, 8) <= 0) 
+								break;
+						memcpy(timestamp, pData, 8);
+						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
+						
 //						UserClearUserInfoFromSystem();
 //						gSystemRunParam.flagInit = 0x00;									// 清除管理员及密码
 //						SaveSetup();														// 保存数据
@@ -808,13 +813,15 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 //						ChangescanRspData(sizeof ( lockinitname ), (uint8*)lockinitname);	// 初始化广播名字
 //						UserSaveAppData(P_EE_ADDR_LOCKNAME, (uint8*)lockinitname);			// update to EEPROM
 //						UserStartAdv(1, 0);													// 立即开始广播
-//						UserSoundSuccess();
 				}
 						break;
 				
 				case CMD_TERFILEDATA:													/* 写设备文件数据 */
 				{
-//				#if (defined USER_FINGERMODE) && (defined USER_FINGERMODEVENA)
+				#if SEGGER_RTT_DEBUG_TERFILEDATA
+						SEGGER_RTT_printf(0, "cmd terfiledata!\r\n");
+				#endif
+				#if (defined USER_FINGERMODE) && (defined USER_FINGERMODEVENA)
 //						temp16 = pData[0];
 //						temp16 = (temp16 << 8) | pData[1]; /* 读取包序号 */
 //						if (temp16 == 0) /* 文件信息 */
@@ -852,14 +859,16 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 //							{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}
 //							UserFingerModuleAddUserDataIng(temp16, pData + 2);
 //						}
-//				#else
-//						UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
-//				#endif
+				#else
+						UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
+				#endif
 				}
 						break;
 				
 				case CMD_PARAM_CONFIG:													/* 参数配置指令 */
 				{
+					
+					
 						if (dataLen < 9)
 						{
 								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
@@ -906,6 +915,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 					
 				case CMD_PARAM_READ:													/* 参数读取指令 */
 				{
+					
 						if (dataLen < 9)
 						{
 								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
