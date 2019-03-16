@@ -309,7 +309,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 				return ret;
 		}
 		#if SEGGER_RTT_DEBUG_AES_DECODE
-				SEGGER_RTT_printf(0, "command = %d\r\n",command);
+				SEGGER_RTT_printf(0, "command = %02x\r\n",command);
 		#endif
 		
 		switch (command)
@@ -639,12 +639,12 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 								break;
 						#endif
 						}
-//						else
-//						{
-//								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
+						else
+						{
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);
 //								break;
-//						}
-						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
+						}
+//						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
 				}
 						break;
 					
@@ -752,9 +752,9 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 				
 				case CMD_READ_LOG:														/* 读取日志 */
 				{
-						#if SEGGER_RTT_DEBUG_READ_LOG
-								SEGGER_RTT_printf(0, "cmd read log!\r\n");
-						#endif
+				#if SEGGER_RTT_DEBUG_READ_LOG
+						SEGGER_RTT_printf(0, "cmd read log!\r\n");
+				#endif
 					
 						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
 						if (UserGetLogInfo(pTmpLogInfo) == 1)
@@ -829,24 +829,33 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 				
 				case CMD_DEL_LOG:														/* 删除日志 */
 				{
-//						//	if (dataLen != 16)
-//						//	{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
-//							memcpy(pTmpLogInfo->userId, pData, sizeof(pTmpLogInfo->userId));
-//							tmp32 = pData[sizeof(pTmpLogInfo->userId) + 0];
-//							tmp32 = (tmp32 << 8) | pData[sizeof(pTmpLogInfo->userId) + 1];
-//							tmp32 = (tmp32 << 8) | pData[sizeof(pTmpLogInfo->userId) + 2];
-//							tmp32 = (tmp32 << 8) | pData[sizeof(pTmpLogInfo->userId) + 3];
-//							pTmpLogInfo->time = tmp32 - SECONDS2000YEAR;
-//							if (UserDelLogInfo(pTmpLogInfo) == 1)
-//							{
-//									UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
-//							}
-//							else 
-//							{
-//									UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
-//							}
-					}
-							break;
+				#if SEGGER_RTT_DEBUG_DEL_LOG
+						SEGGER_RTT_printf(0, "cmd del log!\r\n");
+				#endif
+//						if (dataLen != 16)
+//						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}			/* 数据长度错误，返回参数错误 */
+						memcpy(pTmpLogInfo->userId, pData, sizeof(pTmpLogInfo->userId));
+						tmp32 = pData[sizeof(pTmpLogInfo->userId) + 0];
+						tmp32 = (tmp32 << 8) | pData[sizeof(pTmpLogInfo->userId) + 1];
+						tmp32 = (tmp32 << 8) | pData[sizeof(pTmpLogInfo->userId) + 2];
+						tmp32 = (tmp32 << 8) | pData[sizeof(pTmpLogInfo->userId) + 3];
+						pTmpLogInfo->time = tmp32 - SECONDS2000YEAR;
+						if (UserDelLogInfo(pTmpLogInfo) == 1)
+						{
+						#if SEGGER_RTT_DEBUG_READ_LOG
+								SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_NONE\r\n");
+						#endif
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
+						}
+						else 
+						{
+						#if SEGGER_RTT_DEBUG_READ_LOG
+								SEGGER_RTT_printf(0, "PROTOCOL_APP_ERR_GEN\r\n");
+						#endif
+								UserReturnErrCode(command, PROTOCOL_APP_ERR_GEN);
+						}
+				}
+						break;
 					
 				case CMD_FACTORYRESET:													/* 恢复出厂设置 */
 				{

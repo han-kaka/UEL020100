@@ -3785,6 +3785,10 @@
 #ifndef SEGGER_RTT_DEBUG_READ_LOG
 #define SEGGER_RTT_DEBUG_READ_LOG 1
 #endif
+// <q> debug ble del log
+#ifndef SEGGER_RTT_DEBUG_DEL_LOG
+#define SEGGER_RTT_DEBUG_DEL_LOG 1
+#endif
 // <q> debug ble set keyboard
 #ifndef SEGGER_RTT_DEBUG_SET_KEYBOARD
 #define SEGGER_RTT_DEBUG_SET_KEYBOARD 1
@@ -3894,7 +3898,7 @@
 
 // <q> debug flash
 #ifndef SEGGER_RTT_DEBUG_FLASH
-#define SEGGER_RTT_DEBUG_FLASH 1
+#define SEGGER_RTT_DEBUG_FLASH 0
 #endif
 
 // <q> debug motor

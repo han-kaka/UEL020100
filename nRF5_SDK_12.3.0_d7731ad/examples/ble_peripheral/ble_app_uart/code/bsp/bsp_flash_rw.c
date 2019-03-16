@@ -267,9 +267,6 @@ uint8_t UserGetLogInfo(LogInfo_t *pBuf)
 		
 		if (pBuf != 0)
 		{
-		#if SEGGER_RTT_DEBUG_READ_LOG	
-				SEGGER_RTT_printf(0, "read log flash!\r\n");
-		#endif
 				read_log_data(p_log_data_struct);
 		
 		#if SEGGER_RTT_DEBUG_READ_LOG				
@@ -319,6 +316,12 @@ uint8_t UserDelLogInfo(LogInfo_t *pBuf)
 		tmpLogInfoIndex.head = (log_index[1] << 8) | log_index[2]; 
 		tmpLogInfoIndex.tail = (log_index[3] << 8) | log_index[4]; 
 
+#if SEGGER_RTT_DEBUG_READ_LOG
+		SEGGER_RTT_printf(0, "tmpLogInfoIndex.flag = %02x!\r\n",tmpLogInfoIndex.flag);
+		SEGGER_RTT_printf(0, "tmpLogInfoIndex.head = %x!\r\n",tmpLogInfoIndex.head);
+		SEGGER_RTT_printf(0, "tmpLogInfoIndex.tail = %x!\r\n",tmpLogInfoIndex.tail);
+#endif
+	
 		if (tmpLogInfoIndex.flag != 0xAA)
 		{
 				tmpLogInfoIndex.flag = 0xAA;
@@ -344,11 +347,24 @@ uint8_t UserDelLogInfo(LogInfo_t *pBuf)
 		if (pBuf > 0)
 		{
 				read_log_data(p_log_data_struct);
-				memcpy(tmpLogInfo.userId, p_log_data_struct + sizeof(LogInfo_t) * tmpLogInfoIndex.tail, sizeof(LogInfo_t));
-			
-				if ((memcmp(tmpLogInfo.userId, pBuf->userId, sizeof(tmpLogInfo.userId)) != 0) && 
-					(tmpLogInfo.time == pBuf->time))
+				memcpy((uint8_t *)&tmpLogInfo, ((uint8_t *)p_log_data_struct+sizeof(LogInfo_t)*tmpLogInfoIndex.tail), sizeof(LogInfo_t));
+		#if SEGGER_RTT_DEBUG_READ_LOG
+				SEGGER_RTT_printf(0, "tmpLogInfo_data[%d]!\r\n", sizeof(LogInfo_t));
+				for(uint8_t i=0; i<sizeof(LogInfo_t); i++)
 				{
+						SEGGER_RTT_printf(0, " %02x", ((uint8_t *)&tmpLogInfo)[i]);
+				}
+				SEGGER_RTT_printf(0, "\r\n");
+				SEGGER_RTT_printf(0, " %x\r\n", tmpLogInfo.time);
+				SEGGER_RTT_printf(0, " %x\r\n", pBuf->time);
+		#endif
+				if ((memcmp((uint8_t *)tmpLogInfo.userId, (uint8_t *)pBuf->userId, sizeof(tmpLogInfo.userId)) != 0) && 
+					  (tmpLogInfo.time == pBuf->time))
+				{
+					
+				#if SEGGER_RTT_DEBUG_READ_LOG
+						SEGGER_RTT_printf(0, "return 1!\r\n");
+				#endif
 						if (++tmpLogInfoIndex.tail >= MAX_LOG_NUM) tmpLogInfoIndex.tail = 0;
 						
 						log_index[0] = tmpLogInfoIndex.flag;
@@ -372,6 +388,9 @@ uint8_t UserDelLogInfo(LogInfo_t *pBuf)
 				log_index[4] = tmpLogInfoIndex.tail & 0xff;
 				set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 		}
+#if SEGGER_RTT_DEBUG_READ_LOG
+		SEGGER_RTT_printf(0, "return 0!\r\n");
+#endif
 		return 0;
 }
 

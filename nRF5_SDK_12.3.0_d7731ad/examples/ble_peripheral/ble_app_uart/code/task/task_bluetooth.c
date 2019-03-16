@@ -40,38 +40,9 @@ uint8_t BlueTooth_Task(uint8_t prio)
 								break;
 						
 						case BLUETOOTH_AES_DECODE:
-						{
-//								uint8_t *pp = sProtocolAppFormat.pData;
-//							
-//								pp += sProtocolAppFormat.headData.dataLen - 4*Nb;
-//								
-//								for(i=sProtocolAppFormat.headData.dataLen/(4*Nb); i>0; i--, pp-=4*Nb)
-//								{
-//										if (i == 1)
-//										{// 最后一块数据
-//												AES128_CBC_decrypt_buffer(pp, pp, 4*Nb, useraeskeybuf, useraeskeybuf);
-//										}
-//										else
-//										{
-//												AES128_CBC_decrypt_buffer(pp, pp, 4*Nb, useraeskeybuf, pp-4*Nb);
-//										}
-//								}
-							
+						{							
 								sProtocolAppFormat.headData.dataLen = AES_Decrypt(sProtocolAppFormat.pData, sProtocolAppFormat.pData, sProtocolAppFormat.headData.dataLen, useraeskeybuf, useraeskeybuf);
-
 								stateProcessCommand = 0;
-
-//								i = *(sProtocolAppFormat.pData + sProtocolAppFormat.headData.dataLen - 1);
-//								if((i < sProtocolAppFormat.headData.dataLen) && (i > 0))
-//								{
-//										sProtocolAppFormat.headData.dataLen = sProtocolAppFormat.headData.dataLen - i;
-//								}
-//								else
-//								{
-//										sProtocolAppFormat.headData.dataLen = 0;
-//								}
-								
-								
 						#if SEGGER_RTT_DEBUG_AES_DECODE	
 								ble_command_rx_log(sProtocolAppFormat.headData.dataLen, sProtocolAppFormat.pData, AES_DECODE);
 						#endif	
