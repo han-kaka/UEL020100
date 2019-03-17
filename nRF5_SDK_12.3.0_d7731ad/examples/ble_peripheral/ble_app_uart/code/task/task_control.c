@@ -2,6 +2,8 @@
 
 uint8_t Contrl_Task(uint8_t prio)
 {
+//		SEGGER_RTT_printf(0, "Contrl_Task\r\n");
+	
     uint8_t m_SYS_SubTask_prio=0;
     while(ga_Subtask[prio])
     {

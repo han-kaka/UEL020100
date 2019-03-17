@@ -35,10 +35,16 @@ void m_system_timeout_handler (void *p_context)
     if(Tim_Ms_Struct.sys_ms_count >= MS_TO_S)     // 1S时间到
     {		
 				Tim_1s_Struct.sys_s_count++;
-				if(Tim_1s_Struct.sys_s_count >= S_TO_10S)     // 1S时间到
+				if(Tim_1s_Struct.sys_s_count >= S_TO_10S)     // 10S时间到
 				{	
 						Tim_1s_Struct.sys_s_count -= S_TO_10S;
 						if (gFlagAdjustTime > 1) {gFlagAdjustTime --;}
+						
+						Tim_1s_Struct.sys_10s_count++;
+						if(Tim_1s_Struct.sys_10s_count >= S_TO_HOUR)
+						{
+								set_task(MEASURE, MEASURE_VOLTAGE);
+						}
 				}
 				seconds_times++;
 				Tim_Ms_Struct.sys_ms_count -= MS_TO_S;
@@ -87,8 +93,6 @@ void m_system_timeout_handler (void *p_context)
 				}
 		}
 		
-		
-		
 //		if(Sys_Flag_Struct.air_pressure_flag == ENABLE)
 //		{
 //				//set_task(MEASURE, MEASURE_CMP);
@@ -126,50 +130,50 @@ void m_system_timeout_handler (void *p_context)
 void m_motor_timeout_handler(void *p_context)
 {
 //    setWDI();//在系统慢速定时器内清零	
-			switch (use_channel_enum)
-			{  
-					case LOCKMOTOR_PWM_CHANNEL:
-					{
-							if(++Motor_Struct.motor_times > LOCK_PWM_DRIVE_TIME)
-							{
+		switch (use_channel_enum)
+		{  
+				case LOCKMOTOR_PWM_CHANNEL:
+				{
+						if(++Motor_Struct.motor_times > LOCK_PWM_DRIVE_TIME)
+						{
 //									stop_lockmotor_pwm();	
-							}	
-					}                    
-							break;
-					
-					case UNLOCKMOTOR_FULL_CHANNEL:
-					{
-							//超时
-							if(++Motor_Struct.motor_times > UNLOCK_FULL_DRIVE_TIME)
-							{
-									task_flag_struct.stop_motor_st = 1; 
-							}
-					}
-							break;	
-					
-					case LOCKMOTOR_FULL_CHANNEL:
-					{
-							//超时
-							if(++Motor_Struct.motor_times > LOCK_FULL_DRIVE_TIME)
-							{
-									task_flag_struct.stop_motor_st = 1; 
-							}
-					}                    
-							break; 	
-					
-					case UNLOCKMOTOR_PWM_CHANNEL:
-					{
-							//超时处理
-							if(++Motor_Struct.motor_times > UNLOCK_PWM_DRIVE_TIME)
-							{
+						}	
+				}                    
+						break;
+				
+				case UNLOCKMOTOR_FULL_CHANNEL:
+				{
+						//超时
+						if(++Motor_Struct.motor_times > UNLOCK_FULL_DRIVE_TIME)
+						{
+								task_flag_struct.stop_motor_st = 1; 
+						}
+				}
+						break;	
+				
+				case LOCKMOTOR_FULL_CHANNEL:
+				{
+						//超时
+						if(++Motor_Struct.motor_times > LOCK_FULL_DRIVE_TIME)
+						{
+								task_flag_struct.stop_motor_st = 1; 
+						}
+				}                    
+						break; 	
+				
+				case UNLOCKMOTOR_PWM_CHANNEL:
+				{
+						//超时处理
+						if(++Motor_Struct.motor_times > UNLOCK_PWM_DRIVE_TIME)
+						{
 //									stop_unlockmotor_pwm();		//2.5s	
-							}											
-					}                    
-							break;
-					
-					default:
-							break;									 
-			} 
+						}											
+				}                    
+						break;
+				
+				default:
+						break;									 
+		} 
 }
 
 //初始化马达的定时器

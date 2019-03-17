@@ -599,6 +599,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						
 						pSendbuf = char4_all_send + sizeof(ProtocolAppHeadFormat_t);
 						pSendbuf[sendLength ++] = PROTOCOL_APP_ERR_NONE;
+						gSystemRunParam.batterPercent = (gSystemRunParam.advc - 370)*100/50;
 						pSendbuf[sendLength ++] = gSystemRunParam.batterPercent;
 						tmp = 0;
 						if (gFlagAdjustTime <= 1) 

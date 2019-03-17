@@ -17,15 +17,15 @@
 //一次采集缓存
 #define ADC_BUFFER_SIZE      4                                /**< Size of buffer for ADC samples.  */
 
-////配置采集通道
-////设置温感通道 1.2V参考，1/3输入
-//#define NRF_DRV_ADC_NTC_CHANNEL(analog_input)                        \
-// {{{                                                                 \
-//    .resolution = NRF_ADC_CONFIG_RES_10BIT,                          \
-//    .input      = ADC_CONFIG_INPSEL_AnalogInputOneThirdPrescaling,   \
-//    .reference  = NRF_ADC_CONFIG_REF_VBG,                            \
-//    .ain        = (analog_input)                                     \
-// }}, NULL}
+//配置采集通道
+//设置温感通道 1.2V参考，1/3输入
+#define NRF_DRV_ADC_BAT_CHANNEL(analog_input)                        \
+ {{{                                                                 \
+    .resolution = NRF_ADC_CONFIG_RES_10BIT,                          \
+    .input      = NRF_ADC_CONFIG_SCALING_INPUT_ONE_THIRD,            \
+    .reference  = NRF_ADC_CONFIG_REF_VBG,                            \
+    .ain        = (analog_input)                                     \
+ }}, NULL}
 
 
 //volatile uint32_t m_outbattery_value;        //一个是太阳能值，
@@ -35,7 +35,7 @@ volatile uint32_t m_battery_value;           //一个是电池值,
 volatile uint32_t test_adc_value;            //一次性采集的均值
 
 //static nrf_drv_adc_channel_t bat_outside_channel_config = NRF_DRV_ADC_DEFAULT_CHANNEL(NRF_ADC_CONFIG_INPUT_4); /**< Channel instance. Default configuration used. */
-static nrf_drv_adc_channel_t bat_inside_channel_config  = NRF_DRV_ADC_DEFAULT_CHANNEL(NRF_ADC_CONFIG_INPUT_0); /**< Channel instance. Default configuration used. */
+static nrf_drv_adc_channel_t bat_inside_channel_config  = NRF_DRV_ADC_BAT_CHANNEL(NRF_ADC_CONFIG_INPUT_2); /**< Channel instance. Default configuration used. */
 //static nrf_drv_adc_channel_t rt_channel_config          = NRF_DRV_ADC_NTC_CHANNEL(NRF_ADC_CONFIG_INPUT_5);     /**< Channel instance. Default configuration used. */
 //static nrf_drv_adc_channel_t ntc_channel_config         = NRF_DRV_ADC_NTC_CHANNEL(NRF_ADC_CONFIG_INPUT_6);     /**< Channel instance. Default configuration used. */
  
@@ -44,9 +44,8 @@ static nrf_adc_value_t       adc_buffer[ADC_BUFFER_SIZE]; /**< ADC buffer. */
 Current_ADC_Enum current_adc = BATTERY_ADC;
 ADC_Sample_Enum adc_sample = ADC_START;
 bool need_adc_sample = false;
-AD_Type AD_struct;
+//AD_Type AD_struct;
 //voltage_adc_t voltage_adc;
-
 
 static void voltage_process_task(void);
 
@@ -135,11 +134,11 @@ static uint16_t get_battery_vol(void)
   
     if(m_battery_value > MAX_BATTERY_VALUE)
     {
-        vol = MAX_BATTERY_VALUE*420;
+        vol = MAX_BATTERY_VALUE*120*3*2;
     } 
     else
     {
-        vol = m_battery_value*420;
+        vol = m_battery_value*120*3*2;
     }
 		vol = vol/MAX_BATTERY_VALUE;	
 		if(vol>500)
@@ -303,12 +302,11 @@ static void adc_calculate(void)
 						{
 								m_battery_value = test_adc_value;
 						}
-						AD_struct.voltage_battery = get_battery_vol();
-						if(AD_struct.voltage_battery < ALARM_VOLTAGE_VALUE) //低电量报警,具体数值待定
+						gSystemRunParam.advc = get_battery_vol();
+						if(gSystemRunParam.advc < ALARM_VOLTAGE_VALUE) //低电量报警,具体数值待定
 						{
-
 						}
-						// NRF_LOG_DIRECT("battery_value = %d \r\n",voltage_adc.voltage_battery);
+						SEGGER_RTT_printf(0, "battery_value = %d!\r\n", gSystemRunParam.advc);
 						current_adc = IDLE_ADC;
 						need_adc_sample = false;
 				}
@@ -372,26 +370,26 @@ static void adc_init(void)
 {
     switch(current_adc)
     {
-        case RT_REFER_ADC: 	
-            need_adc_sample = true;
-				#if SEGGER_RTT_DEBUG_ADC	
-						SEGGER_RTT_printf(0, "RT REFER ADC\r\n");
-				#endif				
-            break;	
-				
-        case NTC_ADC:
-						need_adc_sample = true;
-				#if SEGGER_RTT_DEBUG_ADC	
-						SEGGER_RTT_printf(0, "NTC ADC\r\n");
-				#endif                           
-            break;
-				
-        case SOLAR_ADC:	
-						need_adc_sample = true;	
-				#if SEGGER_RTT_DEBUG_ADC	
-						SEGGER_RTT_printf(0, "SOLAR ADC\r\n");
-				#endif				               
-            break;
+//        case RT_REFER_ADC: 	
+//            need_adc_sample = true;
+//				#if SEGGER_RTT_DEBUG_ADC	
+//						SEGGER_RTT_printf(0, "RT REFER ADC\r\n");
+//				#endif				
+//            break;	
+//				
+//        case NTC_ADC:
+//						need_adc_sample = true;
+//				#if SEGGER_RTT_DEBUG_ADC	
+//						SEGGER_RTT_printf(0, "NTC ADC\r\n");
+//				#endif                           
+//            break;
+//				
+//        case SOLAR_ADC:	
+//						need_adc_sample = true;	
+//				#if SEGGER_RTT_DEBUG_ADC	
+//						SEGGER_RTT_printf(0, "SOLAR ADC\r\n");
+//				#endif				               
+//            break;
 				
         case BATTERY_ADC:	  
 						need_adc_sample = true;
@@ -413,7 +411,7 @@ static void adc_init(void)
 //            break;
 				
         default:
-            current_adc = RT_REFER_ADC;
+            current_adc = BATTERY_ADC;
             break;  
     }
 }
@@ -435,7 +433,7 @@ static void voltage_process_task(void)
 
 void measure_voltage(void)
 {
-		current_adc = RT_REFER_ADC;
+		current_adc = BATTERY_ADC;
 		adc_sample = ADC_START;
 		while(1)
 		{

@@ -2,9 +2,11 @@
 
 uint8_t BlueTooth_Task(uint8_t prio)
 {
+//		SEGGER_RTT_printf(0, "BlueTooth_Task\r\n");
+	
 		uint8_t m_SYS_SubTask_prio=0;
 		uint8_t  temp;
-//		uint8_t i;
+	
 		while(ga_Subtask[prio])
 		{
 				m_SYS_SubTask_prio = ga_TaskMapTable[ga_Subtask[prio]];

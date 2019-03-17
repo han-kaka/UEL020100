@@ -59,5 +59,4 @@ void init_peripheral(void)
 //	
 //		drive_open();
 //		saadc_init();
-	
 }
