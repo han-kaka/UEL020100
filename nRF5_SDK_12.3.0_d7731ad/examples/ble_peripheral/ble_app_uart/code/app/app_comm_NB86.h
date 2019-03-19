@@ -186,27 +186,16 @@ typedef enum
 //---------GPRS模块通讯的数据ID-----------
 typedef enum 
 {
-//		UPLOAD_ID_AUTH = 0,          //发送登录包
-//		UPLOAD_ID_STA_MESS,          //发送状态信息包
-//		UPLOAD_ID_HEARTBEAT,         //发送心跳包
-	
 		UPLOAD_ID_INIT = 0,          //发送登录包
-		UPLOAD_ID_LOG,               //发送状态信息包
+		UPLOAD_ID_LOG,               //发送日志包
+		UPLOAD_ID_HEARTBEAT,         //发送心跳包
 		UPLOAD_ID_MAX,
 		UPLOAD_ID_INVALID = 0xFF,
 
-}GPRS_COMM_ID;
+}NB_COMM_ID;
 
 typedef enum 
 {
-//		RETURN_ID_SET_PARMTE=0,
-//		RETURN_ID_QUERY_PARMTE,
-//		RETURN_ID_READ_MESS,
-//		RETURN_ID_CTROL,
-//		RETURN_ID_WRITE_ADDR,
-//		RETURN_ID_READ_ADDR,
-//		RETURN_ID_READ_STA_MESS,
-//		RETURN_ID_SYS_PARMTE_SET,
 		RETURN_ID_MAX,
 		RETURN_ID_INVALID = 0xFF,
 
@@ -215,22 +204,9 @@ typedef enum
 
 typedef enum 
 {
-//		COMM_Event_AUTH             = (0x01 << UPLOAD_ID_AUTH),                  //发送登录包
-//		COMM_Event_STA_MESS         = (0x01 << UPLOAD_ID_STA_MESS),              //发送状态信息包
-//		COMM_Event_HEARTBEAT        = (0x01 << UPLOAD_ID_HEARTBEAT),             //发送心跳包
-	
 		COMM_EVENT_INIT             = (0x01 << UPLOAD_ID_INIT),                  //发送登录包
-		COMM_EVENT_LOG              = (0x01 << UPLOAD_ID_LOG),                   //发送心跳包
-	
-//    COMM_Event_SET_PARMTE       = (0x01 << RETURN_ID_SET_PARMTE),            
-//    COMM_Event_QUERY_PARMTE     = (0x01 << RETURN_ID_QUERY_PARMTE),
-//    COMM_Event_READ_MESS        = (0x01 << RETURN_ID_READ_MESS),
-//    COMM_Event_CTROL            = (0x01 << RETURN_ID_CTROL),
-//    COMM_Event_WRITE_ADDR       = (0x01 << RETURN_ID_WRITE_ADDR),
-//    COMM_Event_READ_ADDR        = (0x01 << RETURN_ID_READ_ADDR),
-//    COMM_Event_READ_STA_MESS    = (0x01 << RETURN_ID_READ_STA_MESS),
-//    COMM_Event_SYS_PARMTE_SET   = (0x01 << RETURN_ID_SYS_PARMTE_SET),
-	
+		COMM_EVENT_LOG              = (0x01 << UPLOAD_ID_LOG),                   //发送日志包
+		COMM_EVENT_HEARTBEAT        = (0x01 << UPLOAD_ID_HEARTBEAT),             //发送心跳包
 }NB_COMM_Event;
 
 /*State switch Event*/
@@ -239,7 +215,7 @@ typedef enum
 		STATE_Event_COMM   = BIT0,     /*go to Comm*/
     STATE_Event_MAX,
 	
-}GPRS_STATE_Event;
+}NB_STATE_Event;
 
 
 /*******GPRS应答类型*************/

@@ -31,7 +31,7 @@ typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 #define NumberOfElements(x) (sizeof(x)/sizeof((x)[0]))
 
 #define NB_MS_TO_S                (1000UL)
-#define HEARTBEAT_TIME              (240UL)
+#define HEARTBEAT_TIME              (2400UL)
 
 #ifndef BV
 #define BV(n)      (1 << (n))

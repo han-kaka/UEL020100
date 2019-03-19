@@ -566,7 +566,7 @@ int main(void)
 #ifdef RTT_LOG_ENABLE
 		SEGGER_RTT_printf(0, "Adv Start!\r\n");
 #endif
-		
+
 		com_bsp_init();
 		
     // Enter main loop.

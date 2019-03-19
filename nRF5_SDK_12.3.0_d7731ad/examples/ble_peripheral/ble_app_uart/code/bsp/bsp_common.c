@@ -40,7 +40,7 @@ uint8_t com_bsp_init(void)
 		SEGGER_RTT_printf(0, "set task MEASURE_VOLTAGE\r\n");
 		Tim_1s_Struct.sys_10s_count = 0;
 		set_task(MEASURE, MEASURE_VOLTAGE);
-//    app_comm_init();            //COMM state and event init
+    app_comm_init();            //COMM state and event init
 
     return true;
 }

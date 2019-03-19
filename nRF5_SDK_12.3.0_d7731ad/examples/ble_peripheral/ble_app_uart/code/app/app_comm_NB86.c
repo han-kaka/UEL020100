@@ -1,6 +1,6 @@
 #include "app_comm_NB86.h"
 #include "nrf_drv_gpiote.h"
-//#include "nrf_delay.h"
+#include "nrf_delay.h"
 
 static uint16_t NB_msCount = 0;
 
@@ -90,7 +90,7 @@ static const uint8_t s_ATCmdStep_Init[] =
 static const uint8_t s_ATCmdStep_Connnect[] = 
 {
 		NB_AT_CGDCONT,
-		NB_AT_CSQ,
+//		NB_AT_CSQ,
 		NB_AT_CGATT_1,
 		NB_AT_CGATT1,	
 	  NB_AT_CFUN_0, 
@@ -125,12 +125,6 @@ static const uint8_t s_ATCmdStep_Mess[] =
 		NB_AT_CFUN_1,
 		NB_AT_CFUN1,
 		NB_AT_NCCID,
-};
-
-static const uint8_t s_ATCmdStep_Read[] = 
-{
-		NB_AT_NMGR,
-		NB_AT_NQMGR,
 };
 
 static const uint8_t s_ATCmdStep_Inquire[] = 
@@ -189,10 +183,10 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
      //ÅÐ¶Ï½ÓÊÕµÄÊý¾ÝÊÇ·ñº¬ÓÐÆÚÍûÓ¦´ð
 		if(Check_Strstr((char*)RxBuf, NB_ATCmdCB.ExpResultStr, NB_ATCmdCB.ucRxLen) == true)
 		{
-				if((NB_ATCmdCB.ATCmdPt == NB_AT_CFUN0) ||
-					 (NB_ATCmdCB.ATCmdPt == NB_AT_CFUN1) ||
-					 (NB_ATCmdCB.ATCmdPt == NB_AT_CGATT1) ||
-					 (NB_ATCmdCB.ATCmdPt == NB_AT_CGATT0))
+				if((NB_AT_CFUN0 == NB_ATCmdCB.ATCmdPt) ||
+					 (NB_AT_CFUN1 == NB_ATCmdCB.ATCmdPt) ||
+					 (NB_AT_CGATT1 == NB_ATCmdCB.ATCmdPt) ||
+					 (NB_AT_CGATT0 == NB_ATCmdCB.ATCmdPt))
 				{
 						if(Check_Strstr((char*)RxBuf, "OK", 20) != true)
 						{
@@ -207,9 +201,9 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 						#endif
 				}
 				
-				if((NB_ATCmdCB.ATCmdPt == NB_AT_CGSN_1) ||
-					 (NB_ATCmdCB.ATCmdPt == NB_AT_NCCID) ||
-				   (NB_ATCmdCB.ATCmdPt == NB_AT_CSQ))
+				if((NB_AT_CGSN_1 == NB_ATCmdCB.ATCmdPt) ||
+					 (NB_AT_NCCID == NB_ATCmdCB.ATCmdPt) ||
+				   (NB_AT_CSQ == NB_ATCmdCB.ATCmdPt))
 				{
 						if(Check_Strstr((char*)RxBuf, "OK", 65) != true)
 						{
@@ -223,6 +217,14 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 								SEGGER_RTT_printf(0, "at+cgsn=1/at+nccid ok !\r\n");
 						#endif
 				}
+				if(NB_AT_CGPADDR == NB_ATCmdCB.ATCmdPt)
+				{
+						if(Check_Strstr((char*)RxBuf, ".", 30) != true)
+						{
+								return BACK_ERROR;  
+						}
+				}
+				
 				NB_ATCmdCB.RspType = RSP_TYPE_CMD;//Ó¦´ðATÖ¸Áî
 				return BACK_TRUE;                 //½ÓÊÕµ½ÕýÈ·Ó¦´ð
 		} 
@@ -241,7 +243,7 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 				{
 						return NO_BACK;
 				}
-			return BACK_ERROR;   		
+				return BACK_ERROR;   		
 		}	
 }
 
@@ -633,25 +635,19 @@ static uint8_t APP_NB_WriteATPacket(uint8_t ATCmdIndex, uint8_t *pFrameDes)
     uint8_t dataNum;
     char *endStr="\x1A\r\n";
 		switch(ATCmdIndex)
-		{
-//				case NB_AT_MIPOPEN_1:/*½¨Á¢socketÁ¬½Ó*/
+		{				
+//				case NB_AT_NCDP:
 //				{
-//						strcpy((char*)pFrameDes, AT_CmdTbl[ATCmdIndex].CmdStr);  
-//						dataNum = Get_Comma(2, (uint8_t*)pFrameDes);
-//						APP_GPRS_SetIP(&pFrameDes[dataNum]);			    
-//						ucSendLen = strlen((char*)pFrameDes);
-//					
-//				}break;
-//				
-//				case NB_AT_DATA:/*Ìî³äÊý¾ÝÄÚÈÝ*/
+//						
+//				}
+//						break;
+			
+//				case NB_AT_CGDCONT:
 //				{
-//						memcpy(pFrameDes, g_stNB_Handler.TxBuf, g_stNB_Handler.ucTxLen);/*copy Ó¦ÓÃ²ãÊý¾Ý*/
-//						ucSendLen = strlen(endStr);
-//						memcpy(pFrameDes+g_stNB_Handler.ucTxLen,endStr,ucSendLen);        /*copy ½áÎ²·û*/
-//						ucSendLen += g_stNB_Handler.ucTxLen;
-//					
-//				}break;
-				
+//						
+//				}
+//						break;
+			
 				default:
 				{
 						strcpy((char*)pFrameDes, AT_CmdTbl[ATCmdIndex].CmdStr);
@@ -677,7 +673,7 @@ static void APP_NB_SendATCmd(AT_CMD_CB* pNBATCmdCB)
 		//¸ù¾Ý²»Í¬µÄATÓ¦´ð½á¹û,ÉèÖÃÖØ·¢´ÎÊý
 		if((BACK_TRUE == pAtCmd->ATCmdResult) || (BACK_PERTIMES_OUT == pAtCmd->ATCmdResult))
 		{
-			ucResendCnt = 0;//ÖØ·¢ÇåÁã
+				ucResendCnt = 0;//ÖØ·¢ÇåÁã
 		}
 		else
 		{
@@ -822,7 +818,7 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 		uint8_t ATCmdIndex;
 //		uint8_t asi_len=0;
 //		char *str = "898";
-		char *p   = NULL;
+		char *pTemp   = NULL;
 		if(g_stNB_Handler.StepPt >= MESS_STEP_NUM)
 		{
 				return; 
@@ -836,27 +832,26 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 						case NB_AT_CGSN_1:
 						{
 								//save cgsn
-								p = strstr((char*)RxBuf, "CGSN:");
+								pTemp = strstr((char*)RxBuf, "CGSN:");
 								#if SEGGER_RTT_DEBUG_MESS
 										SEGGER_RTT_printf(0, "cmd cgsn\r\n");
 								#endif
-								if(p != NULL)
+								if(pTemp != NULL)
 								{
 										for (i = 0; i < 16; i ++)
 										{
-												if (((p[5 + i] < '0') || (p[5 + i] > '9')) && 
-														((p[5 + i] < 'a') || (p[5 + i] > 'z')) && 
-														((p[5 + i] < 'A') || (p[5 + i] > 'Z')))
+												if (((pTemp[5 + i] < '0') || (pTemp[5 + i] > '9')) && 
+														((pTemp[5 + i] < 'a') || (pTemp[5 + i] > 'z')) && 
+														((pTemp[5 + i] < 'A') || (pTemp[5 + i] > 'Z')))
 												{
 														break;
 												}
 										}
-										if (i < 16) p[5 + i] = 0x00;
-										memcpy(NB_CommPacket.Init_Data.imei, p+5, i);
+										if (i < 16) pTemp[5 + i] = 0x00;
+										memcpy(NB_CommPacket.Init_Data.imei, pTemp+5, i);
 								#if SEGGER_RTT_DEBUG_MESS
 										SEGGER_RTT_printf(0, "len = %u, imei:%s. \r\n", i, NB_CommPacket.Init_Data.imei);
 								#endif
-										//Ascii_To_Hex(p, NB_CommPacket.AuthData.imei, (uint16_t)asi_len); 
 										set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 								}
 						}
@@ -865,24 +860,24 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 						case NB_AT_NCCID:
 						{
 								//save nccid
-								p = strstr((char*)RxBuf, "NCCID:");
+								pTemp = strstr((char*)RxBuf, "NCCID:");
 								#if SEGGER_RTT_DEBUG_MESS
 										SEGGER_RTT_printf(0, "cmd nccid\r\n");
 								#endif
-								if(p != NULL)
+								if(pTemp != NULL)
 								{
 										for (i = 0; i < 32; i ++)
 										{
-												if (((p[6 + i] < '0') || (p[6 + i] > '9')) && 
-														((p[6 + i] < 'a') || (p[6 + i] > 'z')) && 
-														((p[6 + i] < 'A') || (p[6 + i] > 'Z')))
+												if (((pTemp[6 + i] < '0') || (pTemp[6 + i] > '9')) && 
+														((pTemp[6 + i] < 'a') || (pTemp[6 + i] > 'z')) && 
+														((pTemp[6 + i] < 'A') || (pTemp[6 + i] > 'Z')))
 												{
 														break;
 												}
 										}
-										if (i < 32) p[6 + i] = 0x00;
+										if (i < 32) pTemp[6 + i] = 0x00;
 										
-										memcpy(NB_CommPacket.Init_Data.iccid, p+6, i);
+										memcpy(NB_CommPacket.Init_Data.iccid, pTemp+6, i);
 								#if SEGGER_RTT_DEBUG_MESS
 										SEGGER_RTT_printf(0, "len = %u, nccid:%s. \r\n", i, NB_CommPacket.Init_Data.iccid);
 								#endif
@@ -1274,12 +1269,8 @@ static void APP_NB_Reset_Init(void)
 {                 
     //ÑÓÊ±ÊÂ¼þÌí¼ÓÖÁÖ÷¶¯ÉÏ´«ÊÂ¼þÖÐ
     //Ðè°ÑÑÓÊ±ÊÂ¼þÈ«²¿Ìí¼ÓÖÁÖ÷¶¯ÉÏ´«ÊÂ¼þÖÐ
-//    APP_NB_EventProc(NB_EvtProc.ucDelayEvt, &NB_EvtProc.ucUploadEvt);  
     g_stNB_Handler.AuthStatus = NOT_AUTH;
     NB_EVENT_SET(NB_EvtProc.ucUploadEvt, COMM_EVENT_INIT);
-//    NB_EvtProc.ucRespondEvt =0;
-//    NB_EvtProc.ucRetryEvt =0;
-//    NB_EvtProc.ucDelayEvt =0;
     g_stNB_Handler.ucCommEvent = 0;
     NB_NetPar.NetType = NET_NO_NET;           //ÎÞÍøÂç×´Ì¬Á¬½Ó
     NB_NetPar.NetConnSta = CONN_OFF;
@@ -1296,11 +1287,11 @@ void app_comm_init(void)
 		g_stNB_Handler.StateOld = NB_STATE_POWER_ON; 
 		g_stNB_Handler.StepPt = 0;
 		g_stNB_Handler.AuthStatus = NOT_AUTH;
-//		BSP_NB_POWERON_SET;
-//		nrf_delay_us(1000); 
-//		BSP_NB_RESET_SET
-//		while(1)
-//		{}
+		BSP_NB_POWERON_SET;
+		nrf_delay_us(1000);
+		BSP_NB_RESET_SET
+		while(1)
+		{}
 		NB_EVENT_SET(NB_EvtProc.ucUploadEvt, COMM_EVENT_INIT);//ÉÏµçÐè·¢ËÍÒ»¸öµÇÂ¼°ü
 		set_task(COMM, COMM_STATE_PROC);     //Æô¶¯GPRS×´Ì¬´¦ÀíÈÎÎñ
 }
@@ -1314,12 +1305,13 @@ void APP_NB_TimeProc(uint16_t usPeriod)
 		if(NB_ATCmdCB.ulTimeOut >= usPeriod)
 		{
 				NB_ATCmdCB.ulTimeOut -= usPeriod;
-				if(NB_ATCmdCB.ulTimeOut < usPeriod)
-				{
-						NB_ATCmdCB.ATCmdResult = BACK_TIMEOUT;/*³¬Ê±*/ 
-				}
+		}
+		else
+		{
+				NB_ATCmdCB.ATCmdResult = BACK_TIMEOUT;/*³¬Ê±*/ 
 		}
 //	}
+		
 		if(NB_ATCmdCB.ucByteTimeOut >= usPeriod)
 		{
 				NB_ATCmdCB.ucByteTimeOut -= usPeriod;
@@ -1329,7 +1321,8 @@ void APP_NB_TimeProc(uint16_t usPeriod)
 						set_task(COMM, COMM_CMD_PROC);
 				}
 		}
-		/***************** NB Ä£¿éÑÓÊ±¼ÆÊ ý*************************/
+		
+		/***************** NB Ä£¿éÑÓÊ±¼Æ ************************/
 		if(g_stNB_Handler.ulDelayCnt >= usPeriod)    
 		{
 				g_stNB_Handler.ulDelayCnt -= usPeriod;
@@ -1338,6 +1331,7 @@ void APP_NB_TimeProc(uint16_t usPeriod)
     {
         g_stNB_Handler.ulDelayCnt = 0;
     }
+		
 		 /*****************NB Ä£¿é×´Ì¬´¦Àíº¯Êý*************************/	
 		g_stNB_Handler.ulProcCtrTaskPer += usPeriod;
 		if(g_stNB_Handler.ulProcCtrTaskPer >= SUB_TASK_PROCCTR_PER)
@@ -1348,25 +1342,15 @@ void APP_NB_TimeProc(uint16_t usPeriod)
 		if(NB_msCount >= NB_MS_TO_S)   //ms to S
 		{
 				NB_msCount =0;
-//				/**************** NB Ä£¿éÖØ´«´¦Àí*************************/
-//				if(NB_RetryCtrol.rtycntEn != DISABLE)
-//				{
-//						NB_RetryCtrol.rtyTimCount++;
-//						if(NB_RetryCtrol.rtyTimCount >= NB_RetryCtrol.rtyTime)
-//						{
-//								NB_RetryCtrol.rtyTimCount=0;
-//								NB_RetryCtrol.rtycntEn = DISABLE;
-//								APP_NB_EventProc(NB_EvtProc.ucDelayEvt,&NB_EvtProc.ucRetryEvt);
-//						}
-//				}
+			
 				/***************** ÐÄÌø°ü´¦Àí *************************/
-				if((NB_NetPar.NetConnSta   == CONN_ON) && (AUTH == g_stNB_Handler.AuthStatus))  /*ÐÄÌø°ü*/
+				if((CONN_ON == NB_NetPar.NetConnSta) && (AUTH == g_stNB_Handler.AuthStatus))  /*ÐÄÌø°ü*/
 				{
 						NB_TimProc.heartbeatCount++;
 						if(NB_TimProc.heartbeatCount >= HEARTBEAT_TIME)
 						{
 								NB_TimProc.heartbeatCount = 0;
-//								NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_HEARTBEAT);
+								NB_EVENT_SET(NB_EvtProc.ucUploadEvt, COMM_EVENT_HEARTBEAT);
 						}
 				}
 		}
@@ -1380,14 +1364,12 @@ void APP_SubTask_CmdProc(void)
 //			SEGGER_RTT_printf(0, "APP SubTask CmdProc !\r\n");
 		#endif
     nrf_uart_disable(NRF_UART0);
-//		disableInterrupts();
     NB_ATCmdCB.Busy = 0;   
     NB_ATCmdCB.ucRxLen = NB_ATCmdCB.ucRxCnt;
     NB_ATCmdCB.ucRxCnt = 0;
     NB_ATCmdCB.RxFrameOk = 0;
-    memcpy(g_stNB_Handler.RxBuf,NB_ATCmdCB.RxBuf,NB_ATCmdCB.ucRxLen);
+    memcpy(g_stNB_Handler.RxBuf, NB_ATCmdCB.RxBuf, NB_ATCmdCB.ucRxLen);
     nrf_uart_enable(NRF_UART0);
-//		enableInterrupts();
 
     NB_ATCmdCB.ATCmdResult = APP_GPRS_ATCmdAckCheck(g_stNB_Handler.RxBuf); 
     ////////// Ó¦´ð´íÎóÖ±½Ó·µ»Ø /////////////////////// 
@@ -1400,14 +1382,6 @@ void APP_SubTask_CmdProc(void)
     {
         return;
     }
-    /////////// ¶Ô·þÎñÆ÷µÄÏÂÐÐÊý¾Ý½øÐÐÐ­Òé½âÎöºÍÏàÓ¦´¦Àí ////////////////
-    if(RSP_TYPE_DATA == NB_ATCmdCB.RspType)
-    {
-        set_task(COMM,COMM_DECODE);
-        #if SEGGER_RTT_DEBUG_NB86
-						SEGGER_RTT_printf(0, "START DECODE\r\n");
-        #endif
-    }  
     NB_ATCmdCB.ATCmdResult = NO_BACK;
 }
 
@@ -1471,7 +1445,7 @@ void APP_SubTask_StateProc(void)
 								SEGGER_RTT_printf(0, "set nb poweron !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
-								g_stNB_Handler.ulDelayCnt = 100;  //À­¸ß10ms
+								g_stNB_Handler.ulDelayCnt = 100;  //À­¸ß100ms
 								LED_Status = CONN_INDI;            //ÕýÔÚÁªÍøLEDÖ¸Ê¾
 						}
 						else if(2 == g_stNB_Handler.StepPt)
@@ -1481,7 +1455,7 @@ void APP_SubTask_StateProc(void)
 								SEGGER_RTT_printf(0, "set nb reset !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
-								g_stNB_Handler.ulDelayCnt = 7000; //µÈ´ý50msºóÔÙ²Ù×÷NBÄ£¿é
+								g_stNB_Handler.ulDelayCnt = 7000; //µÈ´ý7000msºóÔÙ²Ù×÷NBÄ£¿é
 						}
 						else//next state
 						{
@@ -1554,7 +1528,7 @@ void APP_SubTask_StateProc(void)
 								SEGGER_RTT_printf(0, "init wait nb start !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
-								g_stNB_Handler.ulDelayCnt = 20000; //20S NB AT×¼±¸¾ÍÐ÷³¬Ê±Ê±¼ä
+								g_stNB_Handler.ulDelayCnt = 10000; //10S NB AT×¼±¸¾ÍÐ÷³¬Ê±Ê±¼ä
 						}
 						else
 						{
@@ -1592,7 +1566,7 @@ void APP_SubTask_StateProc(void)
 								SEGGER_RTT_printf(0, "mess wait nb start !\r\n");
 						#endif
 								g_stNB_Handler.StepPt++;
-								g_stNB_Handler.ulDelayCnt = 20000; //20S GPRS AT×¼±¸¾ÍÐ÷³¬Ê±Ê±¼ä
+								g_stNB_Handler.ulDelayCnt = 10000; //20S GPRS AT×¼±¸¾ÍÐ÷³¬Ê±Ê±¼ä
 						}
 						else
 						{
@@ -1628,25 +1602,7 @@ void APP_SubTask_StateProc(void)
 								//APP_NB_WriteReturnIDPacketÓëAPP_NB_WriteDataIDPacketº¯Êý¿ÉÒÔºÏ¶þÎªÒ»
 								//µ«¿¼ÂÇµ½ºóÐøÏîÄ¿Ð­Òé¿ÉÄÜÔö¶à£¬×îÖÕ»¹ÊÇµÃ°ÑÖ÷¶¯ÉÏ´«ºÍÓ¦´ðÏûÏ¢·Ö¿ª
 								switch(g_stNB_Handler.ucSendType)
-								{
-//										case RESPOND_TYPE:
-//										{
-//												g_stNB_Handler.ucDataID = Get_CommEvent(NB_EvtProc.ucRespondEvt);
-//												g_stNB_Handler.ucTxLen = (uint8_t)APP_NB_WriteReturnIDPacket(g_stNB_Handler.ucDataID, g_stNB_Handler.TxBuf);
-//										}
-//												break;
-//										
-//										case RTY_TYPE:
-//										{
-//												g_stNB_Handler.ucDataID = Get_CommEvent(NB_EvtProc.ucRetryEvt);
-//										#if CONFIG_RETRY_COPY
-//												g_stNB_Handler.ucTxLen = (uint8_t)APP_NB_WriteRetryIDPacket(g_stNB_Handler.TxBuf);
-//										#else
-//												g_stNB_Handler.ucTxLen = (uint8_t)APP_NB_WriteDataIDPacket(g_stNB_Handler.ucDataID, g_stNB_Handler.TxBuf);
-//										#endif
-//										}
-//												break;
-//										
+								{									
 										case UPLOAD_TYPE:
 										{
 												g_stNB_Handler.ucDataID = Get_CommEvent(NB_EvtProc.ucUploadEvt);
@@ -1683,7 +1639,7 @@ void APP_SubTask_StateProc(void)
 						if(APP_NB_EvtTraverse(TRAVERSE) != false)
 						{
 								//ÓÐÊý¾ÝÒªÍ¨Ñ¶ÔòÉèÖÃÇÐ»»µ½COM×´Ì¬µÄÊÂ¼þ
-								NB_State_Event_Set(STATE_Event_COMM);
+								NB_State_Event_Set(STATE_Event_COMM); 
 						}
 									
 						if(NB_IsSwitch_State())  //ÏÖ²»×ö´¦Àí£¬ºóÐø¿ÉÓÃ×öµÍ¹¦ºÄ
