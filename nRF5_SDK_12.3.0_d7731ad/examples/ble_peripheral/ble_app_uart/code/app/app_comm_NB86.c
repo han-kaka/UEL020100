@@ -776,7 +776,7 @@ static void APP_NB_State_Connect_Proc(uint8_t *RxBuf)
 				else
 				{
 						g_stNB_Handler.State = NB_STATE_CONNECT_NET;//继续当前流程
-				}			
+				}
 		}
 		//////////////////////// AT 指令达到重发次数 //////////////////////////	
 		else if(BACK_PERTIMES_OUT == NB_ATCmdCB.ATCmdResult)
@@ -816,8 +816,6 @@ static void APP_NB_State_Mess_Proc(uint8_t *RxBuf)
 {
 		uint8_t i;
 		uint8_t ATCmdIndex;
-//		uint8_t asi_len=0;
-//		char *str = "898";
 		char *pTemp   = NULL;
 		if(g_stNB_Handler.StepPt >= MESS_STEP_NUM)
 		{
@@ -964,15 +962,12 @@ static void APP_NB_State_Comm_Proc(uint8_t *RxBuf)
 						}
 								break;
 					
-						case NB_AT_NMGS:
+						case NB_AT_NQMGS:
 						{								
 								if(UPLOAD_TYPE == g_stNB_Handler.ucSendType)
 								{
 										/*本次通讯完成,清除对应的事件*/
 										NB_EVENT_CLR(NB_EvtProc.ucUploadEvt,(0x01 << g_stNB_Handler.ucDataID));
-//										//如在这里置起事件，则需等到应答才能发送下一条主动上传消息            
-//										GPRS_Event_Set(GPRS_EvtProc.ucDelayEvt,(0x01 << g_stNB_Handler.ucDataID));     
-//										APP_GPRS_RefreshRetryMess();
 								}
 							
 								NB_EVENT_CLR(g_stNB_Handler.ucCommEvent,(0x01 << g_stNB_Handler.ucDataID));
@@ -1010,22 +1005,23 @@ static void APP_NB_State_Comm_Proc(uint8_t *RxBuf)
 /************************AT 指令达到重发次数**************************/	
 		else if(BACK_PERTIMES_OUT == NB_ATCmdCB.ATCmdResult)
 		{
-				if(NB_AT_NMGS == ATCmdIndex)
+				if(NB_AT_NQMGS == ATCmdIndex)
 				{
 						g_stNB_Handler.State = NB_STATE_COMM;
 						errCnt++;
 				}
-//	    else if((GPRS_AT_MIPSEND_1 == ATCmdIndex) || (errCnt > 3))
-//	    {
-//            #if DEBUG_LOG
-//                  BSP_LOG("Comm Reset\r\n");
-//            #endif
-//            errCnt=0;
-//	        g_stGPRS_Handler.State = GPRS_STATE_RESET;
-//	        GPRS_NetPar.NetType = NET_NO_NET;
-//	    }
-//	    
-				g_stNB_Handler.StepPt = 0;//clr step
+				
+				else if((NB_AT_NMGS == ATCmdIndex) || (errCnt > 3))
+				{
+						#if DEBUG_LOG
+									BSP_LOG("Comm Reset\r\n");
+						#endif
+						errCnt=0;
+						g_stNB_Handler.State = NB_STATE_RESET;
+						NB_NetPar.NetType = NET_NO_NET;
+				}
+				
+				g_stNB_Handler.StepPt = 1;//clr step
 				g_stNB_Handler.ucCommBusy= 0;	
 
 		}
@@ -1224,26 +1220,6 @@ static void APP_NB_EventProc(uint8_t surEvt, uint8_t* objEvt)
 
 static uint8_t APP_NB_EvtTraverse(uint8_t mode)
 {    
-//    if(false == NB_Event_IsEmpty(NB_EvtProc.ucRespondEvt))
-//    {
-//        if(mode == TRAVERSE_AND_ADDEVT)  APP_NB_EventProc(NB_EvtProc.ucRespondEvt,&g_stNB_Handler.ucCommEvent);
-//        return RESPOND_TYPE;
-//    }
-//    else if(false == NB_Event_IsEmpty(NB_EvtProc.ucDelayEvt))
-//    {        
-//        if(NB_Event_IsEmpty(NB_EvtProc.ucRetryEvt)== false)
-//        {
-//            if(mode == TRAVERSE_AND_ADDEVT)  APP_NB_EventProc(NB_EvtProc.ucRetryEvt,&g_stNB_Handler.ucCommEvent);
-//            return RTY_TYPE;
-//        }
-//        return 0;
-//    }
-//    else if(false == NB_Event_IsEmpty(NB_EvtProc.ucUploadEvt))
-//    {
-//        if(mode == TRAVERSE_AND_ADDEVT)  APP_NB_EventProc(NB_EvtProc.ucUploadEvt,&g_stNB_Handler.ucCommEvent);
-//        return UPLOAD_TYPE;
-//    }
-	
     if(false == NB_EVENT_IS_EMPTY(NB_EvtProc.ucUploadEvt))
     {
         if(mode == TRAVERSE_AND_ADDEVT)  APP_NB_EventProc(NB_EvtProc.ucUploadEvt, &g_stNB_Handler.ucCommEvent);
@@ -1287,11 +1263,11 @@ void app_comm_init(void)
 		g_stNB_Handler.StateOld = NB_STATE_POWER_ON; 
 		g_stNB_Handler.StepPt = 0;
 		g_stNB_Handler.AuthStatus = NOT_AUTH;
-		BSP_NB_POWERON_SET;
-		nrf_delay_us(1000);
-		BSP_NB_RESET_SET
-		while(1)
-		{}
+//		BSP_NB_POWERON_SET;
+//		nrf_delay_us(1000);
+//		BSP_NB_RESET_SET
+//		while(1)
+//		{}
 		NB_EVENT_SET(NB_EvtProc.ucUploadEvt, COMM_EVENT_INIT);//上电需发送一个登录包
 		set_task(COMM, COMM_STATE_PROC);     //启动GPRS状态处理任务
 }

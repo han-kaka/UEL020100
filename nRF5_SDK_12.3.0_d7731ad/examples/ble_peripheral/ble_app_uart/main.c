@@ -540,7 +540,7 @@ int main(void)
 {
     uint32_t err_code;
     bool erase_bonds;
-
+		
     // Initialize.
     APP_TIMER_INIT(APP_TIMER_PRESCALER, APP_TIMER_OP_QUEUE_SIZE, false);
 	
@@ -549,15 +549,16 @@ int main(void)
 		SEGGER_RTT_printf(0, "Main Start!\r\n");
 #endif
 
+
 //    uart_init();
 //    buttons_leds_init(&erase_bonds);
     ble_stack_init();
-		
+
     gap_params_init();
     services_init();
     advertising_init();
     conn_params_init();
-		
+	
     err_code = nrf_drv_rng_init(NULL);
     APP_ERROR_CHECK(err_code);
 
