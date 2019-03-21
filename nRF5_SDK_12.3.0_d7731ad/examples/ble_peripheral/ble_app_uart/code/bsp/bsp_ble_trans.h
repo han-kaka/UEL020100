@@ -32,8 +32,9 @@ typedef struct
 
 
 extern ProtocolAppFormat_t  sProtocolAppFormat;
-extern uint8_t              tempkey[16];
-extern uint8_t              useraeskeybuf[16];
+extern uint8_t              defualtaes128key[AES_KEY_LEN];
+extern uint8_t              tempkey[AES_KEY_LEN];
+extern uint8_t              useraeskeybuf[AES_KEY_LEN];
 
 extern uint8_t              char2_all_receive[256];
 extern uint8_t              char2_all_receive_len;

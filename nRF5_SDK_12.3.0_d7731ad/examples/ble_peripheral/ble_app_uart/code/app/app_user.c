@@ -486,45 +486,46 @@ uint8_t UserDelUserInfoFromSystem(uint8_t *uid)
 		return tmp;
 }
 
-///**************************************************************************************************
-// * @brief       清空用户信息
-// * @param       none
-// * @return      none
-// **************************************************************************************************
-// */
-//void UserClearUserInfoFromSystem(void)
-//{
-//	uint8  i;
-//	UserInfo_t tempUserInfo;
-//	
-//	for (i = 0; i < MAX_USER_NUM; i ++)
-//	{
-//		while (UserGetUserInfo(i, &tempUserInfo) == 0xFF);
-//		osal_memset(&tempUserInfo, 0, sizeof(UserInfo_t));
-//		#ifdef FLASHUSERINFO
-//		UserDelUserInfo(i);
-//		#else
-//		UserSaveUserInfo(i, &tempUserInfo);
-//		#endif
-//	}
-//}
+/**************************************************************************************************
+ * @brief       清空用户信息
+ * @param       none
+ * @return      none
+ **************************************************************************************************
+ */
+void UserClearUserInfoFromSystem(void)
+{
+		uint8_t  i;
+		UserInfo_t tempUserInfo;
+		Rom_Data_Type user_info_data_struct;
+		p_Rom_Data_Type p_user_info_data_struct = &user_info_data_struct;
+	
+		read_user_info_data(p_user_info_data_struct);
+	
+		for (i = 0; i < MAX_USER_NUM; i ++)
+		{
+				while (UserGetUserInfo(i, &tempUserInfo, p_user_info_data_struct) == 0xFF);
+				memset(&tempUserInfo, 0, sizeof(UserInfo_t));
 
-////==============================================================================
-////                         * 系统的当前执行状态 *
-////==============================================================================
-////======LockState======
-////0:初始化
-////1:设置模式(添加管理员等)
-////2:可以自动开门
-////3:密码输入状态
-//void Save_SysRunState(uint8 sta)                                                //保存系统工作状态
-//{
-//	gSystemRunParam.nowrunstate=sta;
-//}
-//uint8 Get_SysRunState(void)
-//{
-//	return gSystemRunParam.nowrunstate;
-//}
+				UserSaveUserInfo(i, &tempUserInfo, p_user_info_data_struct);
+		}
+}
+
+//==============================================================================
+//                         * 系统的当前执行状态 *
+//==============================================================================
+//======LockState======
+//0:初始化
+//1:设置模式(添加管理员等)
+//2:可以自动开门
+//3:密码输入状态
+void Save_SysRunState(uint8_t sta)                                                //保存系统工作状态
+{
+	gSystemRunParam.nowrunstate=sta;
+}
+uint8_t Get_SysRunState(void)
+{
+	return gSystemRunParam.nowrunstate;
+}
 ////==============================================================================
 ////                         * 开始进入低功耗计时 *
 ////ty:
