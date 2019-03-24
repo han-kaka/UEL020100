@@ -2,7 +2,7 @@
 
 uint8_t COMM_Task(uint8_t prio)
 {
-//		SEGGER_RTT_printf(0, "COMM_Task\r\n");
+		SEGGER_RTT_printf(0, "COMM_Task\r\n");
 	
     uint8_t m_SYS_SubTask_prio=0;
     while(ga_Subtask[prio])
@@ -12,13 +12,13 @@ uint8_t COMM_Task(uint8_t prio)
         { 
 						case COMM_CMD_PROC:            
             {
-                APP_SubTask_CmdProc();
+//                APP_SubTask_CmdProc();
             }
 								break;
             
             case COMM_STATE_PROC:            
             {
-                APP_SubTask_StateProc();
+//                APP_SubTask_StateProc();
             }
 								break;
 

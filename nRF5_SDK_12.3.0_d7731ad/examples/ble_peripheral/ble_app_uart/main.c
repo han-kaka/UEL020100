@@ -81,7 +81,7 @@
 #define CENTRAL_LINK_COUNT              0                                           /**< Number of central links used by the application. When changing this number remember to adjust the RAM settings*/
 #define PERIPHERAL_LINK_COUNT           1                                           /**< Number of peripheral links used by the application. When changing this number remember to adjust the RAM settings*/
 
-#define DEVICE_NAME                     "ANGUMEN"                                   /**< Name of device. Will be included in the advertising data. */
+#define DEVICE_NAME                     "* ANGUMEN *"                                   /**< Name of device. Will be included in the advertising data. */
 
 #define APP_TIMER_PRESCALER             0                                           /**< Value of the RTC1 PRESCALER register. */
 #define APP_TIMER_OP_QUEUE_SIZE         6                                           /**< Size of timer operation queues. */

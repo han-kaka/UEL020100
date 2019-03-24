@@ -54,10 +54,10 @@ uint8_t UserParseAppProtocolFormat(uint8_t * pBuf, uint16_t length)
 		
 //		if (gLimitALL != 0xA5) return 0;
 		pRecvBuffer = 0;															                              // 初始化变量
-		if ((Get_SysRunState() != 1) && (Get_SysRunState() != 2))					          // 判断系统运行状态
-		{
-				return 0;
-		}
+//		if ((Get_SysRunState() != 1) && (Get_SysRunState() != 2))					          // 判断系统运行状态
+//		{
+//				return 0;
+//		}
 	
 		tmp16 = *p++;																                                // 获取协议头
 		tmp16 <<= 8;
