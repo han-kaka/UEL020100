@@ -796,7 +796,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 				#if SEGGER_RTT_DEBUG_FACTORYRESET
 						SEGGER_RTT_printf(0, "cmd factoryrest!\r\n");
 				#endif
-						if (dataLen != 129)
+						if (dataLen != 9)
 						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}
 						if (pData[8] != 0xAD)
 						{UserReturnErrCode(command, PROTOCOL_APP_ERR_PARAM);break;}					
@@ -806,14 +806,14 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 						UserReturnErrCode(command, PROTOCOL_APP_ERR_NONE);
 						
-						UserClearUserInfoFromSystem();
+//						UserClearUserInfoFromSystem();
 						gSystemRunParam.flagInit = 0x00;									// 清除管理员及密码
 						memcpy(useraeskeybuf, defualtaes128key, 16);
 						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 						ChangeAdvData(2, gSystemRunParam.flagInit);	
-//						SaveSetup();														// 保存数据
+////						SaveSetup();														// 保存数据
 						Save_SysRunState(1);												// 添加管理员模式
-//						WaitSystemExit(0, 20000);
+////						WaitSystemExit(0, 20000);
 //						ChangescanRspData(sizeof ( lockinitname ), (uint8*)lockinitname);	// 初始化广播名字
 //						UserSaveAppData(P_EE_ADDR_LOCKNAME, (uint8*)lockinitname);			// update to EEPROM
 //						UserStartAdv(1, 0);													// 立即开始广播

@@ -41,6 +41,7 @@
 #if NRF_MODULE_ENABLED(BLE_NUS)
 #include "ble_nus.h"
 #include "ble_srv_common.h"
+#include "global.h"
 
 #define BLE_UUID_NUS_TX_CHARACTERISTIC 0xfff2                      /**< The UUID of the TX Characteristic. */
 #define BLE_UUID_NUS_RX_CHARACTERISTIC 0xfff4                      /**< The UUID of the RX Characteristic. */
@@ -235,10 +236,16 @@ void ble_nus_on_ble_evt(ble_nus_t * p_nus, ble_evt_t * p_ble_evt)
     switch (p_ble_evt->header.evt_id)
     {
         case BLE_GAP_EVT_CONNECTED:
+				#ifdef RTT_LOG_ENABLE
+						SEGGER_RTT_printf(0, "BLE_GAP_EVT_CONNECTED\r\n");
+				#endif
             on_connect(p_nus, p_ble_evt);
             break;
 
         case BLE_GAP_EVT_DISCONNECTED:
+				#ifdef RTT_LOG_ENABLE
+						SEGGER_RTT_printf(0, "BLE_GAP_EVT_DISCONNECTED\r\n");
+				#endif
             on_disconnect(p_nus, p_ble_evt);
             break;
 

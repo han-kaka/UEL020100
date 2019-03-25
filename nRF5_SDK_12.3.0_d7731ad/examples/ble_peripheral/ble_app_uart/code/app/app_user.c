@@ -480,7 +480,7 @@ uint8_t UserDelUserInfoFromSystem(uint8_t *uid)
 		if (tmp < MAX_USER_NUM)
 		{
 				while (UserGetUserInfo(tmp, &tempUserInfo, p_user_info_data_struct) == 0xFF);
-				memset(&tempUserInfo, 0, sizeof(UserInfo_t));
+				memset((uint8_t *)&tempUserInfo, 0, sizeof(UserInfo_t));
 				UserSaveUserInfo(tmp, &tempUserInfo, p_user_info_data_struct);
 		}
 		return tmp;
@@ -504,7 +504,7 @@ void UserClearUserInfoFromSystem(void)
 		for (i = 0; i < MAX_USER_NUM; i ++)
 		{
 				while (UserGetUserInfo(i, &tempUserInfo, p_user_info_data_struct) == 0xFF);
-				memset(&tempUserInfo, 0, sizeof(UserInfo_t));
+				memset((uint8_t *)&tempUserInfo, 0, sizeof(UserInfo_t));
 
 				UserSaveUserInfo(i, &tempUserInfo, p_user_info_data_struct);
 		}

@@ -45,7 +45,7 @@
 #include "nrf_log.h"
 #include "fstorage.h"
 #include "sdk_errors.h"
-
+#include "global.h"
 
 // Total number of possible advertising modes.
 #define BLE_ADV_MODES                  (5)
@@ -589,12 +589,19 @@ void ble_advertising_on_ble_evt(ble_evt_t const * p_ble_evt)
     switch (p_ble_evt->header.evt_id)
     {
         case BLE_GAP_EVT_CONNECTED:
+				#ifdef RTT_LOG_ENABLE
+						SEGGER_RTT_printf(0, "BLE_GAP_EVT_CONNECTED\r\n");
+				#endif
             on_connected(p_ble_evt);
             break;
 
         // Upon disconnection, whitelist will be activated and direct advertising is started.
         case BLE_GAP_EVT_DISCONNECTED:
+				#ifdef RTT_LOG_ENABLE
+						SEGGER_RTT_printf(0, "BLE_GAP_EVT_DISCONNECTED\r\n");
+				#endif
             on_disconnected(p_ble_evt);
+            ble_advertising_start(BLE_ADV_MODE_FAST);
             break;
 
         // Upon time-out, the next advertising mode is started.
