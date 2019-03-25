@@ -25,7 +25,7 @@ void m_system_timeout_handler (void *p_context)
 	
     if(task_flag_struct.closeStaProc == DISABLE)
     {
-//        APP_NB_TimeProc(10);
+        APP_NB_TimeProc(10);
     }
 		
 		Bsp_Led_Tim(10);
@@ -92,39 +92,6 @@ void m_system_timeout_handler (void *p_context)
 						}
 				}
 		}
-		
-//		if(Sys_Flag_Struct.air_pressure_flag == ENABLE)
-//		{
-//				//set_task(MEASURE, MEASURE_CMP);
-//		}
-//    if((++Tim_100ms_Struct.sys_timex100ms) > 9)
-//    {
-//				//1s timer
-//				Tim_100ms_Struct.sys_timex100ms = 0;
-//				set_task(TIMER, TIMER_1S);
-////			
-////				set_task(MEASURE, MEASURE_VOLTAGE);
-////				motor_inflate_timer();
-////				//Mpu6050_test_data();
-////				hp303_id_cheak();
-////				//ReadCalCoef();
-////				//ReadHP303B();
-//		}
-//		set_task(TIMER, TIMER_100MS);
-////		add_air_pressure_timer();
-////		oled_display_timer();
-////		//switch_botton_timer();
-////		button_led();
-////		if(oled_battery_level != 1)
-////		{
-////				button_delay_timer();
-////				m_qf_delay_timer();
-////				right_button_timer();
-////				lift_button_timer();
-////				cmp_button_timer();
-////				m_home_button_timer();
-////				version_button_timer();
-////		}
 }	
 
 void m_motor_timeout_handler(void *p_context)

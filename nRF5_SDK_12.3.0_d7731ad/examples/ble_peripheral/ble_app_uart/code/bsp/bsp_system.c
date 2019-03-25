@@ -50,10 +50,10 @@ void init_peripheral(void)
 	
     //------初始化各功能块---------------------	
     //------初始化uart模块---------------------
-//#if SEGGER_RTT_DEBUG_UART
-//    SEGGER_RTT_printf(0, "UART Start!\r\n");
-//#endif
-//    myuart_start();
+#if SEGGER_RTT_DEBUG_UART
+    SEGGER_RTT_printf(0, "UART Start!\r\n");
+#endif
+    myuart_start();
     //init_dsr_detection();
     //setWDI();	
 //	

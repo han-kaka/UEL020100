@@ -3888,18 +3888,18 @@
 
 // <e> debug uart
 #ifndef SEGGER_RTT_DEBUG_UART
-#define SEGGER_RTT_DEBUG_UART 0
+#define SEGGER_RTT_DEBUG_UART 1
 #endif
 
 #if  SEGGER_RTT_DEBUG_UART
 // <q> debug cmdproc
 #ifndef SEGGER_RTT_DEBUG_CMDPROC
-#define SEGGER_RTT_DEBUG_CMDPROC 0
+#define SEGGER_RTT_DEBUG_CMDPROC 1
 #endif
 
 // <q> debug uart data
 #ifndef SEGGER_RTT_DEBUG_UART_DATA
-#define SEGGER_RTT_DEBUG_UART_DATA 0
+#define SEGGER_RTT_DEBUG_UART_DATA 1
 #endif
 #endif
 // </e> 
