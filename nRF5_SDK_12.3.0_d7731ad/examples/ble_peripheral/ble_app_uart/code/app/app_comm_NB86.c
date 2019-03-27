@@ -90,7 +90,7 @@ static const uint8_t s_ATCmdStep_Init[] =
 static const uint8_t s_ATCmdStep_Connnect[] = 
 {
 		NB_AT_CGDCONT,
-//		NB_AT_CSQ,
+		NB_AT_CSQ,
 		NB_AT_CGATT_1,
 		NB_AT_CGATT1,	
 	  NB_AT_CFUN_0, 
@@ -1263,11 +1263,11 @@ void app_comm_init(void)
 		g_stNB_Handler.StateOld = NB_STATE_POWER_ON; 
 		g_stNB_Handler.StepPt = 0;
 		g_stNB_Handler.AuthStatus = NOT_AUTH;
-		BSP_NB_POWERON_SET;
-		nrf_delay_us(1000);
-		BSP_NB_RESET_SET
-		while(1)
-		{}
+//		BSP_NB_POWERON_SET;
+//		nrf_delay_us(1000);
+//		BSP_NB_RESET_CLEAR
+//		while(1)
+//		{}
 		NB_EVENT_SET(NB_EvtProc.ucUploadEvt, COMM_EVENT_INIT);//上电需发送一个登录包
 		set_task(COMM, COMM_STATE_PROC);     //启动GPRS状态处理任务
 }
@@ -1407,7 +1407,7 @@ void APP_SubTask_StateProc(void)
 						if(0 == g_stNB_Handler.StepPt)
 						{
 								BSP_NB_POWERON_CLEAR;
-								BSP_NB_RESET_CLEAR
+								BSP_NB_RESET_SET;
 						#if SEGGER_RTT_DEBUG_POWER_ON
 								SEGGER_RTT_printf(0, "clear nb poweron and reset !\r\n");
 						#endif
@@ -1426,7 +1426,7 @@ void APP_SubTask_StateProc(void)
 						}
 						else if(2 == g_stNB_Handler.StepPt)
 						{
-								BSP_NB_RESET_SET;
+								BSP_NB_RESET_CLEAR;
 						#if SEGGER_RTT_DEBUG_POWER_ON
 								SEGGER_RTT_printf(0, "set nb reset !\r\n");
 						#endif
