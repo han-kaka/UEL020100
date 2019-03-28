@@ -352,7 +352,7 @@ uint8_t UserDelLogInfo(LogInfo_t *pBuf)
 				SEGGER_RTT_printf(0, " %x\r\n", tmpLogInfo.time);
 				SEGGER_RTT_printf(0, " %x\r\n", pBuf->time);
 		#endif
-				if ((memcmp((uint8_t *)tmpLogInfo.userId, (uint8_t *)pBuf->userId, sizeof(tmpLogInfo.userId)) != 0) && 
+				if ((memcmp((uint8_t *)tmpLogInfo.userId, (uint8_t *)pBuf->userId, sizeof(tmpLogInfo.userId)) == 0) && 
 					  (tmpLogInfo.time == pBuf->time))
 				{
 					
@@ -381,6 +381,8 @@ uint8_t UserDelLogInfo(LogInfo_t *pBuf)
 				log_index[3] = (tmpLogInfoIndex.tail >> 8) & 0xff;
 				log_index[4] = tmpLogInfoIndex.tail & 0xff;
 				set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
+			
+				return 1;
 		}
 #if SEGGER_RTT_DEBUG_READ_LOG
 		SEGGER_RTT_printf(0, "return 0!\r\n");

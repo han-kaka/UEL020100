@@ -278,7 +278,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 		uint32_t tmp32;
 		static uint8_t  sReadUserCnt = 0;
 		static uint8_t  sFlagAddUser = 0;
-		uint8_t  buf[16];
+		uint8_t  buf[32];
 		LogInfo_t *pTmpLogInfo = (LogInfo_t *)buf;
 	
 		if (sProtocolAppFormat.headData.version != PROTOCOL_APP_VERSION)			// 判断协议头正确性
@@ -344,6 +344,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 				#endif
 						Put_Return(command, sendLength);
 						gSystemRunParam.flagInit = 0xA5;
+						app_comm_init();            //COMM state and event init
 				}
 						break;
 				
@@ -618,6 +619,8 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						UserSearchUserInfoUID(gCurrentLocalUser, tmpLogInfo.userId);
 						UserSaveLogInfo(&tmpLogInfo);
 						
+						NB_EVENT_SET(NB_EvtProc.ucUploadEvt, COMM_EVENT_LOG);//上电需发送一个登录包
+						
 						if (pData[8] == 0xA1)
 						{
 								Motor_State_Struct = INVERSION;
@@ -811,7 +814,16 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						set_task(MEM_WRITE, MEM_STORE_SOLID_ROMDATA);
 						ChangeAdvData(2, gSystemRunParam.flagInit);	
 ////						SaveSetup();														// 保存数据
-						Save_SysRunState(1);												// 添加管理员模式
+//						Save_SysRunState(1);												// 添加管理员模式
+						
+						BSP_NB_POWERON_CLEAR;
+						BSP_NB_RESET_SET;
+						NB_NetPar.NetType = NET_NO_NET;               //无网络状态连接
+						g_stNB_Handler.StateOld = NB_STATE_RESET;	
+						g_stNB_Handler.State = NB_STATE_POWER_ON;   //开始下一个流程
+						g_stNB_Handler.StepPt = 0;	
+						APP_NB_Reset_Init(); 
+						
 ////						WaitSystemExit(0, 20000);
 //						ChangescanRspData(sizeof ( lockinitname ), (uint8*)lockinitname);	// 初始化广播名字
 //						UserSaveAppData(P_EE_ADDR_LOCKNAME, (uint8*)lockinitname);			// update to EEPROM

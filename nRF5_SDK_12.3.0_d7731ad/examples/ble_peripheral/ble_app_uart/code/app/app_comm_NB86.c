@@ -149,29 +149,6 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 //			SEGGER_RTT_printf(0, NB_ATCmdCB.ExpResultStr);
 //			SEGGER_RTT_printf(0, "\r\n");
 		#endif
-//    if(NB_ATCmdCB.ATCmdPt != NB_AT_MIPOPEN_1)//socket连接时,也有可能回复MIPSTAT: 1,1
-//    {
-//        if(Check_Strstr((char*)RxBuf, "MIPSTAT: 1,1", NB_ATCmdCB.ucRxLen) == true)
-//        {
-//            NB_NetPar.NetConnSta = CONN_OFF;
-//            g_stNB_Handler.State = NB_STATE_CONNECT_NET;    //重新连接socket
-//						g_stNB_Handler.StepPt = 2;
-//						g_stNB_Handler.AuthStatus = NOT_AUTH;
-//						NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_AUTH);
-//        }
-//    }
-//    if(NB_ATCmdCB.ATCmdPt != NB_AT_MIPCALL1) //由于IP获取错误，也会去查询有无IP
-//    {
-//        if(Check_Strstr((char*)RxBuf, "MIPCALL: 0", NB_ATCmdCB.ucRxLen) == true)
-//        
-//        { 
-//            NB_NetPar.NetConnSta = CONN_OFF;
-//						g_stNB_Handler.State = NB_STATE_CONNECT_NET;    //重新连接网络
-//						g_stNB_Handler.StepPt = 0;
-//						g_stNB_Handler.AuthStatus = NOT_AUTH;
-//						NB_Event_Set(NB_EvtProc.ucUploadEvt, COMM_Event_AUTH);
-//        }
-//    }
     
      //判断接收的数据是否含有期望应答
 		if(Check_Strstr((char*)RxBuf, NB_ATCmdCB.ExpResultStr, NB_ATCmdCB.ucRxLen) == true)
@@ -238,11 +215,6 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 				}
 				return BACK_ERROR;   		
 		}	
-}
-
-static uint8_t APP_NB_Transition(uint8_t *hex_data_buf, uint8_t len_hex, uint8_t *new_hex_data_buf, uint8_t *new_len_hex)
-{
-		
 }
 
 //static U8 APP_GPRS_Encrypt(u8 *hex_data_buf,u8 len_hex,u8 *new_hex_data_buf,u8 *new_len_hex)
@@ -342,71 +314,102 @@ static uint8_t APP_NB_Transition(uint8_t *hex_data_buf, uint8_t len_hex, uint8_t
 
 static uint16_t APP_NB_GetPacket(uint16_t messID, uint8_t* Packet)
 {
-    uint8_t i=0;
+    uint8_t i=0,j=0;
     uint8_t newLen = 0;
 //    uint8_t TxBuf[NB_RX_BUFF_LEN]={0};
 		ble_gap_addr_t device_addr;
 		uint32_t err_code = 1;
 		
+		memset(Packet, 0, NB_RX_BUFF_LEN);
+	
     switch(messID)
     {
 				case INIT_ID:
 				{
-					uint8_t MAC_ADDR[6];
-						sprintf((char*)Packet, "%02x", 0);
-						sprintf((char*)Packet+2, "%02x", gSystemRunParam.batterPercent);
-						sprintf((char*)Packet+4, "%02x", NB_CommPacket.Init_Data.CSQ);
-						sprintf((char*)Packet+6, "%02x", seconds_times >> 24);
-						sprintf((char*)Packet+8, "%02x", seconds_times >> 16);
-						sprintf((char*)Packet+10, "%02x", seconds_times >> 8);
-						sprintf((char*)Packet+12, "%02x", seconds_times >> 0);
-						for(i=0; i<20; i++)
+						char *startStr = "AT+NMGS=37,00";
+						i = strlen(startStr);
+						memcpy(Packet, startStr, i);
+						sprintf((char*)Packet+i, "%02x", gSystemRunParam.batterPercent);
+						sprintf((char*)Packet+2+i, "%02x", NB_CommPacket.Init_Data.CSQ);
+						sprintf((char*)Packet+4+i, "%02x", (seconds_times >> 24)&0xff);
+						sprintf((char*)Packet+6+i, "%02x", (seconds_times >> 16)&0xff);
+						sprintf((char*)Packet+8+i, "%02x", (seconds_times >> 8)&0xff);
+						sprintf((char*)Packet+10+i, "%02x", (seconds_times >> 0)&0xff);
+
+						for(j=0; j<20; j++)
 						{
-								sprintf((char*)TxBuf+14+2*i, "%02x", NB_CommPacket.Init_Data.iccid[i]);
+								sprintf((char*)Packet+12+2*j+i, "%02x", NB_CommPacket.Init_Data.iccid[j]);
 						}
-						sprintf((char*)Packet+56, "%02x", (uint8_t)(PROTOCOL_APP_VERSION >> 8));
-						sprintf((char*)Packet+58, "%02x", (uint8_t)(PROTOCOL_APP_VERSION));
-						sprintf((char*)Packet+60, "%02x", (uint8_t)(PROTOCOL_APP_SCENARIOS));
-						sprintf((char*)Packet+62, "%02x", (uint8_t)(PROTOCOL_APP_VENDORCODE));
+						sprintf((char*)Packet+52+i, "%02x", (uint8_t)(PROTOCOL_APP_VERSION >> 8));
+						sprintf((char*)Packet+54+i, "%02x", (uint8_t)(PROTOCOL_APP_VERSION));
+						sprintf((char*)Packet+56+i, "%02x", (uint8_t)(PROTOCOL_APP_SCENARIOS));
+						sprintf((char*)Packet+58+i, "%02x", (uint8_t)(PROTOCOL_APP_VENDORCODE));
+						
 				#if (NRF_SD_BLE_API_VERSION == 3)
 						err_code = sd_ble_gap_addr_get(&device_addr);
 
 				#else
 						err_code = sd_ble_gap_address_get(&device_addr);
 				#endif
-						for(i=0; i<6; i++)
+						for(j=0; j<6; j++)
 						{
-								sprintf((char*)Packet+64+2*i, "%02x", device_addr.addr[i]);
+								sprintf((char*)Packet+60+2*j+i, "%02x", device_addr.addr[j]);
 						}
-						newLen = 78;
+						newLen = 72+i;
 				}
 						break;
 			
 				case LOG_ID:
 				{
-//						Packet[i++] = 0x00;
-//						Packet[i++] = 0x10;
-//						Packet[i++] = NB_CommPacket.Init_Data.CSQ;
-//						Packet[i++] = 0x00;
-//						Packet[i++] = 0x00;
-//						Packet[i++] = 0x00;
-//						Packet[i++] = 0x00;
-//						for(j=0; j<20; j++)
-//						{
-//								Packet[i++] = NB_CommPacket.Init_Data.iccid[j];
-//						}
-//						Packet[i++] = (uint8_t)(PROTOCOL_APP_VERSION >> 8);
-//						Packet[i++] = (uint8_t)(PROTOCOL_APP_VERSION);
-//						Packet[i++] = (uint8_t)(PROTOCOL_APP_SCENARIOS);
-//						Packet[i++] = (uint8_t)(PROTOCOL_APP_VENDORCODE);
-//						for (i = 0; i < 6; i ++)
-//						{
-//								Packet[i++] = NB_CommPacket.Init_Data.iccid[j];
-//						}
+						char *startStr = "AT+NMGS=21,00";
+						LogInfo_t tmpLogInfo;
+						UserGetLogInfo(&tmpLogInfo);
+					
+						i = strlen(startStr);
+						memcpy(Packet, startStr, i);
+						sprintf((char*)Packet+i, "%02x", gSystemRunParam.batterPercent);
+						sprintf((char*)Packet+2+i, "%02x", NB_CommPacket.Init_Data.CSQ);
+						sprintf((char*)Packet+4+i, "%02x", (seconds_times >> 24)&0xff);
+						sprintf((char*)Packet+6+i, "%02x", (seconds_times >> 16)&0xff);
+						sprintf((char*)Packet+8+i, "%02x", (seconds_times >> 8)&0xff);
+						sprintf((char*)Packet+10+i, "%02x", (seconds_times >> 0)&0xff);
+						sprintf((char*)Packet+12+i, "%02x", (uint8_t)(13));
+						for(j=0; j<8; j++)
+						{
+								sprintf((char*)Packet+14+2*j+i, "%02x", tmpLogInfo.userId[j]);
+						}				
+						tmpLogInfo.time += SECONDS2000YEAR;
+						sprintf((char*)Packet+30+i, "%02x", (tmpLogInfo.time >> 24)&0xff);
+						sprintf((char*)Packet+32+i, "%02x", (tmpLogInfo.time >> 16)&0xff);
+						sprintf((char*)Packet+34+i, "%02x", (tmpLogInfo.time >> 8)&0xff);
+						sprintf((char*)Packet+36+i, "%02x", (tmpLogInfo.time >> 0)&0xff);
+						sprintf((char*)Packet+38+i, "%02x", tmpLogInfo.action);
+						
+						newLen = 40+i;
+				}
+						break;
+				
+				case HEARTBEAT_ID:
+				{
+						char *startStr = "AT+NMGS=21,00";
+						i = strlen(startStr);
+						memcpy(Packet, startStr, i);
+						sprintf((char*)Packet+i, "%02x", gSystemRunParam.batterPercent);
+						sprintf((char*)Packet+2+i, "%02x", NB_CommPacket.Init_Data.CSQ);
+						sprintf((char*)Packet+4+i, "%02x", (seconds_times >> 24)&0xff);
+						sprintf((char*)Packet+6+i, "%02x", (seconds_times >> 16)&0xff);
+						sprintf((char*)Packet+8+i, "%02x", (seconds_times >> 8)&0xff);
+						sprintf((char*)Packet+10+i, "%02x", (seconds_times >> 0)&0xff);
+						sprintf((char*)Packet+12+i, "%02x", (uint8_t)(13));
+						for(j=0; j<13; j++)
+						{
+								sprintf((char*)Packet+14+2*j+i, "%02x", 0);
+						}	
+						newLen = 40+i;
 				}
 						break;
     }
-//    APP_NB_Transition(TxBuf, i, Packet, &newLen);
+
     return   (uint16_t)newLen;
 }
 
@@ -525,10 +528,6 @@ static uint16_t APP_NB_WriteDataIDPacket(uint8_t DataID, uint8_t* Packet)
 				case UPLOAD_ID_INIT:
 				{
 						usPacketLen = APP_NB_GetPacket(INIT_ID, Packet);
-//				#if CONFIG_RETRY_COPY            
-//						GPRS_RetryCtrol.rtyLen = usPacketLen;                   //消息长度备份
-//						memcpy(GPRS_RetryCtrol.rtyBuff,Packet,usPacketLen);     //消息备份   
-//				#endif
 				#if SEGGER_RTT_DEBUG_MESS
 						SEGGER_RTT_printf(0, "init mess upload\r\n");
 				#endif
@@ -537,11 +536,7 @@ static uint16_t APP_NB_WriteDataIDPacket(uint8_t DataID, uint8_t* Packet)
 		
 				case UPLOAD_ID_LOG:
 				{
-//						usPacketLen = APP_NB_GetPacket(AUTHENTICA_ID, AUTH_CTROL_CODE, AUTH_LEN, Packet);
-//				#if CONFIG_RETRY_COPY            
-//						GPRS_RetryCtrol.rtyLen = usPacketLen;                   //消息长度备份
-//						memcpy(GPRS_RetryCtrol.rtyBuff,Packet,usPacketLen);     //消息备份   
-//				#endif
+						usPacketLen = APP_NB_GetPacket(LOG_ID, Packet);
 				#if SEGGER_RTT_DEBUG_MESS
 						SEGGER_RTT_printf(0, "log mess upload\r\n");
 				#endif
@@ -550,11 +545,7 @@ static uint16_t APP_NB_WriteDataIDPacket(uint8_t DataID, uint8_t* Packet)
 
 				case UPLOAD_ID_HEARTBEAT:
 				{
-//						usPacketLen = APP_NB_GetPacket(AUTHENTICA_ID, AUTH_CTROL_CODE, AUTH_LEN, Packet);
-//				#if CONFIG_RETRY_COPY            
-//						GPRS_RetryCtrol.rtyLen = usPacketLen;                   //消息长度备份
-//						memcpy(GPRS_RetryCtrol.rtyBuff,Packet,usPacketLen);     //消息备份   
-//				#endif
+						usPacketLen = APP_NB_GetPacket(HEARTBEAT_ID, Packet);
 				#if SEGGER_RTT_DEBUG_MESS
 						SEGGER_RTT_printf(0, "heartbeat mess upload\r\n");
 				#endif
@@ -606,7 +597,7 @@ static uint8_t APP_NB_WriteATPacket(uint8_t ATCmdIndex, uint8_t *pFrameDes)
 {  
     uint8_t ucSendLen;
     uint8_t dataNum;
-    char *endStr="\x1A\r\n";
+    char *endStr="\r";
 		switch(ATCmdIndex)
 		{				
 //				case NB_AT_NCDP:
@@ -623,7 +614,13 @@ static uint8_t APP_NB_WriteATPacket(uint8_t ATCmdIndex, uint8_t *pFrameDes)
 			
 				case NB_AT_NMGS:
 				{
-						
+						memcpy(pFrameDes, g_stNB_Handler.TxBuf, g_stNB_Handler.ucTxLen);/*copy 应用层数据*/
+						ucSendLen = strlen(endStr);
+						memcpy(pFrameDes+g_stNB_Handler.ucTxLen, endStr,ucSendLen);        /*copy 结尾符*/
+						ucSendLen += g_stNB_Handler.ucTxLen;
+				#if SEGGER_RTT_DEBUG_MESS
+						SEGGER_RTT_printf(0, "nb data:%s\r\n", pFrameDes);
+				#endif
 				}
 						break;
 			
@@ -751,6 +748,7 @@ static void APP_NB_State_Connect_Proc(uint8_t *RxBuf)
 						g_stNB_Handler.State = NB_STATE_IDLE;//切换到下一个流程
 						g_stNB_Handler.StepPt = 0;//clr step
 						NB_NetPar.NetConnSta = CONN_ON;
+						LED_Status = SYS_INDI;
 				}
 				else
 				{
@@ -968,6 +966,7 @@ static void APP_NB_State_Comm_Proc(uint8_t *RxBuf)
 					{
 							g_stNB_Handler.State = NB_STATE_IDLE;/*切换到下一个流程*/
 							g_stNB_Handler.ucCommBusy= 0;/*Comm Complete*/
+							LED_Status = SYS_INDI;
 					}
 					else
 					{
@@ -1220,7 +1219,7 @@ static uint8_t APP_NB_EvtTraverse(uint8_t mode)
     }
 }
 
-static void APP_NB_Reset_Init(void)
+void APP_NB_Reset_Init(void)
 {                 
     //延时事件添加至主动上传事件中
     //需把延时事件全部添加至主动上传事件中
@@ -1439,7 +1438,7 @@ void APP_SubTask_StateProc(void)
             if(0 == g_stNB_Handler.StepPt)
 						{
 								//引脚操作
-								BSP_NB_RESET_CLEAR;
+								BSP_NB_POWERON_SET;
 								g_stNB_Handler.StepPt++;
 								g_stNB_Handler.ulDelayCnt = 200; //拉低200ms
 								LED_Status = SYS_INDI;     //系统LED指示
@@ -1447,7 +1446,7 @@ void APP_SubTask_StateProc(void)
 						else if(1 == g_stNB_Handler.StepPt)
 						{
 								//引脚操作
-								BSP_NB_RESET_SET;
+								BSP_NB_RESET_CLEAR;
 								g_stNB_Handler.StepPt++;
 								g_stNB_Handler.ulDelayCnt = 50;
 						}
@@ -1552,7 +1551,7 @@ void APP_SubTask_StateProc(void)
 						if(0 == g_stNB_Handler.StepPt)
 						{
 								g_stNB_Handler.ucCommBusy = 1;    //标记正在和服务器通讯
-//								LED_Status = DATA_SEND_INDI;    //正在通讯LED指示
+								LED_Status = DATA_SEND_INDI;    //正在通讯LED指示
 						}
             
 						if(NB_AT_NMGS == s_ATCmdStep_Comm[g_stNB_Handler.StepPt]) 

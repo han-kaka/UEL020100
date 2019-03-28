@@ -23,15 +23,17 @@ void m_system_timeout_handler (void *p_context)
     Tim_Ms_Struct.sys_ms_count++;
 		Tim_Ms_Struct.m_dly_ms++;	
 	
-    if(task_flag_struct.closeStaProc == DISABLE)
-    {
-        APP_NB_TimeProc(10);
-    }
+		if(gSystemRunParam.flagInit == 0xA5)
+		{
+				if(task_flag_struct.closeStaProc == DISABLE)
+				{
+						APP_NB_TimeProc(10);
+				}
+		}
 		
 		Bsp_Led_Tim(10);
 		Bsp_Motor_Tim(10);
 //    APP_PC_UART_TimeProc(10);
-//    APP_Charge_TimeProc(10);
     if(Tim_Ms_Struct.sys_ms_count >= MS_TO_S)     // 1S时间到
     {		
 				Tim_1s_Struct.sys_s_count++;
@@ -82,15 +84,18 @@ void m_system_timeout_handler (void *p_context)
 								 }
 						}
 				}		
-				if(task_flag_struct.closeStaProc != DISABLE) //重新打开NB状态处理计数
+				if(gSystemRunParam.flagInit == 0xA5)
 				{
-						Tim_1s_Struct.reOpenStaProcCount++;
-						if(Tim_1s_Struct.reOpenStaProcCount >= RE_OPEN_STA_PROC_TIME)
+						if(task_flag_struct.closeStaProc != DISABLE) //重新打开NB状态处理计数
 						{
-								 Tim_1s_Struct.reOpenStaProcCount = 0;
-								 task_flag_struct.closeStaProc = DISABLE;
-						}
-				}
+								Tim_1s_Struct.reOpenStaProcCount++;
+								if(Tim_1s_Struct.reOpenStaProcCount >= RE_OPEN_STA_PROC_TIME)
+								{
+										 Tim_1s_Struct.reOpenStaProcCount = 0;
+										 task_flag_struct.closeStaProc = DISABLE;
+								}
+						}	
+				}	
 		}
 }	
 

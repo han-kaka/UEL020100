@@ -54,9 +54,6 @@ void init_peripheral(void)
     SEGGER_RTT_printf(0, "UART Start!\r\n");
 #endif
     myuart_start();
-    //init_dsr_detection();
-    //setWDI();	
-//	
+	
 //		drive_open();
-//		saadc_init();
 }

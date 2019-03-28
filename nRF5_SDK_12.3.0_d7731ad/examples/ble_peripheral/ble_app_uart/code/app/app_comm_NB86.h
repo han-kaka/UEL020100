@@ -53,63 +53,8 @@
 //日志包信息
 #define LOG_ID                          0x01
 
-
-//登录包相关信息
-//#define AUTHENTICA_ID                   0xb010
-//#define AUTH_CTROL_CODE                 0xa3
-//#define AUTH_LEN                        0x09
-
-////状态信息上传包相关信息
-//#define STA_MESS_ID                     0xb041
-//#define STA_MESS_CTROL_CODE             0xa3
-//#define STA_MESS_LEN                    0x0D
-
-////心跳包相关信息
-//#define HEARTBEAT_ID                    0xb040
-//#define HEARTBEAT_CTROL_CODE            0xa3
-//#define HEARTBEAT_LEN                   0x03
-
-
-////参数设置返回包
-//#define SET_PARMTE_ID                   0xb020
-//#define SET_PARMTE_CTROL_CODE           0xa0
-//#define SET_PARMTE_LEN                  0x03
-
-////查询参数包
-//#define QUERY_PARMTE_ID                 0xb021
-//#define QUERY_PARMTE_CTROL_CODE         0xa1
-//#define QUERY_PARMTE_LEN                0x1d
-
-////读信息包
-//#define READ_MESS_ID                    0xb022
-//#define READ_MESS_CTROL_CODE            0xa1
-//#define READ_MESS_LEN                   0x10
-
-////控制包返回
-//#define CONTROL_ID                      0xb027
-//#define CTROL_CODE                      0xa2
-//#define CTROL_LEN                       0x03
-
-////写地址返回包
-//#define WRITE_ADDR_ID                   0xb024
-//#define WRITE_ADDR_CTROL_CODE           0xa0
-//#define WRITE_ADDR_LEN                  0x03
-
-////读地址返回包
-//#define READ_ADDR_ID                    0xb025
-//#define READ_ADDR_CTROL_CODE            0xa1
-//#define READ_ADDR_LEN                   0x07
-
-////读状态信息包
-//#define READ_STA_MESS_ID                0xb026
-//#define READ_STA_MESS_CTROL_CODE        0xa1
-//#define READ_STA_MESS_LEN               0x0D
-
-////系统参数设置
-//#define SYS_PARMTE_SET_ID               0xb028
-//#define SYS_PARMTE_SET_CTROL_CODE       0xa0
-//#define SYS_PARMTE_SET_LEN              0x03
-
+//心跳包信息
+#define HEARTBEAT_ID                    0x02
 /*****************************************************************/
 
 
@@ -531,7 +476,7 @@ void APP_SubTask_StateProc(void);
 //U8 APP_GPRS_RxDataCheck(U8 *rxBuff);
 
 uint16_t APP_GPRS_WriteReturnIDPacket(uint8_t DataID, uint8_t* Packet);
-
+void APP_NB_Reset_Init(void);
 #endif
 
 

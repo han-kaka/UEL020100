@@ -3753,11 +3753,11 @@
 #if SEGGER_RTT_DEBUG_BLUETOOTH
 // <q> debug ble original data
 #ifndef SEGGER_RTT_DEBUG_ORIGINAL_DATA
-#define SEGGER_RTT_DEBUG_ORIGINAL_DATA 1
+#define SEGGER_RTT_DEBUG_ORIGINAL_DATA 0
 #endif
 // <q> debug ble parse protocol
 #ifndef SEGGER_RTT_DEBUG_PARSE_PROTOCOL
-#define SEGGER_RTT_DEBUG_PARSE_PROTOCOL 1
+#define SEGGER_RTT_DEBUG_PARSE_PROTOCOL 0
 #endif
 // <q> debug ble crc check
 #ifndef SEGGER_RTT_DEBUG_CRC_CHECK
@@ -3845,19 +3845,19 @@
 #if  SEGGER_RTT_DEBUG_NB86
 // <q> debug at cfun
 #ifndef SEGGER_RTT_DEBUG_CFUN
-#define SEGGER_RTT_DEBUG_CFUN 1
+#define SEGGER_RTT_DEBUG_CFUN 0
 #endif
 // <q> debug at cgsn
 #ifndef SEGGER_RTT_DEBUG_CGSN
-#define SEGGER_RTT_DEBUG_CGSN 1
+#define SEGGER_RTT_DEBUG_CGSN 0
 #endif
 // <q> debug at nccid
 #ifndef SEGGER_RTT_DEBUG_NCCID
-#define SEGGER_RTT_DEBUG_NCCID 1
+#define SEGGER_RTT_DEBUG_NCCID 0
 #endif
 // <q> debug at cgatt
 #ifndef SEGGER_RTT_DEBUG_CGATT
-#define SEGGER_RTT_DEBUG_CGATT 1
+#define SEGGER_RTT_DEBUG_CGATT 0
 #endif
 // <q> debug at cmd step power on
 #ifndef SEGGER_RTT_DEBUG_POWER_ON

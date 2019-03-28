@@ -39,7 +39,10 @@ uint8_t com_bsp_init(void)
 	
 		Tim_1s_Struct.sys_10s_count = 0;
 		set_task(MEASURE, MEASURE_VOLTAGE);
-    app_comm_init();            //COMM state and event init
+		if(gSystemRunParam.flagInit == 0xA5)
+		{
+				app_comm_init();            //COMM state and event init
+		}
 
     return true;
 }
