@@ -135,14 +135,7 @@ static const uint8_t s_ATCmdStep_Inquire[] =
 /*校验AT指令应答结果是否正确*/
 static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 {   
-
-//    //判断是否是服务器下行数据
-//    if(Check_Strstr((char*)RxBuf, (char*)(char*)AT_CmdTbl[NB_AT_MIPRTCP].ExpResultStr, NB_ATCmdCB.ucRxLen) == true)
-//    {
-//        NB_ATCmdCB.RspType = RSP_TYPE_DATA;  //通信数据
-//        return BACK_TRUE;   //接收到正确应答
-//    }
-    if(Check_Strstr((char*)RxBuf, "Lierda", NB_ATCmdCB.ucRxLen) == true) //GPRS模块准备就绪推送
+    if(Check_Strstr((char*)RxBuf, "Lierda", NB_ATCmdCB.ucRxLen) == true) //NB模块准备就绪推送
     {
         task_flag_struct.atReday_F = ENABLE;
         NB_ATCmdCB.RspType = RSP_TYPE_CMD;
@@ -183,6 +176,8 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
      //判断接收的数据是否含有期望应答
 		if(Check_Strstr((char*)RxBuf, NB_ATCmdCB.ExpResultStr, NB_ATCmdCB.ucRxLen) == true)
 		{
+				NB_ATCmdCB.RspType = RSP_TYPE_CMD;//应答AT指令
+			
 				if((NB_AT_CFUN0 == NB_ATCmdCB.ATCmdPt) ||
 					 (NB_AT_CFUN1 == NB_ATCmdCB.ATCmdPt) ||
 					 (NB_AT_CGATT1 == NB_ATCmdCB.ATCmdPt) ||
@@ -224,8 +219,6 @@ static uint8_t APP_GPRS_ATCmdAckCheck(uint8_t *RxBuf)
 								return BACK_ERROR;  
 						}
 				}
-				
-				NB_ATCmdCB.RspType = RSP_TYPE_CMD;//应答AT指令
 				return BACK_TRUE;                 //接收到正确应答
 		} 
     else
@@ -349,37 +342,43 @@ static uint8_t APP_NB_Transition(uint8_t *hex_data_buf, uint8_t len_hex, uint8_t
 
 static uint16_t APP_NB_GetPacket(uint16_t messID, uint8_t* Packet)
 {
-    uint8_t i=0,j=0;
-//    U8 check=0;
-//    U8 ipLen=0;
-//    U8 apnLen=0;
-//    U8 fillZeroLen=0;
+    uint8_t i=0;
     uint8_t newLen = 0;
-    uint8_t TxBuf[NB_RX_BUFF_LEN]={0};
+//    uint8_t TxBuf[NB_RX_BUFF_LEN]={0};
+		ble_gap_addr_t device_addr;
+		uint32_t err_code = 1;
 		
     switch(messID)
     {
 				case INIT_ID:
 				{
-						TxBuf[i++] = 0x00;
-						TxBuf[i++] = 0x10;
-						TxBuf[i++] = NB_CommPacket.Init_Data.CSQ;
-						TxBuf[i++] = 0x00;
-						TxBuf[i++] = 0x00;
-						TxBuf[i++] = 0x00;
-						TxBuf[i++] = 0x00;
-						for(j=0; j<20; j++)
+					uint8_t MAC_ADDR[6];
+						sprintf((char*)Packet, "%02x", 0);
+						sprintf((char*)Packet+2, "%02x", gSystemRunParam.batterPercent);
+						sprintf((char*)Packet+4, "%02x", NB_CommPacket.Init_Data.CSQ);
+						sprintf((char*)Packet+6, "%02x", seconds_times >> 24);
+						sprintf((char*)Packet+8, "%02x", seconds_times >> 16);
+						sprintf((char*)Packet+10, "%02x", seconds_times >> 8);
+						sprintf((char*)Packet+12, "%02x", seconds_times >> 0);
+						for(i=0; i<20; i++)
 						{
-								TxBuf[i++] = NB_CommPacket.Init_Data.iccid[j];
+								sprintf((char*)TxBuf+14+2*i, "%02x", NB_CommPacket.Init_Data.iccid[i]);
 						}
-						TxBuf[i++] = (uint8_t)(PROTOCOL_APP_VERSION >> 8);
-						TxBuf[i++] = (uint8_t)(PROTOCOL_APP_VERSION);
-						TxBuf[i++] = (uint8_t)(PROTOCOL_APP_SCENARIOS);
-						TxBuf[i++] = (uint8_t)(PROTOCOL_APP_VENDORCODE);
-						for (i = 0; i < 6; i ++)
+						sprintf((char*)Packet+56, "%02x", (uint8_t)(PROTOCOL_APP_VERSION >> 8));
+						sprintf((char*)Packet+58, "%02x", (uint8_t)(PROTOCOL_APP_VERSION));
+						sprintf((char*)Packet+60, "%02x", (uint8_t)(PROTOCOL_APP_SCENARIOS));
+						sprintf((char*)Packet+62, "%02x", (uint8_t)(PROTOCOL_APP_VENDORCODE));
+				#if (NRF_SD_BLE_API_VERSION == 3)
+						err_code = sd_ble_gap_addr_get(&device_addr);
+
+				#else
+						err_code = sd_ble_gap_address_get(&device_addr);
+				#endif
+						for(i=0; i<6; i++)
 						{
-								TxBuf[i++] = NB_CommPacket.Init_Data.mac[j];
+								sprintf((char*)Packet+64+2*i, "%02x", device_addr.addr[i]);
 						}
+						newLen = 78;
 				}
 						break;
 			
@@ -407,7 +406,7 @@ static uint16_t APP_NB_GetPacket(uint16_t messID, uint8_t* Packet)
 				}
 						break;
     }
-    APP_NB_Transition(TxBuf, i, Packet, &newLen);
+//    APP_NB_Transition(TxBuf, i, Packet, &newLen);
     return   (uint16_t)newLen;
 }
 
@@ -548,46 +547,20 @@ static uint16_t APP_NB_WriteDataIDPacket(uint8_t DataID, uint8_t* Packet)
 				#endif
 				}
 						break;
-				
-//				case UPLOAD_ID_AUTH:
-//				{
-//						usPacketLen = APP_GPRS_GetPacket(AUTHENTICA_ID,AUTH_CTROL_CODE,AUTH_LEN,Packet);
-//				#if CONFIG_RETRY_COPY            
-//						GPRS_RetryCtrol.rtyLen = usPacketLen;                   //消息长度备份
-//						memcpy(GPRS_RetryCtrol.rtyBuff,Packet,usPacketLen);     //消息备份   
-//				#endif
-//				#if DEBUG_LOG
-//						BSP_LOG("auth mess upload\r\n");
-//				#endif
-//				}
-//						break;
-//				
-//				case UPLOAD_ID_STA_MESS:
-//				{
-//						usPacketLen = APP_GPRS_GetPacket(STA_MESS_ID,STA_MESS_CTROL_CODE,STA_MESS_LEN,Packet);
-//				#if CONFIG_RETRY_COPY
-//						GPRS_RetryCtrol.rtyLen = usPacketLen; 
-//						memcpy(GPRS_RetryCtrol.rtyBuff,Packet,usPacketLen);
-//				#endif
-//				#if DEBUG_LOG
-//						BSP_LOG("status mess upload\r\n");
-//				#endif
-//				}
-//						break;	
-//			
-//				case UPLOAD_ID_HEARTBEAT:
-//				{
-//						usPacketLen = APP_GPRS_GetPacket(HEARTBEAT_ID,HEARTBEAT_CTROL_CODE,HEARTBEAT_LEN,Packet);
-//				#if CONFIG_RETRY_COPY            
-//						GPRS_RetryCtrol.rtyLen = usPacketLen;                   //消息长度备份
-//						memcpy(GPRS_RetryCtrol.rtyBuff,Packet,usPacketLen);     //消息备份   
-//				#endif
-//				#if DEBUG_LOG
-//						BSP_LOG("send heartbeat mess\r\n");
-//				#endif
-//				}
-//						break; 
 
+				case UPLOAD_ID_HEARTBEAT:
+				{
+//						usPacketLen = APP_NB_GetPacket(AUTHENTICA_ID, AUTH_CTROL_CODE, AUTH_LEN, Packet);
+//				#if CONFIG_RETRY_COPY            
+//						GPRS_RetryCtrol.rtyLen = usPacketLen;                   //消息长度备份
+//						memcpy(GPRS_RetryCtrol.rtyBuff,Packet,usPacketLen);     //消息备份   
+//				#endif
+				#if SEGGER_RTT_DEBUG_MESS
+						SEGGER_RTT_printf(0, "heartbeat mess upload\r\n");
+				#endif
+				}
+						break;
+				
 				default:
 						break;
 		}
@@ -648,6 +621,12 @@ static uint8_t APP_NB_WriteATPacket(uint8_t ATCmdIndex, uint8_t *pFrameDes)
 //				}
 //						break;
 			
+				case NB_AT_NMGS:
+				{
+						
+				}
+						break;
+			
 				default:
 				{
 						strcpy((char*)pFrameDes, AT_CmdTbl[ATCmdIndex].CmdStr);
@@ -691,7 +670,7 @@ static void APP_NB_SendATCmd(AT_CMD_CB* pNBATCmdCB)
 
 		////// 填充指令内容长度 //////
 		pAtCmd->ucCmdStrLen = APP_NB_WriteATPacket(ATCmdIndex, pAtCmd->CmdStr);
-		//填充指令符期望结果	
+		//填充指令符期望结果
 		strcpy(pAtCmd->ExpResultStr, AT_CmdTbl[ATCmdIndex].ExpResultStr);
 		//发送AT指令
 		NB_SendATCmdStr(pAtCmd->CmdStr, pAtCmd->ucCmdStrLen);
@@ -983,7 +962,7 @@ static void APP_NB_State_Comm_Proc(uint8_t *RxBuf)
 			g_stNB_Handler.StepPt++;
 			if(g_stNB_Handler.StepPt >= COMM_STEP_NUM)
 			{
-					/******GPRS模块状态切换***************/
+					/******NB模块状态切换***************/
 					/*数据标签来判断是否还有其它数据需要发送，如果有则再次进入comm，没有则退出通讯状态*/
 					if(APP_NB_EvtTraverse(TRAVERSE) == false)
 					{
@@ -1281,10 +1260,10 @@ void APP_NB_TimeProc(uint16_t usPeriod)
 		if(NB_ATCmdCB.ulTimeOut >= usPeriod)
 		{
 				NB_ATCmdCB.ulTimeOut -= usPeriod;
-		}
-		else
-		{
-				NB_ATCmdCB.ATCmdResult = BACK_TIMEOUT;/*超时*/ 
+				if(NB_ATCmdCB.ulTimeOut < usPeriod)
+				{
+						NB_ATCmdCB.ATCmdResult = BACK_TIMEOUT;/*超时*/ 			
+				}
 		}
 //	}
 		
@@ -1348,6 +1327,9 @@ void APP_SubTask_CmdProc(void)
 //    nrf_uart_enable(NRF_UART0);
 
     NB_ATCmdCB.ATCmdResult = APP_GPRS_ATCmdAckCheck(g_stNB_Handler.RxBuf); 
+#if SEGGER_RTT_DEBUG_NB86
+		SEGGER_RTT_printf(0, "at cmd result:%d !\r\n", NB_ATCmdCB.ATCmdResult);
+#endif
     ////////// 应答错误直接返回 /////////////////////// 
     if(BACK_ERROR == NB_ATCmdCB.ATCmdResult) 
     {
@@ -1381,7 +1363,7 @@ void APP_SubTask_StateProc(void)
 								if(NB_ATCmdCB.ucResendCnt >= NB_ATCmdCB.ucResendTimes)
 								{	
 										NB_ATCmdCB.ATCmdResult = BACK_PERTIMES_OUT;//重发次数到了
-								}			
+								}
 						}
 						//根据不同的结果，做相应处理
 						if(APP_NB_StateProcTbl[g_stNB_Handler.StateOld] != NULL)
@@ -1394,7 +1376,7 @@ void APP_SubTask_StateProc(void)
 								g_stNB_Handler.StateOld = NB_STATE_WAIT_ACK;
 						}
 						NB_ATCmdCB.ulTimeOut = 0;
-						NB_ATCmdCB.Busy = 0;              
+						NB_ATCmdCB.Busy = 0;       
 				}
 						break;
 				 

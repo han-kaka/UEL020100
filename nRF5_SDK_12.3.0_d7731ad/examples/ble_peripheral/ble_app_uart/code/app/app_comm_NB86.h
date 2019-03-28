@@ -52,6 +52,8 @@
 
 //日志包信息
 #define LOG_ID                          0x01
+
+
 //登录包相关信息
 //#define AUTHENTICA_ID                   0xb010
 //#define AUTH_CTROL_CODE                 0xa3

@@ -303,10 +303,13 @@ static void adc_calculate(void)
 								m_battery_value = test_adc_value;
 						}
 						gSystemRunParam.advc = get_battery_vol();
+						gSystemRunParam.batterPercent = (gSystemRunParam.advc - 370)*100/50;
 						if(gSystemRunParam.advc < ALARM_VOLTAGE_VALUE) //低电量报警,具体数值待定
 						{
 						}
+				#if SEGGER_RTT_DEBUG_ADC			
 						SEGGER_RTT_printf(0, "battery_value = %d!\r\n", gSystemRunParam.advc);
+				#endif
 						current_adc = IDLE_ADC;
 						need_adc_sample = false;
 				}
