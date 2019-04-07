@@ -35,10 +35,10 @@ void init_board(void)
     nrf_gpio_pin_clear(NB_POWER_ON);	                         //NB电源关闭
     
     nrf_gpio_cfg_output(NB_RESET);	
-    nrf_gpio_pin_set(NB_RESET);	                             //复位NB模块
-    
-//    nrf_gpio_cfg_output(NB_PWRONKEY);	
-//    nrf_gpio_pin_set(NB_PWRONKEY);	                          //拉低NB——PWRKEY	
+    nrf_gpio_pin_set(NB_RESET);	                               //复位NB模块
+    	
+		nrf_gpio_cfg_input(SW1, NRF_GPIO_PIN_PULLDOWN);               //sw1
+//		nrf_gpio_cfg_input(SW2, NRF_GPIO_PIN_PULLDOWN);               //sw2
 }
 
 //初始化芯片外设
@@ -54,6 +54,7 @@ void init_peripheral(void)
     SEGGER_RTT_printf(0, "UART Start!\r\n");
 #endif
     myuart_start();
-	
+	 
+		init_dsr_detection();
 //		drive_open();
 }

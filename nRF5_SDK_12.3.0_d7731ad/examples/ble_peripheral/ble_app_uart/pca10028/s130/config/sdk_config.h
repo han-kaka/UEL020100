@@ -3886,6 +3886,11 @@
 #endif
 // </e> 
 
+// <q> debug key
+#ifndef SEGGER_RTT_DEBUG_KEY
+#define SEGGER_RTT_DEBUG_KEY 1
+#endif
+
 // <e> debug uart
 #ifndef SEGGER_RTT_DEBUG_UART
 #define SEGGER_RTT_DEBUG_UART 1
@@ -3899,7 +3904,7 @@
 
 // <q> debug uart data
 #ifndef SEGGER_RTT_DEBUG_UART_DATA
-#define SEGGER_RTT_DEBUG_UART_DATA 1
+#define SEGGER_RTT_DEBUG_UART_DATA 0
 #endif
 #endif
 // </e> 

@@ -3,8 +3,8 @@
 
 #include "global.h"
 
-#define APP_ADV_INTERVAL                1600                                        /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
-#define APP_ADV_TIMEOUT_IN_SECONDS      0                                           /**< The advertising timeout (in units of seconds). */
+#define APP_ADV_INTERVAL                300                                        /**< The advertising interval (in units of 0.625 ms. This value corresponds to 40 ms). */
+#define APP_ADV_TIMEOUT_IN_SECONDS      60                                          /**< The advertising timeout (in units of seconds). */
 
 #define NUS_SERVICE_UUID_TYPE           BLE_UUID_TYPE_BLE                           /**< UUID type for the Nordic UART Service (vendor specific). */
 

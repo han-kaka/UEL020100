@@ -2,6 +2,7 @@
 #include "nrf_drv_common.h"
 #include "app_timer.h"
 #include "nrf_drv_gpiote.h"
+#include "ble_advertising.h"
 
 //用户头文件
 #include "bsp_my_uart.h"
@@ -201,35 +202,31 @@ void myuart_send(const uint8_t *p_data, uint8_t length)
     }	
 }	
 
-////------------NB唤醒处理--------------------------------------------
-//static void DSR_Wake_handler(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
-//{ 
-//    gsm_mevent.b.have_wakeup_uartst = true;
-//    NRF_LOG_DIRECT("dsr wake handler!\r\n");
-//    nrf_gpio_pin_clear(WAKEUP_DTR);	//唤醒NB模块
-//    if(Sys_Lock_State_Struct.c1100_mode_flag == C1100_MODE_DRX_SLEEP)
-//    {
-//        set_task(COMM, COMM_READDATA);				
-//    }	
-//}
+//------------按键中断处理--------------------------------------------
+static void key_handler(nrf_drv_gpiote_pin_t pin, nrf_gpiote_polarity_t action)
+{ 
+#if SEGGER_RTT_DEBUG_KEY
+    SEGGER_RTT_printf(0, "key handler!\r\n");
+#endif
+		ble_advertising_start(BLE_ADV_MODE_FAST);
+}
 
-////--------------上电初始化--------------------------------------------
-//void init_dsr_detection(void)
-//{
-//    //开机时初始化GSM状态 
-////		gsm_mevent.Whole=0;
+//--------------上电初始化--------------------------------------------
+void init_dsr_detection(void)
+{
+    //开机时初始化GSM状态 
+//		gsm_mevent.Whole=0;
 
-//    //开启NB唤醒功能	
-//    nrf_drv_gpiote_in_config_t config = {.is_watcher = false,                     \
-//                                         .hi_accuracy = false,                    \
-//                                         .pull = NRF_GPIO_PIN_NOPULL,             \
-//                                         .sense = NRF_GPIOTE_POLARITY_HITOLO,     \
-//                                        };
-//    //PULLDOWN为了省电
-//    nrf_drv_gpiote_in_init(WAKEUP_CHECK, &config, DSR_Wake_handler);//  
-//    gsm_mevent.b.have_wakeup_uartst = false;				 
-//    nrf_drv_gpiote_in_event_enable(WAKEUP_CHECK,true);
-//}
+    //开启NB唤醒功能	
+    nrf_drv_gpiote_in_config_t config = {.is_watcher = false,                     \
+                                         .hi_accuracy = false,                    \
+                                         .pull = NRF_GPIO_PIN_NOPULL,             \
+                                         .sense = GPIOTE_CONFIG_POLARITY_LoToHi,  \
+                                        };
+    //PULLDOWN为了省电
+    nrf_drv_gpiote_in_init(SW1, &config, key_handler);//  		 
+    nrf_drv_gpiote_in_event_enable(SW1,true);
+}
 
 ////--------------关闭DSR脚中断功能---------------------------------------
 //void stop_dsr_detection(void)

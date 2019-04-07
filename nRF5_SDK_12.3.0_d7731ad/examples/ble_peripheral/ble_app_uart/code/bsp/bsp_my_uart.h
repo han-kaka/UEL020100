@@ -79,7 +79,7 @@ void myuart_send(const uint8_t *p_data, uint8_t length);
 
 ////NB
 ////void myuart_task(void);
-//void init_dsr_detection(void);
+void init_dsr_detection(void);
 //void stop_dsr_detection(void);
 //void openGprs(void);
 //void stopGprs(void);

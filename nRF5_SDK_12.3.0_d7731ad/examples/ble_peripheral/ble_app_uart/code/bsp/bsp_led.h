@@ -8,7 +8,6 @@ typedef enum
   SYS_INDI = 0,
   CONN_INDI,
   DATA_SEND_INDI,
-  CHARGE_INDI,
   MAX_INDI,
 }LED_Status_Tpye;
 

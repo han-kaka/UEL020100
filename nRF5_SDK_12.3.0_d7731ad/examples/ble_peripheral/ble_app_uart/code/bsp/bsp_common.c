@@ -8,15 +8,6 @@ static void bsp_peri_init(void)
     init_board();
 	
     init_peripheral();
-	
-//    Bsp_Rcc_Init();
-//    Bsp_GPIO_Init();
-//    Bsp_Tim2_Init();
-//    Bsp_Tim3_Delay_Init();    
-
-//    Bsp_UART1_Init(115200);
-//    Bsp_UART2_Init(115200);
-//    IWDG_Init();
 }
 
 

@@ -45,7 +45,7 @@ static void Led_Flicker(uint16_t usPeriod, uint16_t halfPeriod, uint8_t times)
 //                }
 //                else
                 {
-                    LED_Status = SYS_INDI;          /*系统LED指示*/
+                    LED_Status = SYS_INDI;          /*关闭LED指示*/
                 }
             }
         }

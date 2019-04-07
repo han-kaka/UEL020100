@@ -823,7 +823,7 @@ uint8_t ProcessCommand(uint8_t *pData, uint8_t command, uint16_t dataLen)
 						g_stNB_Handler.State = NB_STATE_POWER_ON;   //开始下一个流程
 						g_stNB_Handler.StepPt = 0;	
 						APP_NB_Reset_Init(); 
-						
+						LED_Status = SYS_INDI;                       //关闭LED指示
 ////						WaitSystemExit(0, 20000);
 //						ChangescanRspData(sizeof ( lockinitname ), (uint8*)lockinitname);	// 初始化广播名字
 //						UserSaveAppData(P_EE_ADDR_LOCKNAME, (uint8*)lockinitname);			// update to EEPROM
