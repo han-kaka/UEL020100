@@ -538,6 +538,7 @@ static void power_manage(void)
  */
 int main(void)
 {
+		
     uint32_t err_code;
     bool erase_bonds;
 		
@@ -553,19 +554,19 @@ int main(void)
 //    buttons_leds_init(&erase_bonds);
     ble_stack_init();
 
-    gap_params_init();
-    services_init();
-    advertising_init();
-    conn_params_init();
-	
-    err_code = nrf_drv_rng_init(NULL);
-    APP_ERROR_CHECK(err_code);
+//    gap_params_init();
+//    services_init();
+//    advertising_init();
+//    conn_params_init();
+//	
+//    err_code = nrf_drv_rng_init(NULL);
+//    APP_ERROR_CHECK(err_code);
 
-    //err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
-    APP_ERROR_CHECK(err_code);
-#ifdef RTT_LOG_ENABLE
-		SEGGER_RTT_printf(0, "Adv Start!\r\n");
-#endif
+//    err_code = ble_advertising_start(BLE_ADV_MODE_FAST);
+//    APP_ERROR_CHECK(err_code);
+//#ifdef RTT_LOG_ENABLE
+//		SEGGER_RTT_printf(0, "Adv Start!\r\n");
+//#endif
 
 		com_bsp_init();
 		
