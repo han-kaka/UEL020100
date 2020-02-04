@@ -25,15 +25,15 @@ uint8_t com_bsp_init(void)
 {
     bsp_peri_init();            // peripheral init
 		
-    bsp_var_init();             //ver init
-    data_recover();             //data recover
-	
-		Tim_1s_Struct.sys_10s_count = 0;
-		set_task(MEASURE, MEASURE_VOLTAGE);
-		if(gSystemRunParam.flagInit == 0xA5)
-		{
-				app_comm_init();            //COMM state and event init
-		}
+//    bsp_var_init();             //ver init
+//    data_recover();             //data recover
+//	
+//		Tim_1s_Struct.sys_10s_count = 0;
+//		set_task(MEASURE, MEASURE_VOLTAGE);
+//		if(gSystemRunParam.flagInit == 0xA5)
+//		{
+//				app_comm_init();            //COMM state and event init
+//		}
 
     return true;
 }

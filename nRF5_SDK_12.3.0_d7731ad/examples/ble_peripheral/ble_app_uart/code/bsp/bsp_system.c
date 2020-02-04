@@ -10,7 +10,7 @@ void init_board(void)
 	
 		//LED
     nrf_gpio_cfg_output(LED1);
-    nrf_gpio_pin_set(LED1);
+    nrf_gpio_pin_clear(LED1);
 	
 		//adc采集
 		nrf_gpio_cfg_input(V_BAT_AD, NRF_GPIO_PIN_NOPULL);
@@ -35,26 +35,26 @@ void init_board(void)
     nrf_gpio_pin_clear(NB_POWER_ON);	                         //NB电源关闭
     
     nrf_gpio_cfg_output(NB_RESET);	
-    nrf_gpio_pin_set(NB_RESET);	                               //复位NB模块
+    nrf_gpio_pin_clear(NB_RESET);	                               //复位NB模块
     	
-		nrf_gpio_cfg_input(SW1, NRF_GPIO_PIN_PULLDOWN);               //sw1
+		nrf_gpio_cfg_input(SW1, NRF_GPIO_PIN_NOPULL);               //sw1
 //		nrf_gpio_cfg_input(SW2, NRF_GPIO_PIN_PULLDOWN);               //sw2
 }
 
 //初始化芯片外设
 void init_peripheral(void)
 {  
-    //------开启慢速系统计时-------------------	
-    init_system_time();
-    start_system_time();
-	
-    //------初始化各功能块---------------------	
-    //------初始化uart模块---------------------
-#if SEGGER_RTT_DEBUG_UART
-    SEGGER_RTT_printf(0, "UART Start!\r\n");
-#endif
-    myuart_start();
-	 
-		init_dsr_detection();
+//    //------开启慢速系统计时-------------------	
+//    init_system_time();
+//    start_system_time();
+//	
+//    //------初始化各功能块---------------------	
+//    //------初始化uart模块---------------------
+//#if SEGGER_RTT_DEBUG_UART
+//    SEGGER_RTT_printf(0, "UART Start!\r\n");
+//#endif
+//    myuart_start();
+//	 
+//		init_dsr_detection();
 //		drive_open();
 }

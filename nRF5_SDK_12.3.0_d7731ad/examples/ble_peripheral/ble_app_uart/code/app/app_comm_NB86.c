@@ -45,7 +45,7 @@ const NB_Cmd_Data_Type AT_CmdTbl[] =
 			{"AT+CFUN=1\r\n",                                  3,       "OK",                     3},
       {"AT+CFUN?\r\n",                                   3,       "CFUN:0",                 3},
 			{"AT+CFUN?\r\n",                                   3,       "CFUN:1",                 3},
-			{"AT+NCDP=180.101.147.115,5683\r\n",               3,       "OK",                     3},
+			{"AT+NCDP=117.60.157.137,5683\r\n",               3,       "OK",                     3},
 			{"AT+NRB\r\n",                                     3,       "REBOOTING",              3},
 			
 			{"AT+CGSN=1\r\n",                                  3,       "CGSN",                   3},

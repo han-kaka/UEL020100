@@ -36,8 +36,7 @@
 //#define OPEN_LOCK_NO_LEN                    2
 //#define OPEN_LOCK_ORDER_LEN                 39 
 
-#define MAX_SAVE_SIZE 128
-#define ROMDATA_SAVE_BYTES  MAX_SAVE_SIZE*4
+
 
 ///****************************************** solid data ****************************************************/
 //typedef struct
